@@ -1,0 +1,12 @@
+Package: ripeds
+Title: Download and Manipulate Integrated Postsecondary Education Data System (IPEDS) Data
+Version: 0.0.0.9000
+Authors@R: person("Benjamin", "Skinner",
+           email = "bskinner@neh.gov",
+           role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-0337-7415"))
+Description: Download and manipulate IPEDS data using the complete data files.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
