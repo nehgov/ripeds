@@ -5,12 +5,14 @@
 \title{Download IPEDS files}
 \usage{
 get_ipeds(
-  year = 2022:2023,
+  year,
   survey,
-  title = "directory",
-  file_name,
+  title,
+  file,
   local_dir = NA,
-  revised_files = TRUE
+  revised_files = TRUE,
+  lower_names = TRUE,
+  filter_bool = c("and", "or")
 )
 }
 \description{
