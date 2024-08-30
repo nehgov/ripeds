@@ -23,7 +23,7 @@ parse_html <- function(zip, dfile) {
 }
 
 ## get list of available IPEDS dictionary files
-itab <- ripeds::ipeds_file_table() |> filter(year == 2022)
+itab <- ripeds::ipeds_file_table() |> filter(year %in% 2004:2023)
 
 ## init list of proper size
 dict <- vector("list", length = nrow(itab))
