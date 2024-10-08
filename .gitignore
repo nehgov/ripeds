@@ -1,0 +1,6 @@
+*.Rproj
+*.Rhistory
+*.DS_Store
+*.Rapp.history
+inst/doc
+data-raw/*.xlsx
