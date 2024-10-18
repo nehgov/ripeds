@@ -115,41 +115,124 @@ for (i in 1:length(dict)) {
   }
   ## munge and add to list
   dict[[i]] <- out |>
-    dplyr::mutate(file = itab[["file"]][i]) |>
+    dplyr::mutate(file_name = itab[["file"]][i]) |>
     dplyr::rename_all(tolower) |>
-    dplyr::select(file, varname, vartitle) |>
+    dplyr::select(file_name, varname, vartitle) |>
     dplyr::filter(!is.na(varname))
 }
 
 ## bind
-dict <- dplyr::bind_rows(dict)
+dict <- dplyr::bind_rows(dict) |> dplyr::rename(description = vartitle)
 
 ## -----------------------------------------------------------------------------
 ## create hash maps
 ## -----------------------------------------------------------------------------
 
-dict_hash <- new.env(parent = emptyenv())
+## ----------------------
+## index frames
+## ----------------------
 
-tmp <- dict |> dplyr::distinct(varname, vartitle) |> dplyr::arrange(varname)
+idx_file <- dict |>
+  dplyr::distinct(file_name) |>
+  dplyr::arrange(file_name) |>
+  dplyr::mutate(idxf = paste0("fi", dplyr::row_number()))
 
-for (i in 1:nrow(tmp)) {
-  ## key stub (varname)
-  key <- tmp[["varname"]][i]
-  if (key == "UNITID") next
-  ## years
-  key_y <- paste0(key, "_y")
-  dict_hash[[key_y]] <- dict |>
-    dplyr::filter(varname == key) |>
-    dplyr::pull(file) |>
-    list()
-  ## titles
-  for (j in 1:length(unlist(dict_hash[[key_y]]))) {
-    f <- unlist(dict_hash[[key_y]])[j]
-    dict_hash[[paste(key, f, sep = "_")]] <- dict |>
-      dplyr::filter(varname == key, file == f) |>
-      dplyr::pull(vartitle)
-  }
+idx_vars <- dict |>
+  dplyr::distinct(varname) |>
+  dplyr::arrange(varname) |>
+  dplyr::mutate(idxv = paste0("vi", dplyr::row_number()))
+
+idx_desc <- dict |>
+  dplyr::distinct(description) |>
+  dplyr::arrange(description) |>
+  dplyr::mutate(idxd = paste0("di", dplyr::row_number()))
+
+idx_dict <- dict |>
+  dplyr::left_join(idx_file, by = "file_name") |>
+  dplyr::left_join(idx_vars, by = "varname") |>
+  dplyr::left_join(idx_desc, by = "description") |>
+  dplyr::select(starts_with("idx"))
+
+## ----------------------
+## hashes
+## ---------------------
+
+main_hash <- new.env(parent = emptyenv())
+
+file_hash <- new.env(parent = emptyenv())
+file_hash_lu <- new.env(parent = emptyenv())
+
+for(i in 1:nrow(idx_file)) {
+  key <- idx_file[["file_name"]][i]
+  val <- idx_file[["idxf"]][i]
+  file_hash[[key]] <- val
+  file_hash_lu[[val]] <- key
+  main_hash[[val]] <- list(
+    "idxv" =  idx_dict |> dplyr::filter(idxf == val) |> dplyr::pull(idxv),
+    "idxd" =  idx_dict |> dplyr::filter(idxf == val) |> dplyr::pull(idxd)
+  )
 }
 
+vars_hash <- new.env(parent = emptyenv())
+vars_hash_lu <- new.env(parent = emptyenv())
+
+for(i in 1:nrow(idx_vars)) {
+  key <- idx_vars[["varname"]][i]
+  val <- idx_vars[["idxv"]][i]
+  vars_hash[[key]] <- val
+  vars_hash_lu[[val]] <- key
+  main_hash[[val]] <- list(
+    "idxf" =  idx_dict |> dplyr::filter(idxv == val) |> dplyr::pull(idxf),
+    "idxd" =  idx_dict |> dplyr::filter(idxv == val) |> dplyr::pull(idxd)
+  )
+}
+
+desc_hash <- new.env(parent = emptyenv())
+desc_hash_lu <- new.env(parent = emptyenv())
+
+for(i in 1:nrow(idx_desc)) {
+  key <- idx_desc[["description"]][i]
+  val <- idx_desc[["idxd"]][i]
+  desc_hash[[key]] <- val
+  desc_hash_lu[[val]] <- key
+  main_hash[[val]] <- list(
+    "idxf" =  idx_dict |> dplyr::filter(idxd == val) |> dplyr::pull(idxf),
+    "idxv" =  idx_dict |> dplyr::filter(idxd == val) |> dplyr::pull(idxv)
+  )
+}
+
+
+## ## ----------------------
+## ## description hash
+## ## ----------------------
+
+## desc_hash <- new.env(parent = emptyenv())
+
+
+## dict_hash <- new.env(parent = emptyenv())
+
+## tmp <- dict |> dplyr::distinct(varname, description) |> dplyr::arrange(varname)
+
+## for (i in 1:nrow(tmp)) {
+##   ## key stub (varname)
+##   key <- tmp[["varname"]][i]
+##   if (key == "UNITID") next
+##   ## years
+##   key_y <- paste0(key, "_y")
+##   dict_hash[[key_y]] <- dict |>
+##     dplyr::filter(varname == key) |>
+##     dplyr::pull(file_name) |>
+##     list()
+##   ## titles
+##   for (j in 1:length(unlist(dict_hash[[key_y]]))) {
+##     f <- unlist(dict_hash[[key_y]])[j]
+##     dict_hash[[paste(key, f, sep = "_")]] <- dict |>
+##       dplyr::filter(varname == key, file_name == f) |>
+##       dplyr::pull(description)
+##   }
+## }
+
 usethis::proj_set("..")
-usethis::use_data(dict, dict_hash, overwrite = TRUE, internal = TRUE)
+usethis::use_data(main_hash, file_hash, vars_hash, desc_hash,
+                  file_hash_lu, vars_hash_lu, desc_hash_lu,
+                  overwrite = TRUE, internal = TRUE)
