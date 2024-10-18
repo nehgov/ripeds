@@ -38,6 +38,12 @@ ipeds_dict <- function(search_string,
                        ignore_case = TRUE, limit = 10, confirm = FALSE,
                        return_df = FALSE, print_off = FALSE) {
 
+  search_col <- switch(match.arg(search_col),
+                       "all" = "all",
+                       "description" = "desc",
+                       "varname" = "vars",
+                       "file_name" = "file")
+
   ## ----------------------
   ## get values
   ## ----------------------
@@ -52,73 +58,123 @@ ipeds_dict <- function(search_string,
   ##                 ignore.case = ignore_case)
   ## }
 
-  if (match.arg(search_col) == "all") {
-
-    for (col in c("description", "varname", "file_name")) {
-      tmp_rows <- grepl(search_string, dict[[col]], ignore.case = ignore_case)
-      rows <- rows | tmp_rows     # promote to TRUE either TRUE
+  if (search_col == "all") {
+    vals <- c()
+    for (col in c("desc", "vars", "file")) {
+      keys <- grep(search_string,
+                   names(get(paste0(col, "_hash"))),
+                   ignore.case = ignore_case,
+                   value = TRUE)
+      if (length(keys) > 0) {
+        tmp_vals <- c()
+        tmp_vals <- lapply(keys,
+                           FUN = get,
+                           envir = get(paste0(col, "_hash"))) |>
+          unlist()
+        vals <- c(vals, tmp_vals)
+      }
     }
   } else {
-    rows <- grepl(search_string, dict[[match.arg(search_col)]],
-                  ignore.case = ignore_case)
+    keys <- grep(search_string,
+                 names(get(paste0(search_col, "_hash"))),
+                 ignore.case = ignore_case,
+                 value = TRUE)
+    if (length(keys) > 0) {
+      tmp_vals <- c()
+      tmp_vals <- lapply(keys,
+                         FUN = get,
+                         envir = get(paste0(search_col, "_hash"))) |>
+        unlist()
+      vals <- c(vals, tmp_vals)
+    }
   }
 
   ## ----------------------
   ## return message if 0
   ## ----------------------
-  if (all(rows == FALSE)) {
+  if (length(vals) == 0) {
     return(cat("\nNo matches! Try again with new string or column.\n\n"))
   }
 
-  ## pull data
-  out <- dict[rows,]
+  ## ----------------------
+  ## build dictionary
+  ## ----------------------
 
-  ## get unique varnames
-  uniqv <- unique(out[["varname"]])
+  ## TODO
+  ## assign column names as appropriate based on type (vars, file, desc)
+  ## loop through
+  ## add to sublist
+  ## bind sublist
+  ## bind list
+  ## check for duplicates
+  ## convert from idx to actual values
 
-  ## pretty print
-  if (!print_off) {
-    for (i in 1:min(length(uniqv), limit)) {
-
-      ## subset
-      d <- out[out[["varname"]] == uniqv[i],]
-
-      ## console table
-      cat("\n" %+% hline(70) %+% "\n")
-      cat("varname: " %+% d[["varname"]][1])
-
-      cat(rep("", 53 - nchar(d[["varname"]][1]) -
-                    nchar(d[["source"]][1])))
-      cat("source: " %+% d[["source"]][1])
-      cat("\n" %+% hline(70) %+% "\n")
-
-      cat("DESCRIPTION:\n\n")
-      cat(strwrap(d[["description"]][1], 70) %+% "\n")
-      cat("\n")
-      ## cat("VALUES: ")
-      ## if (is.na(d[["value"]][1])) {
-      ##   cat("NA\n\n")
-      ## } else {
-      ##   cat("\n\n")
-      ##   for (j in seq(nrow(d))) {
-      ##     cat(d[["value"]][j] %+% " = " %+% d[["label"]][j] %+% "\n")
-      ##   }
-      ##   cat("\n")
-      ## }
+  dict_list <- vector("list", length(vals))
+  for (i in c("f", "v", "d") {
+    subvals <- grep(i, vals, value = TRUE)
+    if (length(subvals) == 0) next
+    dict_sublist <- vector("list", length(subvals))
+    for (j in 1:length(vals)) {
+      dict_sublist[[j]] <- dplyr::tibble(
+        x = vals[j],
+        y = main_hash[[vals[j]]][1] |> unlist(),
+        z = main_hash[[vals[j]]][2] |> unlist()
+      )
     }
-
-    cat(hline(70) %+% "\n")
-    cat("Printed information for " %+% min(length(uniqv), limit) %+% " of out ")
-    cat(length(uniqv) %+% " variables.\n")
-    if (limit < length(uniqv)) cat("Increase limit to see more variables.\n")
-    cat("\n")
+    dist_list[i] <- dplyr::bind_rows(dict_sublist)
   }
+    dict <- dplyr::bind_rows(dict_list)
+    d
+
+  ## ## pull data
+  ## out <- dict[rows,]
+
+  ## ## get unique varnames
+  ## uniqv <- unique(out[["varname"]])
+
+  ## ## pretty print
+  ## if (!print_off) {
+  ##   for (i in 1:min(length(uniqv), limit)) {
+
+  ##     ## subset
+  ##     d <- out[out[["varname"]] == uniqv[i],]
+
+  ##     ## console table
+  ##     cat("\n" %+% hline(70) %+% "\n")
+  ##     cat("varname: " %+% d[["varname"]][1])
+
+  ##     cat(rep("", 53 - nchar(d[["varname"]][1]) -
+  ##                   nchar(d[["source"]][1])))
+  ##     cat("source: " %+% d[["source"]][1])
+  ##     cat("\n" %+% hline(70) %+% "\n")
+
+  ##     cat("DESCRIPTION:\n\n")
+  ##     cat(strwrap(d[["description"]][1], 70) %+% "\n")
+  ##     cat("\n")
+  ##     ## cat("VALUES: ")
+  ##     ## if (is.na(d[["value"]][1])) {
+  ##     ##   cat("NA\n\n")
+  ##     ## } else {
+  ##     ##   cat("\n\n")
+  ##     ##   for (j in seq(nrow(d))) {
+  ##     ##     cat(d[["value"]][j] %+% " = " %+% d[["label"]][j] %+% "\n")
+  ##     ##   }
+  ##     ##   cat("\n")
+  ##     ## }
+  ##   }
+
+  ##   cat(hline(70) %+% "\n")
+  ##   cat("Printed information for " %+% min(length(uniqv), limit) %+% " of out ")
+  ##   cat(length(uniqv) %+% " variables.\n")
+  ##   if (limit < length(uniqv)) cat("Increase limit to see more variables.\n")
+  ##   cat("\n")
+  ## }
 
   ## return_df ? return(out) : <>
-  if (return_df) {
-    var_order <- c("varname", "description", "file_name")
-    out <- tidyr::as_tibble(out) |>
-      dplyr::select(dplyr::one_of(var_order))
-    return(out)
-  }
+  ## if (return_df) {
+  ##   var_order <- c("varname", "description", "file_name")
+  ##   out <- tidyr::as_tibble(out) |>
+  ##     dplyr::select(dplyr::one_of(var_order))
+  ##   return(out)
+  ## }
 }
