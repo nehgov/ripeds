@@ -201,37 +201,6 @@ for(i in 1:nrow(idx_desc)) {
   )
 }
 
-
-## ## ----------------------
-## ## description hash
-## ## ----------------------
-
-## desc_hash <- new.env(parent = emptyenv())
-
-
-## dict_hash <- new.env(parent = emptyenv())
-
-## tmp <- dict |> dplyr::distinct(varname, description) |> dplyr::arrange(varname)
-
-## for (i in 1:nrow(tmp)) {
-##   ## key stub (varname)
-##   key <- tmp[["varname"]][i]
-##   if (key == "UNITID") next
-##   ## years
-##   key_y <- paste0(key, "_y")
-##   dict_hash[[key_y]] <- dict |>
-##     dplyr::filter(varname == key) |>
-##     dplyr::pull(file_name) |>
-##     list()
-##   ## titles
-##   for (j in 1:length(unlist(dict_hash[[key_y]]))) {
-##     f <- unlist(dict_hash[[key_y]])[j]
-##     dict_hash[[paste(key, f, sep = "_")]] <- dict |>
-##       dplyr::filter(varname == key, file_name == f) |>
-##       dplyr::pull(description)
-##   }
-## }
-
 usethis::proj_set("..")
 usethis::use_data(main_hash, file_hash, vars_hash, desc_hash,
                   file_hash_lu, vars_hash_lu, desc_hash_lu,
