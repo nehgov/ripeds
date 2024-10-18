@@ -12,7 +12,9 @@ get_ipeds(
   local_dir = NA,
   revised_files = TRUE,
   lower_names = TRUE,
-  filter_bool = c("and", "or")
+  filter_bool = c("and", "or"),
+  bind = TRUE,
+  join = FALSE
 )
 }
 \description{

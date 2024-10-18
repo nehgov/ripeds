@@ -4,3 +4,4 @@
 *.Rapp.history
 inst/doc
 data-raw/*.xlsx
+_*
