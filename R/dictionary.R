@@ -6,7 +6,7 @@
 #'   for search. Must escape special characters, \code{. \ | ( ) [ \{ ^ $ * +
 #'   ?}, with a doublebackslash \code{\\\\}.
 #' @param search_col Column to search. The default is to search all columns.
-#'   Other options include: "varname", "description", "file_name".
+#'   Other options include: "varname", "description", "filename".
 #' @param ignore_case Search is case insensitive by default. Change to
 #'   \code{FALSE} to restrict search to exact case matches.
 #' @param limit Only the first 10 dictionary items are returned by default.
@@ -34,7 +34,7 @@ ipeds_dict <- function(search_string,
                        search_col = c("all",
                                       "description",
                                       "varname",
-                                      "file_name"),
+                                      "filename"),
                        ignore_case = TRUE, limit = 10, confirm = FALSE,
                        return_dict = FALSE, print_off = FALSE) {
 
@@ -45,7 +45,7 @@ ipeds_dict <- function(search_string,
                        "all" = "all",
                        "description" = "desc",
                        "varname" = "vars",
-                       "file_name" = "file")
+                       "filename" = "file")
 
   ## ----------------------
   ## regex search
@@ -120,60 +120,112 @@ ipeds_dict <- function(search_string,
     ## bind sublists into main list
     dict_list[[i]] <- dplyr::bind_rows(dict_sublist)
   }
+
   ## bind main list into one tibble; remove duplicate rows (which can occur when
   ## searching across more than one column); convert idx* to actual values;
   ## select new columns; arrange
   dict <- dplyr::bind_rows(dict_list) |>
     dplyr::distinct() |>
-    dplyr::mutate(file = get_hash(idxf, file_hash_lu),
+    dplyr::mutate(filename = get_hash(idxf, file_hash_lu),
                   varname = get_hash(idxv, vars_hash_lu),
                   description = get_hash(idxd, desc_hash_lu)) |>
-    dplyr::select(file, varname, description) |>
-    dplyr::arrange(file, varname)
+    dplyr::select(filename, varname, description) |>
+    dplyr::arrange(filename, varname)
 
-  ## ## pull data
-  ## out <- dict[rows,]
+  ## ----------------------
+  ## pretty print ascii
+  ## ----------------------
+  if (!print_off) {
 
-  ## ## get unique varnames
-  ## uniqv <- unique(out[["varname"]])
+    ## ----------------------
+    ## unique variables
+    ## ----------------------
+    uvars <- dict |> dplyr::distinct(varname) |> dplyr::pull()
 
-  ## ## pretty print
-  ## if (!print_off) {
-  ##   for (i in 1:min(length(uniqv), limit)) {
+    ## ----------------------
+    ## loop through vars
+    ## ----------------------
+    for (i in 1:min(length(uvars), limit)) {
+      ## variable name
+      varn <- uvars[i]
+      ## ascii header: varname
+      cat("\n" %+% hline(70, "=") %+% "\n")
+      cat("VARIABLE: " %+% varn)
+      cat("\n" %+% hline(70, "=") %+% "\n")
 
-  ##     ## subset
-  ##     d <- out[out[["varname"]] == uniqv[i],]
+      ## ----------------------
+      ## unique descriptions
+      ## ----------------------
+      udesc <- dict |>
+        dplyr::filter(varname == varn) |>
+        dplyr::distinct(description) |>
+        dplyr::pull()
 
-  ##     ## console table
-  ##     cat("\n" %+% hline(70) %+% "\n")
-  ##     cat("varname: " %+% d[["varname"]][1])
+      if (length(udesc) > 1) {
+        cat("\n" %+% "NOTE: This variable has (" %+% length(udesc) %+% ") unique descriptions.\n")
+      }
+      ## ----------------------
+      ## loop through desc
+      ## ----------------------
+      for (j in 1:length(udesc)) {
+        ## variable name
+        desc <- udesc[j]
 
-  ##     cat(rep("", 53 - nchar(d[["varname"]][1]) -
-  ##                   nchar(d[["source"]][1])))
-  ##     cat("source: " %+% d[["source"]][1])
-  ##     cat("\n" %+% hline(70) %+% "\n")
+        ## ascii: description
+        cat("\n")
+        if (length(udesc) > 1) {
+          if (j < 10) {
+            desch <- hline(20, ":") %+%
+              hline(9, " ") %+%
+              "DESCRIPTION (" %+%
+              j %+% ")" %+%
+              hline(9, " ") %+%
+              hline(20, ":") %+%
+              "\n\n"
+          } else {
+            desch <- hline(20, ":")  %+%
+              hline(9, " ") %+%
+              "DESCRIPTION (" %+%
+              j %+%
+              ")" %+%
+              hline(8, " ") %+%
+              hline(20, ":") %+%
+              "\n\n"
+          }
+        } else {
+          desch <- hline(20, ":") %+%
+            hline(11, " ") %+%
+            "DESCRIPTION" %+%
+            hline(11, " ") %+%
+            hline(20, ":") %+%
+            "\n\n"
+        }
+        cat(desch)
+        cat(strwrap(desc, 70) %+% "\n\n")
+        cat(hline(70, ":") %+% "\n")
+        cat("\n")
 
-  ##     cat("DESCRIPTION:\n\n")
-  ##     cat(strwrap(d[["description"]][1], 70) %+% "\n")
-  ##     cat("\n")
-  ##     ## cat("VALUES: ")
-  ##     ## if (is.na(d[["value"]][1])) {
-  ##     ##   cat("NA\n\n")
-  ##     ## } else {
-  ##     ##   cat("\n\n")
-  ##     ##   for (j in seq(nrow(d))) {
-  ##     ##     cat(d[["value"]][j] %+% " = " %+% d[["label"]][j] %+% "\n")
-  ##     ##   }
-  ##     ##   cat("\n")
-  ##     ## }
-  ##   }
+        ## subset files for unique varname / description pair
+        ufiles <- dict |>
+          dplyr::filter(varname == varn, description == desc) |>
+          dplyr::pull(filename) |>
+          sort()
 
-  ##   cat(hline(70) %+% "\n")
-  ##   cat("Printed information for " %+% min(length(uniqv), limit) %+% " of out ")
-  ##   cat(length(uniqv) %+% " variables.\n")
-  ##   if (limit < length(uniqv)) cat("Increase limit to see more variables.\n")
-  ##   cat("\n")
-  ## }
+        ## ascii: filenames
+        cat("../FILES ")
+        cat("\n\n")
+        for (k in ufiles) {
+          cat(" |__ " %+% k %+% "\n")
+        }
+      }
+    }
+
+    cat("\n" %+% hline(70, "=") %+% "\n")
+    cat("Printed information for " %+% min(length(uvars), limit) %+% " of out ")
+    cat(length(uvars) %+% " variables.\n")
+    if (limit < length(uvars)) cat("Increase limit to see more variables.\n")
+    cat("\n")
+  }
 
   ## return_dict ? return(dict) : <>
   if (return_dict) return(dict)
