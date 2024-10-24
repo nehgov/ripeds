@@ -66,28 +66,23 @@ ipeds_dict <- function(search_string,
                    ignore.case = ignore_case,
                    value = TRUE)
       if (length(keys) > 0) {
-        tmp_vals <- c()
-        tmp_vals <- lapply(keys,
-                           FUN = get,
-                           envir = get(paste0(col, "_hash"))) |>
-          unlist()
+        tmp_vals <- get_hash(keys, get(paste0(col, "_hash")))
         vals <- c(vals, tmp_vals)
       }
     }
   } else {
+    vals <- c()
     keys <- grep(search_string,
                  names(get(paste0(search_col, "_hash"))),
                  ignore.case = ignore_case,
                  value = TRUE)
     if (length(keys) > 0) {
-      tmp_vals <- c()
-      tmp_vals <- lapply(keys,
-                         FUN = get,
-                         envir = get(paste0(search_col, "_hash"))) |>
-        unlist()
+      tmp_vals <- get_hash(keys, get(paste0(search_col, "_hash")))
       vals <- c(vals, tmp_vals)
     }
   }
+  ## CHECK POINT: remove
+  ## return(vals)
 
   ## ----------------------
   ## return message if 0
@@ -109,22 +104,54 @@ ipeds_dict <- function(search_string,
   ## check for duplicates
   ## convert from idx to actual values
 
-  dict_list <- vector("list", length(vals))
-  for (i in c("f", "v", "d") {
+  ## init main list
+  dict_list <- list()
+  ## main loop through file, varnames, description
+  for (i in c("f", "v", "d")) {
+    ## pull idx* that match
     subvals <- grep(i, vals, value = TRUE)
+    ## skip if none
     if (length(subvals) == 0) next
+    ## init sublist
     dict_sublist <- vector("list", length(subvals))
-    for (j in 1:length(vals)) {
+    ## pull corresponding lists from main hash; have to use if/else so that
+    ## column names align with idx* type (e.g., f --> idxf)
+    for (j in 1:length(subvals)) {
+      if (i == "f") {
+        idxf = subvals[j]
+        idxv = main_hash[[subvals[j]]]["idxv"] |> unlist()
+        idxd = main_hash[[subvals[j]]]["idxd"] |> unlist()
+      } else if (i == "v") {
+        idxf = main_hash[[subvals[j]]]["idxf"] |> unlist()
+        idxv = subvals[j]
+        idxd = main_hash[[subvals[j]]]["idxd"] |> unlist()
+      } else if (i == "d") {
+        idxf = main_hash[[subvals[j]]]["idxf"] |> unlist()
+        idxv = main_hash[[subvals[j]]]["idxv"] |> unlist()
+        idxd = subvals[j]
+      }
+      ## bind lists to tibble and place in sublist
       dict_sublist[[j]] <- dplyr::tibble(
-        x = vals[j],
-        y = main_hash[[vals[j]]][1] |> unlist(),
-        z = main_hash[[vals[j]]][2] |> unlist()
+        idxf = idxf,
+        idxv = idxv,
+        idxd = idxd
       )
     }
-    dist_list[i] <- dplyr::bind_rows(dict_sublist)
+    ## bind sublists into main list
+    dict_list[[i]] <- dplyr::bind_rows(dict_sublist)
   }
-    dict <- dplyr::bind_rows(dict_list)
-    d
+  ## bind main list into one tibble; remove duplicate rows (which can occur when
+  ## searching across more than one column); convert idx* to actual values;
+  ## select new columns; arrange
+  dict <- dplyr::bind_rows(dict_list) |>
+    dplyr::distinct() |>
+    dplyr::mutate(file = get_hash(idxf, file_hash_lu),
+                  varname = get_hash(idxv, vars_hash_lu),
+                  description = get_hash(idxd, desc_hash_lu)) |>
+    dplyr::select(file, varname, description) |>
+    dplyr::arrange(file, varname)
+  return(dict)
+
 
   ## ## pull data
   ## out <- dict[rows,]
