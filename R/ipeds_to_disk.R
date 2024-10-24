@@ -54,6 +54,9 @@ ipeds_tmp_to_disk <- function(to_dir, overwrite_existing = FALSE,
 #' default, the function will create directories as necessary to save the files.
 #'
 #' @param files Vector of files (without ending) to download (e.g., HD2023)
+#' @param ipeds_dict_df Output from ipeds_dict(return_dict = TRUE); if argument
+#'   isn't missing, it will be choosen over input to files argument if also
+#'   included
 #' @param to_dir Directory path to copy
 #' @param overwrite_existing Overwrite files on local directory with those in
 #'   temporary directory
@@ -62,22 +65,58 @@ ipeds_tmp_to_disk <- function(to_dir, overwrite_existing = FALSE,
 #'
 #' @export
 ipeds_download_to_disk <- function(files,
+                                   ipeds_dict_df,
                                    to_dir,
                                    overwrite_existing = FALSE,
                                    create_directory = TRUE) {
-  base_url <- "https://nces.ed.gov/ipeds/datacenter/data"
+  ## choose dictionary first
+  if (!missing(ipeds_dict_df)) {
+    files <- ipeds_dict_df |> dplyr::distinct(filename) |> dplyr::pull()
+  }
+  ## confirm files in IPEDS
+  check <- files %in% ipeds_file_table()[["file"]]
+  if (!all(check)) {
+    message("The following files are not found in IPEDS ",
+            "and have been removed from download list:\n\n",
+            paste0("- ", files[!check], "\n"))
+  }
+  ## stop if none
+  if (length(files[check]) == 0) {
+    stop("No files to download. Recheck list.", call. = FALSE)
+  }
+  ## update file list
+  files <- files[check]
   ## check path and create if doesn't exist (or give warning if user sets
   ## create_directory = FALSE
   if (!dir.exists(to_dir)) {
     if (create_directory) {
       dir.create(to_dir, showWarnings = FALSE, recursive = TRUE)
     } else {
-      stop("Directory does not exist. ",
-           "Either create directory path or set create_directory = TRUE")
+      stop("\nDirectory does not exist. ",
+           "Either create directory path or set create_directory = TRUE",
+           .call = FALSE)
     }
   }
-  ## append ending to files
+  ## check for already downloaded
+  if (!overwrite_existing) {
+    existing <- list.files(to_dir) |> tools::file_path_sans_ext()
+    overlap <- files[which(files %in% existing)]
+    if (length(overlap) > 0) {
+      message("The following files have already been downloaded:\n\n",
+              paste0("- ", overlap, "\n"),
+              "\nIf you would like to redownload, set overwrite_exiting = TRUE")
+    }
+    ## update file list
+    files <- files[which(!files %in% overlap)]
+    ## stop if none
+    if (length(files) == 0) {
+      stop("No files to download. All already downloaded.", call. = FALSE)
+    }
+  }
+  ## add zip ending
   fzipvec <- paste0(files, ".zip")
+  ## set base url
+  base_url <- "https://nces.ed.gov/ipeds/datacenter/data"
   ## loop through
   for (f in fzipvec) {
     if (!file.exists(file.path(to_dir, f))) {
