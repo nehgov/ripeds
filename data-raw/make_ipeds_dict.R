@@ -128,9 +128,13 @@ dict <- dplyr::bind_rows(dict) |> dplyr::rename(description = vartitle)
 ## create hash maps
 ## -----------------------------------------------------------------------------
 
-## ----------------------
+## -------------------------------------
 ## index frames
-## ----------------------
+## -------------------------------------
+
+## f := file names
+## v := variable names
+## d := description strings
 
 idx_file <- dict |>
   dplyr::distinct(file_name) |>
@@ -153,11 +157,23 @@ idx_dict <- dict |>
   dplyr::left_join(idx_desc, by = "description") |>
   dplyr::select(starts_with("idx"))
 
+## -------------------------------------
+## hash maps
+## -------------------------------------
+
+## main := used to store idx values in lists
+## *_hash := key --> val (actual name to idx)
+## *_hash_lu := val --> key (lookup of actual name using idx)
+
 ## ----------------------
-## hashes
-## ---------------------
+## main has
+## ----------------------
 
 main_hash <- new.env(parent = emptyenv())
+
+## ----------------------
+## file hashes
+## ----------------------
 
 file_hash <- new.env(parent = emptyenv())
 file_hash_lu <- new.env(parent = emptyenv())
@@ -173,6 +189,10 @@ for(i in 1:nrow(idx_file)) {
   )
 }
 
+## ----------------------
+## variable hashes
+## ----------------------
+
 vars_hash <- new.env(parent = emptyenv())
 vars_hash_lu <- new.env(parent = emptyenv())
 
@@ -186,6 +206,10 @@ for(i in 1:nrow(idx_vars)) {
     "idxd" =  idx_dict |> dplyr::filter(idxv == val) |> dplyr::pull(idxd)
   )
 }
+
+## ----------------------
+## description hashes
+## ----------------------
 
 desc_hash <- new.env(parent = emptyenv())
 desc_hash_lu <- new.env(parent = emptyenv())
@@ -201,7 +225,14 @@ for(i in 1:nrow(idx_desc)) {
   )
 }
 
+## -----------------------------------------------------------------------------
+## store hash environments in sysdata.rda
+## -----------------------------------------------------------------------------
+
 usethis::proj_set("..")
 usethis::use_data(main_hash, file_hash, vars_hash, desc_hash,
                   file_hash_lu, vars_hash_lu, desc_hash_lu,
                   overwrite = TRUE, internal = TRUE)
+
+## -----------------------------------------------------------------------------
+################################################################################
