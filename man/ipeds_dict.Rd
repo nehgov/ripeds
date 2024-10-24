@@ -6,11 +6,11 @@
 \usage{
 ipeds_dict(
   search_string,
-  search_col = c("all", "description", "varname", "file_name"),
+  search_col = c("all", "description", "varname", "filename"),
   ignore_case = TRUE,
   limit = 10,
   confirm = FALSE,
-  return_df = FALSE,
+  return_dict = FALSE,
   print_off = FALSE
 )
 }
@@ -20,7 +20,7 @@ for search. Must escape special characters, \code{. \ | ( ) [ \{ ^ $ * +
   ?}, with a doublebackslash \code{\\\\}.}
 
 \item{search_col}{Column to search. The default is to search all columns.
-Other options include: "varname", "description", "file_name".}
+Other options include: "varname", "description", "filename".}
 
 \item{ignore_case}{Search is case insensitive by default. Change to
 \code{FALSE} to restrict search to exact case matches.}
@@ -32,7 +32,7 @@ matched in search'}
 \item{confirm}{Use to confirm status of variable name in dictionary. Returns
 \code{TRUE} or \code{FALSE}.}
 
-\item{return_df}{Return a tibble of the subset data dictionary.}
+\item{return_dict}{Return a tibble of the subset data dictionary.}
 
 \item{print_off}{Do not print to console; useful if you only want to return a
 tibble of dictionary values.}

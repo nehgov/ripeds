@@ -6,6 +6,7 @@
 \usage{
 ipeds_download_to_disk(
   files,
+  ipeds_dict_df,
   to_dir,
   overwrite_existing = FALSE,
   create_directory = TRUE
@@ -13,6 +14,10 @@ ipeds_download_to_disk(
 }
 \arguments{
 \item{files}{Vector of files (without ending) to download (e.g., HD2023)}
+
+\item{ipeds_dict_df}{Output from ipeds_dict(return_dict = TRUE); if argument
+isn't missing, it will be choosen over input to files argument if also
+included}
 
 \item{to_dir}{Directory path to copy}
 
