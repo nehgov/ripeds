@@ -14,7 +14,7 @@
 #'   matched in search'
 #' @param confirm Use to confirm status of variable name in dictionary. Returns
 #'   \code{TRUE} or \code{FALSE}.
-#' @param return_df Return a tibble of the subset data dictionary.
+#' @param return_dict Return a tibble of the subset data dictionary.
 #' @param print_off Do not print to console; useful if you only want to return a
 #'   tibble of dictionary values.
 #'
@@ -36,8 +36,11 @@ ipeds_dict <- function(search_string,
                                       "varname",
                                       "file_name"),
                        ignore_case = TRUE, limit = 10, confirm = FALSE,
-                       return_df = FALSE, print_off = FALSE) {
+                       return_dict = FALSE, print_off = FALSE) {
 
+  ## ----------------------
+  ## set search column
+  ## ----------------------
   search_col <- switch(match.arg(search_col),
                        "all" = "all",
                        "description" = "desc",
@@ -45,19 +48,8 @@ ipeds_dict <- function(search_string,
                        "file_name" = "file")
 
   ## ----------------------
-  ## get values
+  ## regex search
   ## ----------------------
-  ## if (match.arg(search_col) == "all") {
-  ##   rows <- rep(FALSE, nrow(dict))
-  ##   for (col in c("description", "varname", "file_name")) {
-  ##     tmp_rows <- grepl(search_string, dict[[col]], ignore.case = ignore_case)
-  ##     rows <- rows | tmp_rows     # promote to TRUE either TRUE
-  ##   }
-  ## } else {
-  ##   rows <- grepl(search_string, dict[[match.arg(search_col)]],
-  ##                 ignore.case = ignore_case)
-  ## }
-
   if (search_col == "all") {
     vals <- c()
     for (col in c("desc", "vars", "file")) {
@@ -81,8 +73,6 @@ ipeds_dict <- function(search_string,
       vals <- c(vals, tmp_vals)
     }
   }
-  ## CHECK POINT: remove
-  ## return(vals)
 
   ## ----------------------
   ## return message if 0
@@ -94,16 +84,6 @@ ipeds_dict <- function(search_string,
   ## ----------------------
   ## build dictionary
   ## ----------------------
-
-  ## TODO
-  ## assign column names as appropriate based on type (vars, file, desc)
-  ## loop through
-  ## add to sublist
-  ## bind sublist
-  ## bind list
-  ## check for duplicates
-  ## convert from idx to actual values
-
   ## init main list
   dict_list <- list()
   ## main loop through file, varnames, description
@@ -150,8 +130,6 @@ ipeds_dict <- function(search_string,
                   description = get_hash(idxd, desc_hash_lu)) |>
     dplyr::select(file, varname, description) |>
     dplyr::arrange(file, varname)
-  return(dict)
-
 
   ## ## pull data
   ## out <- dict[rows,]
@@ -197,11 +175,6 @@ ipeds_dict <- function(search_string,
   ##   cat("\n")
   ## }
 
-  ## return_df ? return(out) : <>
-  ## if (return_df) {
-  ##   var_order <- c("varname", "description", "file_name")
-  ##   out <- tidyr::as_tibble(out) |>
-  ##     dplyr::select(dplyr::one_of(var_order))
-  ##   return(out)
-  ## }
+  ## return_dict ? return(dict) : <>
+  if (return_dict) return(dict)
 }
