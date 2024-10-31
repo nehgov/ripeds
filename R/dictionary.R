@@ -38,6 +38,11 @@ ipeds_dict <- function(search_string,
                        ignore_case = TRUE, limit = 10, confirm = FALSE,
                        return_dict = FALSE, print_off = FALSE) {
 
+  ## only for confirm
+  if (confirm) {
+    return(!is.null(vars_hash[[toupper(search_string)]]))
+  }
+
   ## ----------------------
   ## set search column
   ## ----------------------

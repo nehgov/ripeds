@@ -15,3 +15,32 @@ get_hash <- function(x, hash_env) {
 cyear_to_ayear <- function(x) {
   paste0(substr(x, 3, 4), substr(x + 1, 3, 4))
 }
+
+## confirm that first argument is ipedscall list
+confirm_chain <- function(x) {
+  ## error message
+  m <- "Chain not properly initialized. Be sure to start with ipeds_init()."
+  ## must force() the chain so it works in order, but need to try() first
+  ## and capture result
+  res <- try(force(x), silent = TRUE)
+  ## if try-error and any of following:
+  ## 1. "ipedscall" is missing
+  ## 2. error in filter (meaning no arguments at all in ipeds_filter())
+  ## 3. object isn"t found (meaning sccall isn"t first)
+  if (identical(class(res), "try-error")
+      & (grepl("argument \"ipedscall\" is missing, with no default\n", res[1])
+        | grepl("Error in filter .+ : subscript out of bounds\n", res[1])
+        | grepl("object '.+' not found", res[1]))) {
+    stop(m, call. = FALSE)
+    ## if no try-error and:
+    ## 1. is list
+    ## 2. is longer than 1 element
+    ## 3. contains "ipeds_init_list" == TRUE
+  } else if (is.list(x) && length(x) > 1 && x[["ipeds_init_list"]]) {
+    res
+  ##   ## if no try-error, but ipeds_year() is called, this will catch that
+  ## } else if (is.numeric(x) | x == "latest") {
+  ##   stop(m, call. = FALSE)
+  ## }
+  }
+}
