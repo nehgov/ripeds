@@ -9,11 +9,11 @@
 #' @param bind Row bind all same name survey files (e.g., HD2022 and HD2023)
 #' @param join Join different name survey files by UNITID and year
 #' @param lower_names Lower column names in returned data
+#' @param include_filter_vars Include filtering variables in output table
 #'
-
 #' @export
 ipeds_get <- function(ipedscall, bind = TRUE, join = TRUE,
-                      lower_names = TRUE) {
+                      lower_names = TRUE, include_filter_vars = TRUE) {
   suppressWarnings({
     ## check first argument
     confirm_chain(ipedscall)
@@ -35,8 +35,10 @@ ipeds_get <- function(ipedscall, bind = TRUE, join = TRUE,
     ## -------------------------------------
     if(!is.null(ipedscall[["filter_vars"]])) {
       search_str <- paste(c(ipedscall[["select"]], ipedscall[["filter_vars"]]), collapse = "|")
+      keep_vars <- toupper(c(ipedscall[["select"]], ipedscall[["filter_vars"]]))
     } else {
       search_str <- paste(ipedscall[["select"]], collapse = "|")
+      keep_vars <- toupper(ipedscall[["select"]])
     }
     file_year <- ipeds_file_table() |>
       dplyr::filter(year %in% ipedscall[["year"]]) |>
@@ -44,7 +46,7 @@ ipeds_get <- function(ipedscall, bind = TRUE, join = TRUE,
     dict <- ipeds_dict(search_str, search_col = "varname", return_dict = TRUE,
                        print_off = TRUE) |>
       ## filter to exact match
-      dplyr::filter(varname %in% toupper(ipedscall[["select"]])) |>
+      dplyr::filter(varname %in% !!keep_vars) |>
       ## filter to year(s)
       dplyr::filter(filename %in% file_year)
 
@@ -98,8 +100,14 @@ ipeds_get <- function(ipedscall, bind = TRUE, join = TRUE,
                FILE = i)
       ## filter if there is a filter string
       if (!is.null(ipedscall[["filter"]])) {
-        print(ipedscall[["filter"]])
-        out <- dplyr::filter(out, !!!rlang::enquos(ipedscall[["filter"]]))
+        expr <- lapply(ipedscall[["filter"]], function(x) rlang::quo_get_expr(x))[[1]] |> deparse()
+        out <- dplyr::filter(out, eval(!!!rlang::parse_expr(expr)))
+        ## include_filter_vars ? add them to order list at end : <>
+        if (include_filter_vars) {
+          to_add <- toupper(ipedscall[["filter_vars"]])
+          to_add <- to_add[to_add %in% dplyr::pull(dict, varname)]
+          ipedscall[["select_order"]] <- c(ipedscall[["select_order"]], to_add)
+        }
       }
       ## put in order of variable request
       out <- dplyr::select(out, dplyr::one_of("UNITID",

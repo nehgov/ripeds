@@ -2,46 +2,23 @@
 % Please edit documentation in R/select.R
 \name{ipeds_select}
 \alias{ipeds_select}
-\alias{ipeds_select_}
 \title{Select IPEDS data variables.}
 \usage{
 ipeds_select(ipedscall, ...)
-
-ipeds_select_(ipedscall, vars)
 }
 \arguments{
 \item{ipedscall}{Current list of parameters carried forward from prior
 functions in the chain (ignore)}
 
 \item{...}{Desired variable names separated by commas (not case sensitive)}
-
-\item{vars}{Character string of variable name or vector of
-character string variable names}
 }
 \description{
 This function is used to select the variables returned in the final dataset.
 }
-\section{Functions}{
-\itemize{
-\item \code{ipeds_select_()}: Standard evaluation version of
-\code{\link{ipeds_select}} (\code{vars} must be string or vector
-of strings when using this version)
-
-}}
 \examples{
 \dontrun{
 ipeds_select(UNITID)
 ipeds_select(UNITID, INSTNM)
 ipeds_select(unitid, instnm)
 }
-\dontrun{
-ipeds_select_("UNITID")
-ipeds_select_(c("UNITID", "INSTNM"))
-ipeds_select_(c("unitid", "instnm"))
-
-## stored in object
-vars_to_pull <- c("unitid","instnm")
-ipeds_select(vars_to_pull)
-}
-
 }

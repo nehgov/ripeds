@@ -15,37 +15,12 @@
 #' @export
 ipeds_select <- function(ipedscall, ...) {
 
-  ## vars in ... to list
-  vars <- lapply(lazyeval::lazy_dots(...), function(x) bquote(.(x[["expr"]])))
-
-  ## give to _ version
-  ipeds_select_(ipedscall, vars)
-
-}
-
-#' @describeIn ipeds_select Standard evaluation version of
-#'     \code{\link{ipeds_select}} (\code{vars} must be string or vector
-#'     of strings when using this version)
-#'
-#' @param vars Character string of variable name or vector of
-#'     character string variable names
-#'
-#' @examples
-#' \dontrun{
-#' ipeds_select_("UNITID")
-#' ipeds_select_(c("UNITID", "INSTNM"))
-#' ipeds_select_(c("unitid", "instnm"))
-#'
-#' ## stored in object
-#' vars_to_pull <- c("unitid","instnm")
-#' ipeds_select(vars_to_pull)
-#' }
-#'
-
-ipeds_select_ <- function(ipedscall, vars) {
   suppressWarnings({
     ## check first argument
     confirm_chain(ipedscall)
+
+    ## vars in ... to list
+    vars <- lapply(lazyeval::lazy_dots(...), function(x) bquote(.(x[["expr"]])))
 
     ## confirm has a least one variable
     if (missing(vars) || length(vars) < 1) {

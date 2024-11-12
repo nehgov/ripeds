@@ -4,7 +4,13 @@
 \alias{ipeds_get}
 \title{Get IPEDS data.}
 \usage{
-ipeds_get(ipedscall, bind = TRUE, join = TRUE, lower_names = TRUE)
+ipeds_get(
+  ipedscall,
+  bind = TRUE,
+  join = TRUE,
+  lower_names = TRUE,
+  include_filter_vars = TRUE
+)
 }
 \arguments{
 \item{ipedscall}{Current list of parameters carried forward from prior
@@ -15,6 +21,8 @@ functions in the chain (ignore)}
 \item{join}{Join different name survey files by UNITID and year}
 
 \item{lower_names}{Lower column names in returned data}
+
+\item{include_filter_vars}{Include filtering variables in output table}
 }
 \description{
 This function gets IPEDS data by compiling and
