@@ -44,3 +44,19 @@ confirm_chain <- function(x) {
   ## }
   }
 }
+
+## confirm variables in dictionary
+confirm_vars <- function(varlist) {
+  lapply(varlist, function(v) {
+    if (!ipeds_dict(toupper(as.character(v)), confirm = TRUE)) {
+      stop("Variable \"" %+% v %+% "\" not found in dictionary. "
+           %+% "Please check your spelling or search dictionary: "
+           %+% "?ipeds_dict()", call. = FALSE)
+    }
+  })
+}
+
+## order variables so they are returned as user input them
+order_vars <- function(varlist, split_character = ",") {
+  trimws(unlist(strsplit(toString(varlist), split = split_character)))
+}

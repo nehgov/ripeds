@@ -21,5 +21,6 @@ ipeds_init <- function(local_dir = NA, revised_files = TRUE) {
        "select" = NULL,
        "select_order" = NULL,
        "filter" = NULL,
+       "filter_vars" = NULL,
        "year" = NULL)
 }

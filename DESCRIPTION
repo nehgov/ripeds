@@ -12,7 +12,8 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Imports: rvest,
          dplyr,
-         readr
+         readr,
+         rlang
 Depends: 
     R (>= 2.10)
 Suggests: 

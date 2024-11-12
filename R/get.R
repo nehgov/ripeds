@@ -33,7 +33,11 @@ ipeds_get <- function(ipedscall, bind = TRUE, join = TRUE,
     ## -------------------------------------
     ## make list of files that apply
     ## -------------------------------------
-    search_str <- paste(ipedscall[["select"]], collapse = "|")
+    if(!is.null(ipedscall[["filter_vars"]])) {
+      search_str <- paste(c(ipedscall[["select"]], ipedscall[["filter_vars"]]), collapse = "|")
+    } else {
+      search_str <- paste(ipedscall[["select"]], collapse = "|")
+    }
     file_year <- ipeds_file_table() |>
       dplyr::filter(year %in% ipedscall[["year"]]) |>
       dplyr::pull(file)
@@ -92,6 +96,11 @@ ipeds_get <- function(ipedscall, bind = TRUE, join = TRUE,
                  dplyr::filter(file == i) |>
                  dplyr::pull(year),
                FILE = i)
+      ## filter if there is a filter string
+      if (!is.null(ipedscall[["filter"]])) {
+        print(ipedscall[["filter"]])
+        out <- dplyr::filter(out, !!!rlang::enquos(ipedscall[["filter"]]))
+      }
       ## put in order of variable request
       out <- dplyr::select(out, dplyr::one_of("UNITID",
                                               "YEAR",
