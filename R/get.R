@@ -102,30 +102,37 @@ ipeds_get <- function(ipedscall, bind = TRUE, join = TRUE,
       out <- readr::read_csv(unz(file.path(zdir, f),
                                  csv_file_name),
                              show_col_types = FALSE,
-                             col_select = dplyr::all_of(select_vars)) |>
+                             col_select = dplyr::all_of(select_vars),
+                             na = c("", NA, NULL, ".")) |>
       dplyr::mutate(YEAR = ipeds_file_table() |>
                       dplyr::filter(file == i) |>
                       dplyr::distinct(file, .keep_all = TRUE) |>
                       dplyr::pull(year),
-                    FILE = i)
+                    FILE = i) |>
+        dplyr::rename_all(tolower)
       ## filter if there is a filter string
+      ## TODO
+      ## Need to account for filter upper/lower
+      ## Need to track which files filter var lives in and only filter there (otherwise, the object isn't found)
+      ## Need to account for unitids / years that end up filtered so that those can be taken care of
+      ## in the end with the bind/join
       if (!is.null(ipedscall[["filter"]])) {
         expr <- lapply(ipedscall[["filter"]], function(x) rlang::quo_get_expr(x))[[1]] |> deparse()
-        out <- dplyr::filter(out, eval(!!!rlang::parse_expr(expr)))
+        out <- dplyr::filter(out, eval(!!rlang::parse_expr(expr)))
         ## include_filter_vars ? add them to order list at end : <>
         if (include_filter_vars) {
-          to_add <- toupper(ipedscall[["filter_vars"]])
+          to_add <- ipedscall[["filter_vars"]]
           to_add <- to_add[to_add %in% dplyr::pull(dict, varname)]
           ipedscall[["select_order"]] <- c(ipedscall[["select_order"]], to_add)
         }
       }
       ## put in order of variable request
-      out <- dplyr::select(out, dplyr::any_of(c("UNITID",
-                                              "YEAR",
-                                              toupper(ipedscall[["select_order"]]),
-                                              "FILE")))
+      out <- dplyr::select(out, dplyr::any_of(c("unitid",
+                                                "year",
+                                                ipedscall[["select_order"]],
+                                                "file")))
       ## save in list
-      out_list[[i]] <- out |> dplyr::rename_all(tolower)
+      out_list[[i]] <- out
     }
     ## -------------------------------------
     ## return
@@ -155,8 +162,8 @@ ipeds_get <- function(ipedscall, bind = TRUE, join = TRUE,
       b_outlist <- list()
       for (i in 1:nrow(lname_groups)) {
         ## get data frame names that match
-        fn <- c(lname_groups[i,], use.names = FALSE) |> unlist() |> na.omit()
-        b_outlist[[i]] <- dplyr::bind_rows(out_list[grepl(fn, names(out_list))])
+        fn <- lname_groups[i,] |> unlist() |> na.omit() |> c()
+        b_outlist[[i]] <- dplyr::bind_rows(out_list[match(fn, names(out_list))])
       }
       ## ----------------------
       ## join into one tibble

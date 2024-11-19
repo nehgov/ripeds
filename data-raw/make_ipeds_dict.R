@@ -19,26 +19,29 @@ parse_xlsx <- function(zipfile, dfile) {
   ## return
   out
 }
-parse_html <- function(zipfile, dfile) {
-  ## unzip file
-  f <- unzip(zipfile, dfile, exdir = tempdir())
-  ## read in html
-  f <- readLines(f, warn = FALSE)
-  ## strip unicode
-  f <- iconv(f, "latin1", "ascii", sub = "")
-  ## keep only those that:
-  ## 1. start with text
-  ## 2. start with <br><br>TEXT and end with <hr>
-  ## reg1 <- "^[[:upper:][:digit:]]{3,}.+-?[[:digit:]]*- ?[[:upper:]].+$"
-  f <- grep("^[[:upper:][:digit:]]{3,}.+-[[:digit:]]+-[[:alpha:]].+$|<br><br>\\w.+</table><hr>", f, value = TRUE)
-  ## pull out relevant variable name for the <br><br> values
-  f <- gsub("^<br><br>.+</table><hr>(.+)$", "\\1", f)
-  ## split
-  varname <- gsub("^([[:upper:][:digit:]]{3,}_?[[:alnum:]]*)-.+$", "\\1", f)
-  vartitle <- gsub("^([[:upper:][:digit:]]{3,}_?[[:alnum:]]*)-([[:digit:]]*)?-?([Imputation]*.+)$", "\\3", f)
-  ## put into tibble
-  dplyr::tibble(varname = varname,
-                vartitle = vartitle)
+parse_html <- function(zipfile, dfile, dfvarname) {
+  ## ## unzip file
+  ## f <- unzip(zipfile, dfile, exdir = tempdir())
+  ## ## read in html
+  ## f <- readLines(f, warn = FALSE)
+  ## ## strip unicode
+  ## f <- iconv(f, "latin1", "ascii", sub = "")
+  ## ## keep only those that:
+  ## ## 1. start with text
+  ## ## 2. start with <br><br>TEXT and end with <hr>
+  ## ## reg1 <- "^[[:upper:][:digit:]]{3,}.+-?[[:digit:]]*- ?[[:upper:]].+$"
+  ## f <- grep("^[[:upper:][:digit:]]{3,}.+-[[:digit:]]+-[[:alpha:]].+$|<br><br>\\w.+</table><hr>", f, value = TRUE)
+  ## ## pull out relevant variable name for the <br><br> values
+  ## f <- gsub("^<br><br>.+</table><hr>(.+)$", "\\1", f)
+  ## ## split
+  ## varname <- gsub("^([[:upper:][:digit:]]{3,}_?[[:alnum:]]*)-.+$", "\\1", f)
+  ## vartitle <- gsub("^([[:upper:][:digit:]]{3,}_?[[:alnum:]]*)-([[:digit:]]*)?-?([Imputation]*.+)$", "\\3", f)
+  ## ## put into tibble
+  ## dplyr::tibble(varname = varname,
+  ##               vartitle = vartitle)
+  fname <- tools::file_path_sans_ext(basename(zipfile)) |> gsub(pattern = "_Dict", replacement = "")
+  dplyr::tibble(varname = dfvarname |> dplyr::filter(file == fname) |> dplyr::pull(varname),
+                vartitle = dfvarname |> dplyr::filter(file == fname) |> dplyr::pull(varname))
 }
 patch_varname <- function(varname) {
   ## patch for bad column names (10 October 2024)
@@ -62,16 +65,15 @@ get_varnames <- function(zipfile) {
 }
 
 
-## ## read variables from data files themselves
-## dfiles <- list.files(file.path("_zip", "data"))
+## read variables from data files themselves
+dfiles <- list.files(file.path("_zip", "data"))
 
-## ## get column names attached to file
-## df <- purrr::map(dfiles,
-##                  ~ dplyr::tibble(file = tools::file_path_sans_ext(.x),
-##                                  varname = get_varnames(file.path("_zip", "data", .x)))
-##                  ) |>
-##   dplyr::bind_rows()
-
+## get column names attached to file
+df <- purrr::map(dfiles,
+                 ~ dplyr::tibble(file = tools::file_path_sans_ext(.x),
+                                 varname = get_varnames(file.path("_zip", "data", .x)))
+                 ) |>
+  dplyr::bind_rows()
 
 ## get list of available IPEDS dictionary files
 itab <- ripeds::ipeds_file_table() |> dplyr::distinct(year, file)
@@ -80,7 +82,7 @@ itab <- ripeds::ipeds_file_table() |> dplyr::distinct(year, file)
 ## TEMP FILTER
 ## -------------------------------------
 
-itab <- itab |> dplyr::filter(year >= 2012)
+## itab <- itab |> dplyr::filter(year >= 2012)
 
 ## -------------------------------------
 
@@ -107,16 +109,16 @@ for (i in 1:length(dict)) {
   ## get dictionary file type
   ftype <- tools::file_ext(fname)
   ## extract based on file type
-  if (ftype == "xlsx") {
+  if (ftype %in% c("xlsx", "xls")) {
     out <- parse_xlsx(file.path(tdir, zipf), fname)
   } else {
-    next
-    ## out <- parse_html(file.path(tdir, zipf), fname)
+    out <- parse_html(file.path(tdir, zipf), fname, df)
   }
   ## munge and add to list
   dict[[i]] <- out |>
     dplyr::mutate(file_name = itab[["file"]][i]) |>
     dplyr::rename_all(tolower) |>
+    dplyr::mutate(varname = toupper(varname)) |>
     dplyr::select(file_name, varname, vartitle) |>
     dplyr::filter(!is.na(varname))
 }
@@ -229,7 +231,7 @@ for(i in 1:nrow(idx_desc)) {
 ## store hash environments in sysdata.rda
 ## -----------------------------------------------------------------------------
 
-usethis::proj_set("..")
+usethis::proj_set(".")
 usethis::use_data(main_hash, file_hash, vars_hash, desc_hash,
                   file_hash_lu, vars_hash_lu, desc_hash_lu,
                   overwrite = TRUE, internal = TRUE)
