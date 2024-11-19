@@ -8,12 +8,14 @@
 #'   functions in the chain (ignore)
 #' @param bind Row bind all same name survey files (e.g., HD2022 and HD2023)
 #' @param join Join different name survey files by UNITID and year
+#' @param use_revised Use revised files ("*_rv") if they exist (default: TRUE)
 #' @param lower_names Lower column names in returned data
 #' @param include_filter_vars Include filtering variables in output table
 #'
 #' @export
 ipeds_get <- function(ipedscall, bind = TRUE, join = TRUE,
-                      lower_names = TRUE, include_filter_vars = TRUE) {
+                      use_revised = TRUE, lower_names = TRUE,
+                      include_filter_vars = TRUE) {
   suppressWarnings({
     ## check first argument
     confirm_chain(ipedscall)
@@ -89,15 +91,23 @@ ipeds_get <- function(ipedscall, bind = TRUE, join = TRUE,
         dplyr::filter(filename == i) |>
         dplyr::pull(varname) |>
         {\(x) c(x, "UNITID")}()
+      ## check zip file contents and get file name
+      revised_exists <- unzip(file.path(zdir, f), list = TRUE)[["Name"]] |> grepl(pattern = "_rv")
+      if (any(revised_exists) & use_revised) {
+        csv_file_name <- paste0(tolower(i), "_rv.csv")
+      } else {
+        csv_file_name <- paste0(tolower(i), ".csv")
+      }
       ## regardless of location, read in CSV
       out <- readr::read_csv(unz(file.path(zdir, f),
-                                   paste0(tolower(i), ".csv")),
+                                 csv_file_name),
                              show_col_types = FALSE,
                              col_select = dplyr::all_of(select_vars)) |>
-        mutate(YEAR = ipeds_file_table() |>
-                 dplyr::filter(file == i) |>
-                 dplyr::pull(year),
-               FILE = i)
+      dplyr::mutate(YEAR = ipeds_file_table() |>
+                      dplyr::filter(file == i) |>
+                      dplyr::distinct(file, .keep_all = TRUE) |>
+                      dplyr::pull(year),
+                    FILE = i)
       ## filter if there is a filter string
       if (!is.null(ipedscall[["filter"]])) {
         expr <- lapply(ipedscall[["filter"]], function(x) rlang::quo_get_expr(x))[[1]] |> deparse()
@@ -110,10 +120,10 @@ ipeds_get <- function(ipedscall, bind = TRUE, join = TRUE,
         }
       }
       ## put in order of variable request
-      out <- dplyr::select(out, dplyr::one_of("UNITID",
+      out <- dplyr::select(out, dplyr::any_of(c("UNITID",
                                               "YEAR",
                                               toupper(ipedscall[["select_order"]]),
-                                              "FILE"))
+                                              "FILE")))
       ## save in list
       out_list[[i]] <- out |> dplyr::rename_all(tolower)
     }
@@ -135,10 +145,10 @@ ipeds_get <- function(ipedscall, bind = TRUE, join = TRUE,
     if (bind) {
       ## get list of like data files based on having same variable
       ## e.g., HD* or IC*
-      vars <- dict |> dplyr::distinct(varname) |> pull()
+      vars <- dict |> dplyr::distinct(varname) |> dplyr::pull()
       lname_groups <- list()
       for (v in vars) {
-        lname_groups[[v]] <- dict |> dplyr::filter(varname == v) |> pull(filename)
+        lname_groups[[v]] <- dict |> dplyr::filter(varname == v) |> dplyr::pull(filename)
       }
       ## get distinct groups
       lname_groups <- dplyr::bind_rows(lname_groups) |> dplyr::distinct()

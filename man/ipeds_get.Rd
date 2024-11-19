@@ -8,6 +8,7 @@ ipeds_get(
   ipedscall,
   bind = TRUE,
   join = TRUE,
+  use_revised = TRUE,
   lower_names = TRUE,
   include_filter_vars = TRUE
 )
@@ -19,6 +20,8 @@ functions in the chain (ignore)}
 \item{bind}{Row bind all same name survey files (e.g., HD2022 and HD2023)}
 
 \item{join}{Join different name survey files by UNITID and year}
+
+\item{use_revised}{Use revised files ("*_rv") if they exist (default: TRUE)}
 
 \item{lower_names}{Lower column names in returned data}
 
