@@ -172,6 +172,7 @@ ipeds_dict <- function(search_string,
       ## ----------------------
       ## loop through desc
       ## ----------------------
+      long_flag <- FALSE
       for (j in 1:length(udesc)) {
         ## variable name
         desc <- udesc[j]
@@ -206,8 +207,8 @@ ipeds_dict <- function(search_string,
             "\n\n"
         }
         cat(desch)
-        cat(strwrap(desc, 70) %+% "\n\n")
-        cat(hline(70, ":") %+% "\n")
+        cat(strwrap(desc, 70) %+% "\n")
+        cat("\n" %+% hline(70, ":") %+% "\n")
         cat("\n")
 
         ## subset files for unique varname / description pair
@@ -220,8 +221,19 @@ ipeds_dict <- function(search_string,
         cat("../FILES ")
         cat("\n\n")
         for (k in ufiles) {
-          cat(" |__ " %+% k %+% "\n")
+          if (file_hash[[k]] %in% long_hash[["long"]]) {
+            cat(" |__ " %+% k %+% "*" %+% "\n")
+            long_flag <- TRUE
+          } else {
+            cat(" |__ " %+% k %+%  "\n")
+          }
         }
+      }
+      if (long_flag) {
+        cat("\n" %+% " " %+% strwrap(paste("* Denotes a long file in which institutions",
+                                           "may have more than one record (UNITID values",
+                                           "repeated across multiple rows)."), 70))
+        cat("\n")
       }
     }
 

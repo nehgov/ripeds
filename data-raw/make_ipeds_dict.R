@@ -40,8 +40,8 @@ parse_html <- function(zipfile, dfile, dfvarname) {
   ## dplyr::tibble(varname = varname,
   ##               vartitle = vartitle)
   fname <- tools::file_path_sans_ext(basename(zipfile)) |> gsub(pattern = "_Dict", replacement = "")
-  dplyr::tibble(varname = dfvarname |> dplyr::filter(file == fname) |> dplyr::pull(varname),
-                vartitle = dfvarname |> dplyr::filter(file == fname) |> dplyr::pull(varname))
+  dplyr::tibble(varname = dfvarname |> dplyr::filter(file_name == fname) |> dplyr::pull(varname),
+                vartitle = dfvarname |> dplyr::filter(file_name == fname) |> dplyr::pull(varname))
 }
 patch_varname <- function(varname) {
   ## patch for bad column names (10 October 2024)
@@ -63,16 +63,37 @@ get_varnames <- function(zipfile) {
   ## fix
   varname <- patch_varname(varname)
 }
-
+get_longfiles <- function(zipfile) {
+  ## get files in zipfile
+  flist <- unzip(zipfile, list = TRUE)
+  ## return revised file (_rv) if exists
+  fnames <- flist[["Name"]]
+  fname <- ifelse(length(fnames) == 2, grep("_[R|r][V|v]", fnames, value = TRUE, invert = TRUE), fnames)
+  ## get variables (read header line only)
+  max_count <- readr::read_csv(unz(zipfile, fname), show_col_types = FALSE, name_repair = "unique") |>
+    dplyr::rename_all(tolower) |>
+    dplyr::count(unitid) |>
+    dplyr::summarise(n = max(n)) |>
+    dplyr::pull()
+  ## return
+  ifelse(max_count > 1, 1, 0)
+}
 
 ## read variables from data files themselves
 dfiles <- list.files(file.path("_zip", "data"))
 
 ## get column names attached to file
 df <- purrr::map(dfiles,
-                 ~ dplyr::tibble(file = tools::file_path_sans_ext(.x),
+                 ~ dplyr::tibble(file_name = tools::file_path_sans_ext(.x),
                                  varname = get_varnames(file.path("_zip", "data", .x)))
                  ) |>
+  dplyr::bind_rows()
+
+## get file names that are long
+df_long <- purrr::map(dfiles,
+                      ~ dplyr::tibble(file_name = tools::file_path_sans_ext(.x),
+                                      long = get_longfiles(file.path("_zip", "data", .x)))
+                      ) |>
   dplyr::bind_rows()
 
 ## get list of available IPEDS dictionary files
@@ -118,13 +139,15 @@ for (i in 1:length(dict)) {
   dict[[i]] <- out |>
     dplyr::mutate(file_name = itab[["file"]][i]) |>
     dplyr::rename_all(tolower) |>
-    dplyr::mutate(varname = toupper(varname)) |>
+    dplyr::mutate(varname = tolower(varname)) |>
     dplyr::select(file_name, varname, vartitle) |>
     dplyr::filter(!is.na(varname))
 }
 
 ## bind
-dict <- dplyr::bind_rows(dict) |> dplyr::rename(description = vartitle)
+dict <- dplyr::bind_rows(dict) |>
+  dplyr::rename(description = vartitle) |>
+  dplyr::left_join(df_long, by = "file_name")
 
 ## -----------------------------------------------------------------------------
 ## create hash maps
@@ -139,7 +162,7 @@ dict <- dplyr::bind_rows(dict) |> dplyr::rename(description = vartitle)
 ## d := description strings
 
 idx_file <- dict |>
-  dplyr::distinct(file_name) |>
+  dplyr::distinct(file_name, long) |>
   dplyr::arrange(file_name) |>
   dplyr::mutate(idxf = paste0("fi", dplyr::row_number()))
 
@@ -180,7 +203,7 @@ main_hash <- new.env(parent = emptyenv())
 file_hash <- new.env(parent = emptyenv())
 file_hash_lu <- new.env(parent = emptyenv())
 
-for(i in 1:nrow(idx_file)) {
+for (i in 1:nrow(idx_file)) {
   key <- idx_file[["file_name"]][i]
   val <- idx_file[["idxf"]][i]
   file_hash[[key]] <- val
@@ -198,7 +221,7 @@ for(i in 1:nrow(idx_file)) {
 vars_hash <- new.env(parent = emptyenv())
 vars_hash_lu <- new.env(parent = emptyenv())
 
-for(i in 1:nrow(idx_vars)) {
+for (i in 1:nrow(idx_vars)) {
   key <- idx_vars[["varname"]][i]
   val <- idx_vars[["idxv"]][i]
   vars_hash[[key]] <- val
@@ -216,7 +239,7 @@ for(i in 1:nrow(idx_vars)) {
 desc_hash <- new.env(parent = emptyenv())
 desc_hash_lu <- new.env(parent = emptyenv())
 
-for(i in 1:nrow(idx_desc)) {
+for (i in 1:nrow(idx_desc)) {
   key <- idx_desc[["description"]][i]
   val <- idx_desc[["idxd"]][i]
   desc_hash[[key]] <- val
@@ -227,6 +250,14 @@ for(i in 1:nrow(idx_desc)) {
   )
 }
 
+## -------------------------------------
+## add long list
+## -------------------------------------
+
+long_hash <- new.env(parent = emptyenv())
+long_hash[["long"]] <- idx_file |> dplyr::filter(long == 1) |> dplyr::pull(idxf)
+long_hash[["wide"]] <- idx_file |> dplyr::filter(long == 0) |> dplyr::pull(idxf)
+
 ## -----------------------------------------------------------------------------
 ## store hash environments in sysdata.rda
 ## -----------------------------------------------------------------------------
@@ -234,7 +265,7 @@ for(i in 1:nrow(idx_desc)) {
 usethis::proj_set(".")
 usethis::use_data(main_hash, file_hash, vars_hash, desc_hash,
                   file_hash_lu, vars_hash_lu, desc_hash_lu,
-                  overwrite = TRUE, internal = TRUE)
+                  long_hash, overwrite = TRUE, internal = TRUE)
 
 ## -----------------------------------------------------------------------------
 ################################################################################
