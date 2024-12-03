@@ -54,10 +54,10 @@ ipeds_tmp_to_disk <- function(to_dir, overwrite_existing = FALSE,
 #' default, the function will create directories as necessary to save the files.
 #'
 #' @param files Vector of files (without ending) to download (e.g., HD2023)
+#' @param to_dir Directory path to copy
 #' @param ipeds_dict_df Output from ipeds_dict(return_dict = TRUE); if argument
 #'   isn't missing, it will be choosen over input to files argument if also
 #'   included
-#' @param to_dir Directory path to copy
 #' @param overwrite_existing Overwrite files on local directory with those in
 #'   temporary directory
 #' @param create_directory Recursively create directory path specified by user
@@ -65,12 +65,12 @@ ipeds_tmp_to_disk <- function(to_dir, overwrite_existing = FALSE,
 #'
 #' @export
 ipeds_download_to_disk <- function(files,
-                                   ipeds_dict_df,
                                    to_dir,
+                                   ipeds_dict_df = NULL,
                                    overwrite_existing = FALSE,
                                    create_directory = TRUE) {
   ## choose dictionary first
-  if (!missing(ipeds_dict_df)) {
+  if (!is.null(ipeds_dict_df)) {
     files <- ipeds_dict_df |> dplyr::distinct(filename) |> dplyr::pull()
   }
   ## confirm files in IPEDS
@@ -118,7 +118,8 @@ ipeds_download_to_disk <- function(files,
   ## set base url
   base_url <- "https://nces.ed.gov/ipeds/datacenter/data"
   ## loop through
-  for (f in fzipvec) {
+  for (i in length(fzipvec)) {
+    f <- fzipvec[i]
     if (!file.exists(file.path(to_dir, f))) {
       ## download to local directory
       download.file(file.path(base_url, f),

@@ -7,6 +7,9 @@
 #'   ?}, with a doublebackslash \code{\\\\}.
 #' @param search_col Column to search. The default is to search all columns.
 #'   Other options include: "varname", "description", "filename".
+#' @param exact_match Set to TRUE if you only want exact search string matches.
+#'   Note that setting exact_match to TRUE may not work as expected if search string
+#'   includes regular expressions.
 #' @param limit Only the first 10 dictionary items are returned by default.
 #'   Increase to return more values. Set to \code{Inf} to return all items
 #'   matched in search'
@@ -33,12 +36,12 @@ ipeds_dict <- function(search_string,
                                       "description",
                                       "varname",
                                       "filename"),
-                       ignore_case = TRUE, limit = 10, confirm = FALSE,
+                       exact_match = FALSE, limit = 10, confirm = FALSE,
                        return_dict = FALSE, print_off = FALSE) {
 
   ## only for confirm
   if (confirm) {
-    return(!is.null(vars_hash[[toupper(search_string)]]))
+    return(!is.null(vars_hash[[tolower(search_string)]]))
   }
 
   ## ----------------------
@@ -53,6 +56,13 @@ ipeds_dict <- function(search_string,
   ## ----------------------
   ## regex search
   ## ----------------------
+
+  ## set search string with boundaries for exact match
+  if (exact_match) {
+    search_string <- paste0("\\b", search_string, "\\b")
+  }
+
+  ## search
   if (search_col == "all") {
     vals <- c()
     for (col in c("desc", "vars", "file")) {
