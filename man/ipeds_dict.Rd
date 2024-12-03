@@ -7,7 +7,7 @@
 ipeds_dict(
   search_string,
   search_col = c("all", "description", "varname", "filename"),
-  ignore_case = TRUE,
+  exact_match = FALSE,
   limit = 10,
   confirm = FALSE,
   return_dict = FALSE,
@@ -22,8 +22,9 @@ for search. Must escape special characters, \code{. \ | ( ) [ \{ ^ $ * +
 \item{search_col}{Column to search. The default is to search all columns.
 Other options include: "varname", "description", "filename".}
 
-\item{ignore_case}{Search is case insensitive by default. Change to
-\code{FALSE} to restrict search to exact case matches.}
+\item{exact_match}{Set to TRUE if you only want exact search string matches.
+Note that setting exact_match to TRUE may not work as expected if search string
+includes regular expressions.}
 
 \item{limit}{Only the first 10 dictionary items are returned by default.
 Increase to return more values. Set to \code{Inf} to return all items
