@@ -7,8 +7,6 @@
 #'   ?}, with a doublebackslash \code{\\\\}.
 #' @param search_col Column to search. The default is to search all columns.
 #'   Other options include: "varname", "description", "filename".
-#' @param ignore_case Search is case insensitive by default. Change to
-#'   \code{FALSE} to restrict search to exact case matches.
 #' @param limit Only the first 10 dictionary items are returned by default.
 #'   Increase to return more values. Set to \code{Inf} to return all items
 #'   matched in search'
@@ -60,7 +58,7 @@ ipeds_dict <- function(search_string,
     for (col in c("desc", "vars", "file")) {
       keys <- grep(search_string,
                    names(get(paste0(col, "_hash"))),
-                   ignore.case = ignore_case,
+                   ignore.case = TRUE,
                    value = TRUE)
       if (length(keys) > 0) {
         tmp_vals <- get_hash(keys, get(paste0(col, "_hash")))
@@ -71,7 +69,7 @@ ipeds_dict <- function(search_string,
     vals <- c()
     keys <- grep(search_string,
                  names(get(paste0(search_col, "_hash"))),
-                 ignore.case = ignore_case,
+                 ignore.case = TRUE,
                  value = TRUE)
     if (length(keys) > 0) {
       tmp_vals <- get_hash(keys, get(paste0(search_col, "_hash")))
@@ -228,12 +226,12 @@ ipeds_dict <- function(search_string,
             cat(" |__ " %+% k %+%  "\n")
           }
         }
-      }
-      if (long_flag) {
-        cat("\n" %+% " " %+% strwrap(paste("* Denotes a long file in which institutions",
-                                           "may have more than one record (UNITID values",
-                                           "repeated across multiple rows)."), 70))
-        cat("\n")
+        if (long_flag) {
+          cat("\n" %+% " " %+% strwrap(paste("* Denotes a long file in which institutions",
+                                             "may have more than one record (UNITID values",
+                                             "repeated across multiple rows)."), 70))
+          cat("\n")
+        }
       }
     }
 
