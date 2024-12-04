@@ -124,26 +124,22 @@ ipeds_dict <- function(search_string,
         idxd = subvals[j]
       }
       ## bind lists to tibble and place in sublist
-      dict_sublist[[j]] <- dplyr::tibble(
-        idxf = idxf,
-        idxv = idxv,
-        idxd = idxd
+      dict_sublist[[j]] <- data.frame(
+        "idxf" = idxf,
+        "idxv" = idxv,
+        "idxd" = idxd
       )
     }
     ## bind sublists into main list
-    dict_list[[i]] <- dplyr::bind_rows(dict_sublist)
+    dict_list[[i]] <- do.call("rbind", dict_sublist)
   }
 
-  ## bind main list into one tibble; remove duplicate rows (which can occur when
-  ## searching across more than one column); convert idx* to actual values;
-  ## select new columns; arrange
-  dict <- dplyr::bind_rows(dict_list) |>
-    dplyr::distinct() |>
-    dplyr::mutate(filename = get_hash(idxf, file_hash_lu),
-                  varname = get_hash(idxv, vars_hash_lu),
-                  description = get_hash(idxd, desc_hash_lu)) |>
-    dplyr::select(filename, varname, description) |>
-    dplyr::arrange(filename, varname)
+  ## clean up dictionary:
+  ## bind main list into one data frame
+  ## remove duplicate rows (make distinct)
+  ## convert idx* to actual values
+  ## arrange
+  dict <- clean_hash_dict(dict_list)
 
   ## ----------------------
   ## pretty print ascii
@@ -153,7 +149,7 @@ ipeds_dict <- function(search_string,
     ## ----------------------
     ## unique variables
     ## ----------------------
-    uvars <- dict |> dplyr::distinct(varname) |> dplyr::pull()
+    uvars <- make_distinct(dict, "varname")[["varname"]]
 
     ## ----------------------
     ## loop through vars
@@ -169,10 +165,9 @@ ipeds_dict <- function(search_string,
       ## ----------------------
       ## unique descriptions
       ## ----------------------
-      udesc <- dict |>
-        dplyr::filter(varname == varn) |>
-        dplyr::distinct(description) |>
-        dplyr::pull()
+      udesc <- dict[dict["varname"] == varn,] |>
+        make_distinct(cols = "description") |>
+        _[["description"]]
 
       if (length(udesc) > 1) {
         cat("\n" %+% "NOTE: This variable has (" %+% length(udesc) %+% ") unique descriptions.\n")
@@ -220,9 +215,8 @@ ipeds_dict <- function(search_string,
         cat("\n")
 
         ## subset files for unique varname / description pair
-        ufiles <- dict |>
-          dplyr::filter(varname == varn, description == desc) |>
-          dplyr::pull(filename) |>
+        ufiles <- dict[dict["varname"] == varn & dict["description"] == desc,] |>
+          _[["filename"]] |>
           sort()
 
         ## ascii: filenames
@@ -254,4 +248,15 @@ ipeds_dict <- function(search_string,
 
   ## return_dict ? return(dict) : <>
   if (return_dict) return(dict)
+}
+
+## function to convert dictionary list to usable data frame; see utils.R for
+## internal helper functions
+clean_hash_dict <- function(df_list) {
+  df <- do.call("rbind", df_list)
+  df <- make_distinct(df, names(df))
+  df <- convert_hash_df(df)
+  df <- convert_hash_df_names(df)
+  rownames(df) <- NULL
+  df
 }
