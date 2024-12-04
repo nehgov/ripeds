@@ -11,6 +11,35 @@ get_hash <- function(x, hash_env) {
   sapply(x, FUN = get, envir = hash_env)
 }
 
+convert_hash_vec <- function(df, x) {
+  switch(x,
+         "idxf" = get_hash(df[[x]], file_hash_lu),
+         "idxv" = get_hash(df[[x]], vars_hash_lu),
+         "idxd" = get_hash(df[[x]], desc_hash_lu))
+}
+
+convert_hash_df <- function(df) {
+  cbind(sapply(names(df), function(x) convert_hash_vec(df, x))) |>
+    as.data.frame()
+}
+
+convert_hash_name <- function(x) {
+  switch(x,
+         "idxf" = "filename",
+         "idxv" = "varname",
+         "idxd" = "description"
+         )
+}
+
+convert_hash_df_names <- function(df) {
+  names(df) <- lapply(names(df), function(x) convert_hash_name(x))
+  df
+}
+
+make_distinct <- function(df, cols) {
+  df[!duplicated(df[cols]),]
+}
+
 ## convert calendar year (YYYY) to academic year (YY/YY+1)
 cyear_to_ayear <- function(x) {
   paste0(substr(x, 3, 4), substr(x + 1, 3, 4))
