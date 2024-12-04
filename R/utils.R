@@ -26,7 +26,7 @@ confirm_chain <- function(x) {
   ## if try-error and any of following:
   ## 1. "ipedscall" is missing
   ## 2. error in filter (meaning no arguments at all in ipeds_filter())
-  ## 3. object isn"t found (meaning sccall isn"t first)
+  ## 3. object isn't found (meaning ipedscall isn't first)
   if (identical(class(res), "try-error")
       & (grepl("argument \"ipedscall\" is missing, with no default\n", res[1])
         | grepl("Error in filter .+ : subscript out of bounds\n", res[1])
@@ -48,7 +48,7 @@ confirm_chain <- function(x) {
 ## confirm variables in dictionary
 confirm_vars <- function(varlist) {
   lapply(varlist, function(v) {
-    if (!ipeds_dict(toupper(as.character(v)), confirm = TRUE)) {
+    if (!ipeds_dict(tolower(as.character(v)), confirm = TRUE)) {
       stop("Variable \"" %+% v %+% "\" not found in dictionary. "
            %+% "Please check your spelling or search dictionary: "
            %+% "?ipeds_dict()", call. = FALSE)
