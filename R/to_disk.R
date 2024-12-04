@@ -28,7 +28,7 @@ ipeds_tmp_to_disk <- function(to_dir, overwrite_existing = FALSE,
     }
   }
   ## get vector of available IPEDS files
-  ifvec <- ipeds_file_table() |> dplyr::pull(file) |> paste0(".zip")
+  ifvec <- ipeds_file_table()[["file"]] |> paste0(".zip")
   ## get vector of files in tempdir()
   tfvec <- list.files(tempdir())
   ## compare
@@ -71,7 +71,7 @@ ipeds_download_to_disk <- function(files,
                                    create_directory = TRUE) {
   ## choose dictionary first
   if (!is.null(ipeds_dict_df)) {
-    files <- ipeds_dict_df[!duplicated(ipeds_dict_df[c("filename")]),][["filename"]]
+    files <- make_distinct(ipeds_dict_df, "filename")[["filename"]]
   }
   ## confirm files in IPEDS
   check <- files %in% ipeds_file_table()[["file"]]
