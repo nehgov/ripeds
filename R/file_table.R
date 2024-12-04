@@ -26,7 +26,7 @@ ipeds_file_table <- function(redownload_table = FALSE) {
     names(ftab) <- tolower(names(ftab))
     names(ftab)[names(ftab) == "data file"] <- "file"
     ftab <- ftab[,c("year", "survey", "title", "file")]
-    ftab <- ftab[!duplicated(ftab[c("year", "survey", "title", "file")]),]
+    ftab <- make_distinct(ftab, names(ftab))
     ## store
     saveRDS(ftab, file.path(tempdir(), "ipeds_file_list.RDS"))
     ## return
