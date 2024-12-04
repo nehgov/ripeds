@@ -21,10 +21,12 @@ ipeds_file_table <- function(redownload_table = FALSE) {
     ## get file table
     ftab <- rvest::read_html(paste(base_url, opts, sep = "?")) |>
       rvest::html_element("#contentPlaceHolder_tblResult") |>
-      rvest::html_table() |>
-      dplyr::rename_all(tolower) |>
-      dplyr::select(year, survey, title, file = `data file`) |>
-      dplyr::distinct(year, survey, title, file)
+      rvest::html_table()
+    ## lower names; select columns; remove potential duplicates
+    names(ftab) <- tolower(names(ftab))
+    names(ftab)[names(ftab) == "data file"] <- "file"
+    ftab <- ftab[,c("year", "survey", "title", "file")]
+    ftab <- ftab[!duplicated(ftab[c("year", "survey", "title", "file")]),]
     ## store
     saveRDS(ftab, file.path(tempdir(), "ipeds_file_list.RDS"))
     ## return
