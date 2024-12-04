@@ -1,3 +1,8 @@
+
+## -----------------------------------------------------------------------------
+## general formatting / string helpers
+## -----------------------------------------------------------------------------
+
 ## paste pipe
 `%+%`  <- function(a,b) paste(a, b, sep = "")
 
@@ -6,23 +11,11 @@ hline <- function(nchar, symbol = "-") {
   paste(rep("", nchar), collapse = symbol)
 }
 
-## vectorized function to return hash value from selected environment
-get_hash <- function(x, hash_env) {
-  sapply(x, FUN = get, envir = hash_env)
-}
+## -----------------------------------------------------------------------------
+## helpers for conversion among hash environments
+## -----------------------------------------------------------------------------
 
-convert_hash_vec <- function(df, x) {
-  switch(x,
-         "idxf" = get_hash(df[[x]], file_hash_lu),
-         "idxv" = get_hash(df[[x]], vars_hash_lu),
-         "idxd" = get_hash(df[[x]], desc_hash_lu))
-}
-
-convert_hash_df <- function(df) {
-  cbind(sapply(names(df), function(x) convert_hash_vec(df, x))) |>
-    as.data.frame()
-}
-
+## convert hash string short value to human readable value
 convert_hash_name <- function(x) {
   switch(x,
          "idxf" = "filename",
@@ -31,10 +24,34 @@ convert_hash_name <- function(x) {
          )
 }
 
+## convert data frame column names from hash to human readable values
 convert_hash_df_names <- function(df) {
   names(df) <- lapply(names(df), function(x) convert_hash_name(x))
   df
 }
+
+## vectorized function to return hash value from selected environment
+get_hash <- function(x, hash_env) {
+  sapply(x, FUN = get, envir = hash_env)
+}
+
+## support function to convert data frame vectors based on hash name
+convert_hash_vec <- function(df, x) {
+  switch(x,
+         "idxf" = get_hash(df[[x]], file_hash_lu),
+         "idxv" = get_hash(df[[x]], vars_hash_lu),
+         "idxd" = get_hash(df[[x]], desc_hash_lu))
+}
+
+## convert data frame columns from hash to values
+convert_hash_df <- function(df) {
+  cbind(sapply(names(df), function(x) convert_hash_vec(df, x))) |>
+    as.data.frame()
+}
+
+## -----------------------------------------------------------------------------
+## helper functions to support base R pipe chains / reduce code
+## -----------------------------------------------------------------------------
 
 make_distinct <- function(df, cols) {
   df[!duplicated(df[cols]),]
@@ -44,6 +61,15 @@ make_distinct <- function(df, cols) {
 cyear_to_ayear <- function(x) {
   paste0(substr(x, 3, 4), substr(x + 1, 3, 4))
 }
+
+## order variables so they are returned as user input them
+order_vars <- function(varlist, split_character = ",") {
+  trimws(unlist(strsplit(toString(varlist), split = split_character)))
+}
+
+## -----------------------------------------------------------------------------
+## helper functions unique to package structure / design
+## -----------------------------------------------------------------------------
 
 ## confirm that first argument is ipedscall list
 confirm_chain <- function(x) {
@@ -83,9 +109,4 @@ confirm_vars <- function(varlist) {
            %+% "?ipeds_dict()", call. = FALSE)
     }
   })
-}
-
-## order variables so they are returned as user input them
-order_vars <- function(varlist, split_character = ",") {
-  trimws(unlist(strsplit(toString(varlist), split = split_character)))
 }
