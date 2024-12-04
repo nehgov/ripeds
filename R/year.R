@@ -38,11 +38,7 @@ ipeds_year <- function(ipedscall, year) {
            ipeds_file_table()[["year"]] |> max(),
            call. = FALSE)
     }
-    ## if (length(year) > 1 && is.numeric(year)) {
-    ##   ipedscall[["year"]] <- paste(year, collapse = "|")
-    ## } else {
     ipedscall[["year"]] <- year
-    ## }
     ipedscall
   })
 }
