@@ -112,9 +112,7 @@ subset_file_table_by_year <- function(years) {
 
 subset_dictionary_by_var_year <- function(search_str, vars_to_keep, years_to_keep) {
   ipeds_dict(search_str, search_col = "varname", return_dict = TRUE, print_off = TRUE) |>
-    ## filter to exact match
     dplyr::filter(varname %in% !!vars_to_keep) |>
-    ## filter to year(s)
     dplyr::filter(filename %in% years_to_keep)
 }
 
