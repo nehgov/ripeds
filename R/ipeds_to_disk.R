@@ -71,7 +71,7 @@ ipeds_download_to_disk <- function(files,
                                    create_directory = TRUE) {
   ## choose dictionary first
   if (!is.null(ipeds_dict_df)) {
-    files <- ipeds_dict_df |> dplyr::distinct(filename) |> dplyr::pull()
+    files <- ipeds_dict_df[!duplicated(ipeds_dict_df[c("filename")]),][["filename"]]
   }
   ## confirm files in IPEDS
   check <- files %in% ipeds_file_table()[["file"]]
