@@ -42,7 +42,7 @@ ipeds_select <- function(ipedscall, ...) {
         if (v[[1]] %in% shl) {
           if (v[[1]] != "everything") {
             fun <- get(v[[1]], asNamespace("tidyselect"))
-            v <- do.call(fun, list(v[[2]] |> toupper(), vars = vars_hash |> names()))
+            v <- do.call(fun, list(v[[2]] |> tolower(), vars = vars_hash |> names()))
             v <- names(vars_hash)[v]
           } else {
             ## TODO: if going to allow everything(), then need to require user to
