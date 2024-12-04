@@ -65,7 +65,7 @@ ipeds_get <- function(ipedscall, bind = TRUE, join = TRUE,
 
     ## unique files; names
     ufiles <- select_dict |> dplyr::distinct(filename) |> dplyr::pull()
-    out_list <- lapply(ufiles, function(x) read_select_vars_from_zip(ipedscall, x, select_dict, use_revised))
+    out_list <- lapply(ufiles, \(x) read_select_vars_from_zip(x, select_dict, ipedscall[["local_dir"]], use_revised))
     names(out_list) <- ufiles |> unname()
 
     ## -----------------------------------------------------------------------------
@@ -84,13 +84,13 @@ ipeds_get <- function(ipedscall, bind = TRUE, join = TRUE,
   })
 }
 
-read_select_vars_from_zip <- function(ipedscall, fname, dict, use_revised) {
+read_select_vars_from_zip <- function(fname, dict, local_dir = NA, use_revised = TRUE) {
   ## get zipfile name
   zf <- paste0(fname, ".zip")
   ## get variables associated with this file to select
   select_vars <- get_vars_from_file(fname, dict)
   ## file location / download if necessary
-  zdir <- get_file_location_or_download(zf, ipedscall[["local_dir"]])
+  zdir <- get_file_location_or_download(zf, local_dir)
   ## internal file name to be read
   ifile <- get_internal_file_name(file.path(zdir, zf), use_revised)
   ## read in CSV; add file name and year to file; lower column names
@@ -105,34 +105,32 @@ read_select_vars_from_zip <- function(ipedscall, fname, dict, use_revised) {
 }
 
 subset_file_table_by_year <- function(years) {
-  ipeds_file_table() |>
-    dplyr::filter(year %in% !!years) |>
-    dplyr::pull(file)
-}
+  ft <- ipeds_file_table()
+  ft[ft[["year"]] %in% years, "file"]
 
 subset_dictionary_by_var_year <- function(search_str, vars_to_keep, years_to_keep) {
   ipeds_dict(search_str, search_col = "varname", return_dict = TRUE, print_off = TRUE) |>
-    dplyr::filter(varname %in% !!vars_to_keep) |>
-    dplyr::filter(filename %in% years_to_keep)
+    filter_in("varname", vars_to_keep) |>
+    filter_in("filename", years_to_keep)
+    ## dplyr::filter(varname %in% !!vars_to_keep) |>
+    ## dplyr::filter(filename %in% years_to_keep)
 }
 
 get_file_year <- function(fname) {
   ipeds_file_table() |>
-    dplyr::filter(file == fname) |>
-    dplyr::distinct(file, .keep_all = TRUE) |>
-    dplyr::pull(year)
+    filter_equals("file", fname) |>
+    make_distinct("file") |>
+    _[["year"]]
 }
 
 get_vars_from_file <- function(fname, ipeds_dict) {
-  ipeds_dict |>
-    dplyr::filter(filename == fname) |>
-    dplyr::pull(varname) |>
-    {\(x) c(x, "unitid")}()
-}
-
-get_file_stub_name <- function(file, lower = FALSE) {
-  stub <- basename(tools::file_path_sans_ext(file))
-  if (lower) { tolower(stub) } else { stub }
+  c("unitid",
+    ipeds_dict |>
+    filer_equals("filename", fname) |>
+    _[["varname"]])
+    ## dplyr::filter(filename == fname) |>
+    ## dplyr::pull(varname) |>
+    ## {\(x) c(x, "unitid")}()
 }
 
 ## check zip file contents and get file name
@@ -146,7 +144,7 @@ get_internal_file_name <- function(zfile, use_revised = TRUE) {
   }
 }
 
-get_file_location_or_download <- function(f, local_dir = NULL) {
+get_file_location_or_download <- function(f, local_dir = NA) {
   if (file.exists(file.path(tempdir(), f))) {
     return(tempdir())
   } else if (!is.na(local_dir)) {
@@ -160,9 +158,9 @@ get_file_location_or_download <- function(f, local_dir = NULL) {
   }
 }
 
-remove_df_col <- function(df, col) {
-  df |> dplyr::select(-dplyr::any_of(col))
-}
+## remove_df_col <- function(df, col) {
+##   df |> dplyr::select(-dplyr::any_of(col))
+## }
 
 
 bind_like_files <- function(df_list, dictionary) {
@@ -184,7 +182,7 @@ bind_like_files <- function(df_list, dictionary) {
 }
 
 join_all_files <- function(bound_outlist) {
-  lapply(bound_outlist, function(x) remove_df_col(x, "file")) |>
+  lapply(bound_outlist, function(x) x[,-c("file")]) |>
     purrr::reduce(dplyr::full_join, by = c("unitid", "year"))
 }
 

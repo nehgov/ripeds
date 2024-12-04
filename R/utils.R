@@ -1,6 +1,6 @@
 
 ## -----------------------------------------------------------------------------
-## general formatting / string helpers
+## general formatting / string helpers / utils
 ## -----------------------------------------------------------------------------
 
 ## paste pipe
@@ -9,6 +9,12 @@
 ## make ascii hline
 hline <- function(nchar, symbol = "-") {
   paste(rep("", nchar), collapse = symbol)
+}
+
+## remove path and file ending
+get_file_stub_name <- function(file, lower = FALSE) {
+  stub <- basename(tools::file_path_sans_ext(file))
+  if (lower) { tolower(stub) } else { stub }
 }
 
 ## -----------------------------------------------------------------------------
@@ -55,6 +61,14 @@ convert_hash_df <- function(df) {
 
 make_distinct <- function(df, cols) {
   df[!duplicated(df[cols]),]
+}
+
+filter_equals <- function(df, colname, x) {
+  df[df[[colname]] == x, ]
+}
+
+filter_in <- function(df, colname, x) {
+  df[df[[colname]] %in% x, ]
 }
 
 ## convert calendar year (YYYY) to academic year (YY/YY+1)

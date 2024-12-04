@@ -21,7 +21,8 @@ ipeds_file_table <- function(redownload_table = FALSE) {
     ## get file table
     ftab <- rvest::read_html(paste(base_url, opts, sep = "?")) |>
       rvest::html_element("#contentPlaceHolder_tblResult") |>
-      rvest::html_table()
+      rvest::html_table() |>
+      as.data.frame()
     ## lower names; select columns; remove potential duplicates
     names(ftab) <- tolower(names(ftab))
     names(ftab)[names(ftab) == "data file"] <- "file"
