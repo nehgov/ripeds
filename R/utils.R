@@ -1,6 +1,7 @@
+## utils.R
 
 ## -----------------------------------------------------------------------------
-## general formatting / string helpers / utils
+## general formatting / string helpers
 ## -----------------------------------------------------------------------------
 
 ## paste pipe
@@ -9,12 +10,6 @@
 ## make ascii hline
 hline <- function(nchar, symbol = "-") {
   paste(rep("", nchar), collapse = symbol)
-}
-
-## remove path and file ending
-get_file_stub_name <- function(file, lower = FALSE) {
-  stub <- basename(tools::file_path_sans_ext(file))
-  if (lower) { tolower(stub) } else { stub }
 }
 
 ## -----------------------------------------------------------------------------
@@ -56,10 +51,47 @@ convert_hash_df <- function(df) {
 }
 
 ## -----------------------------------------------------------------------------
+## I/O helper functions
+## -----------------------------------------------------------------------------
+
+## check zip file contents and get file name
+get_internal_file_name <- function(zfile, use_revised = TRUE) {
+  if (!use_revised) return(paste0(get_file_stub_name(zfile, lower = TRUE), ".csv"))
+  revised_exists <- utils::unzip(zfile, list = TRUE)[["Name"]] |> grepl(pattern = "_rv")
+  if (any(revised_exists)) {
+    paste0(get_file_stub_name(zfile, lower = TRUE), "_rv.csv")
+  } else {
+    paste0(get_file_stub_name(zfile, lower = TRUE), ".csv")
+  }
+}
+
+## find a file's location and, if missing, download
+get_file_location_or_download <- function(f, local_dir = NA) {
+  if (file.exists(file.path(tempdir(), f))) {
+    return(tempdir())
+  } else if (!is.na(local_dir)) {
+    if (!file.exists(file.path(local_dir, f))) {
+      ipeds_download_to_disk(get_file_stub_name(f), to_dir = local_dir)
+    }
+    return(local_dir)
+  } else if (is.na(local_dir)) {
+    ipeds_download_to_disk(get_file_stub_name(f), to_dir = tempdir())
+    return(tempdir())
+  }
+}
+
+## remove path and file ending
+get_file_stub_name <- function(file, lower = FALSE) {
+  stub <- basename(tools::file_path_sans_ext(file))
+  if (lower) { tolower(stub) } else { stub }
+}
+
+## -----------------------------------------------------------------------------
 ## helper functions to support base R pipe chains / reduce code
 ## -----------------------------------------------------------------------------
 
 make_distinct <- function(df, cols) {
+  if (missing(cols)) { cols <- names(df) }
   df[!duplicated(df[cols]),]
 }
 
@@ -79,6 +111,19 @@ cyear_to_ayear <- function(x) {
 ## order variables so they are returned as user input them
 order_vars <- function(varlist, split_character = ",") {
   trimws(unlist(strsplit(toString(varlist), split = split_character)))
+}
+
+lower_names_df <- function(df) {
+  names(df) <- tolower(names(df))
+  df
+}
+
+bind_rows_df <- function(df_list) {
+  as.data.frame(do.call("rbind", df_list))
+}
+
+roll_join_full <- function(df_list, join_vars) {
+  Reduce(function(x, y) merge(x, y, all = TRUE, by = join_vars), df_list)
 }
 
 ## -----------------------------------------------------------------------------
