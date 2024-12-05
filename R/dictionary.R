@@ -20,6 +20,7 @@
 #'   tibble of dictionary values.
 #'
 #' @examples
+#' \dontrun{
 #' ## simple search for "state" in any part of the dictionary
 #' ipeds_dict("state")
 #'
@@ -28,7 +29,8 @@
 #'
 #' ## return full dictionary (only recommended if not printing and
 #' ## storing in object)
-#' df <- ipeds_dict(".", limit = Inf, print_off = TRUE, return_df = TRUE)
+#' df <- ipeds_dict(".", limit = Inf, print_off = TRUE, return_dict = TRUE)
+#' }
 
 #' @export
 ipeds_dict <- function(search_string,
