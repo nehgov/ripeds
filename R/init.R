@@ -10,6 +10,7 @@
 #'   revised files. Default is TRUE.
 #' @param include_filter_vars Include filtering variables in output table when
 #'   filters are used. Default is TRUE.
+#' @param use_nse Use non-standard evaluation in chain. Default is TRUE.
 #'
 #' @examples
 #' \dontrun{
@@ -18,7 +19,7 @@
 
 #' @export
 ipeds_init <- function(local_dir = NA, use_revised_files = TRUE,
-                       include_filter_vars = TRUE) {
+                       include_filter_vars = TRUE, use_nse = TRUE) {
   ## run ipeds_file_table() to bring into memory
   ipeds_file_table()
   ## set up list for chained call
@@ -32,5 +33,6 @@ ipeds_init <- function(local_dir = NA, use_revised_files = TRUE,
        "filter" = NULL,
        "filter_vars" = NULL,
        "include_filter_vars" = include_filter_vars,
-       "year" = NULL)
+       "year" = NULL,
+       "nse" = use_nse)
 }
