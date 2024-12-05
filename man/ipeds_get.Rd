@@ -4,13 +4,7 @@
 \alias{ipeds_get}
 \title{Get IPEDS data.}
 \usage{
-ipeds_get(
-  ipedscall,
-  bind = TRUE,
-  join = TRUE,
-  use_revised = TRUE,
-  include_filter_vars = TRUE
-)
+ipeds_get(ipedscall, bind = TRUE, join = TRUE)
 }
 \arguments{
 \item{ipedscall}{Current list of parameters carried forward from prior
@@ -19,10 +13,6 @@ functions in the chain (ignore)}
 \item{bind}{Row bind all same name survey files (e.g., HD2022 and HD2023)}
 
 \item{join}{Join different name survey files by UNITID and year}
-
-\item{use_revised}{Use revised files ("*_rv") if they exist (default: TRUE)}
-
-\item{include_filter_vars}{Include filtering variables in output table}
 }
 \description{
 This function gets IPEDS data by compiling and

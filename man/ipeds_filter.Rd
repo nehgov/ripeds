@@ -15,7 +15,3 @@ functions in the chain (ignore)}
 \description{
 This function is used to filter downloaded IPEDS data.
 }
-\examples{
-\dontrun{
-}
-}

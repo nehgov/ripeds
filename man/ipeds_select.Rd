@@ -14,11 +14,24 @@ functions in the chain (ignore)}
 }
 \description{
 This function is used to select the variables returned in the final dataset.
+By default, non-standard evaluation is assumed, meaning that you can input
+variable names without quotation, separated by commas. If you set
+\code{use_nse = FALSE} in \code{\link[=ipeds_init]{ipeds_init()}}, then you must use quotations around
+column names or use an external object.
 }
 \examples{
 \dontrun{
+# with non-standard evalution
 ipeds_select(UNITID)
 ipeds_select(UNITID, INSTNM)
 ipeds_select(unitid, instnm)
+
+# without non-standard evaluation
+ipeds_select("UNITID")
+ipeds_select("unitid", "instnm")
+ipeds_select(c("unitid", "instnm"))
+
+vars <- c("unitid", "instnm")
+ipeds_select(vars)
 }
 }

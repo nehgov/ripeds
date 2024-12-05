@@ -42,6 +42,7 @@ tibble of dictionary values.}
 This function is used to search the IPEDS data dictionary.
 }
 \examples{
+\dontrun{
 ## simple search for "state" in any part of the dictionary
 ipeds_dict("state")
 
@@ -50,5 +51,6 @@ ipeds_dict("^st", search_col = "varname")
 
 ## return full dictionary (only recommended if not printing and
 ## storing in object)
-df <- ipeds_dict(".", limit = Inf, print_off = TRUE, return_df = TRUE)
+df <- ipeds_dict(".", limit = Inf, print_off = TRUE, return_dict = TRUE)
+}
 }
