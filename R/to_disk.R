@@ -122,9 +122,9 @@ ipeds_download_to_disk <- function(files,
     f <- fzipvec[i]
     if (!file.exists(file.path(to_dir, f))) {
       ## download to local directory
-      download.file(file.path(base_url, f),
-                    file.path(to_dir, f),
-                    quiet = TRUE, mode = "wb")
+      utils::download.file(file.path(base_url, f),
+                           file.path(to_dir, f),
+                           quiet = TRUE, mode = "wb")
       ## add counter so not throttled
       if (i %% 50 == 0) Sys.sleep(10)
     }
