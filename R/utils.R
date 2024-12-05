@@ -138,7 +138,7 @@ confirm_chain <- function(x) {
   ## and capture result
   res <- try(force(x), silent = TRUE)
   ## if try-error and any of following:
-  ## 1. "ipedscall" is missing
+  ## 1. ipedscall is missing
   ## 2. error in filter (meaning no arguments at all in ipeds_filter())
   ## 3. object isn't found (meaning ipedscall isn't first)
   if (identical(class(res), "try-error")
@@ -152,10 +152,6 @@ confirm_chain <- function(x) {
     ## 3. contains "ipeds_init_list" == TRUE
   } else if (is.list(x) && length(x) > 1 && x[["ipeds_init_list"]]) {
     res
-  ##   ## if no try-error, but ipeds_year() is called, this will catch that
-  ## } else if (is.numeric(x) | x == "latest") {
-  ##   stop(m, call. = FALSE)
-  ## }
   }
 }
 

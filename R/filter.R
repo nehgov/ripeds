@@ -6,10 +6,6 @@
 #'     functions in the chain (ignore)
 #' @param ... Expressions to evaluate
 #'
-#' @examples
-#' \dontrun{
-#' }
-
 #' @export
 ipeds_filter <- function(ipedscall, ...) {
 
@@ -24,17 +20,56 @@ ipeds_filter <- function(ipedscall, ...) {
     }
 
     ## get expressions so we can parse and check variables
-    filter_quo <- rlang::enquos(...)
-    expr <- lapply(filter_quo, rlang::quo_get_expr)[[1L]] |> deparse()
-    filter_vars <- regmatches(expr, gregexpr("((?![0-9]+)[A-Za-z0-9]+)", expr, perl = TRUE))[[1L]]
+    if (ipedscall[["nse"]]) {
+      expr <- eval(substitute(alist(...)))
+      vars <- lapply(expr, \(x) x[[2]])
+    } else {
+      expr <- list(...)
+      expr <- lapply(expr, \(x) parse(text = x)[[1]])[[1]]
+      vars <- list()
+      while (length(expr) == 3) {
+        subexpr <- expr[[2]]
+        if (length(subexpr) == 1) {
+          v <- as.character(subexpr)
+        } else {
+          v <- as.character(subexpr[[2]])
+        }
+        vars[[v]] <- v
+        expr <- expr[[3]]
+      }
+      vars <- unname(vars)
+    }
 
     ## confirm variable(s) in dictionary
-    ## lapply(filter_str_expr, function(x) confirm_vars(as.character(x[[2]])))
+    confirm_vars(vars)
 
     ## return
-    ipedscall[["filter"]] <- filter_quo
-    ipedscall[["filter_vars"]] <- filter_vars
+    ipedscall[["filter"]] <- expr
+    ipedscall[["filter_vars"]] <- vars
     ipedscall
   })
+}
 
+## TODO: need to account for nested ()
+## this
+## xx <- "x == 1 | (y == 2 & stabbr %in% c('KY'))"
+## yy <- parse(text = xx)[[1]]
+## yy
+
+test_filter <- function(...) {
+  expr <- list(...)
+  expr <- lapply(expr, \(x) parse(text = x)[[1]])[[1]]
+  vars <- list()
+  while (length(expr) == 3) {
+    subexpr <- expr[[2]]
+    print(subexpr)
+    if (length(subexpr) == 1) {
+      v <- as.character(subexpr)
+    } else {
+      v <- as.character(subexpr[[2]])
+    }
+    vars[[v]] <- v
+    expr <- expr[[3]]
+  }
+  unname(vars)
 }
