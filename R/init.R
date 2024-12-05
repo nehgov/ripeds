@@ -8,6 +8,8 @@
 #'   well. If unset, all files will be stored in tempdir().
 #' @param use_revised_files When IPEDS zip files contain revised data, use the
 #'   revised files. Default is TRUE.
+#' @param include_filter_vars Include filtering variables in output table when
+#'   filters are used. Default is TRUE.
 #'
 #' @examples
 #' \dontrun{
@@ -15,7 +17,8 @@
 #' }
 
 #' @export
-ipeds_init <- function(local_dir = NA, use_revised_files = TRUE) {
+ipeds_init <- function(local_dir = NA, use_revised_files = TRUE,
+                       include_filter_vars = TRUE) {
   ## run ipeds_file_table() to bring into memory
   ipeds_file_table()
   ## set up list for chained call
@@ -28,5 +31,6 @@ ipeds_init <- function(local_dir = NA, use_revised_files = TRUE) {
        "select_order" = NULL,
        "filter" = NULL,
        "filter_vars" = NULL,
+       "include_filter_vars" = include_filter_vars,
        "year" = NULL)
 }
