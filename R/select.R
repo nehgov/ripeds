@@ -35,7 +35,7 @@ ipeds_select <- function(ipedscall, ...) {
     if (ipedscall[["nse"]]) {
       vars <- eval(substitute(alist(...)))
     } else {
-      vars <- lapply(list(...), function(x) eval(x))
+      vars <- lapply(list(...), \(x) eval(x))
     }
 
     ## confirm has a least one variable
