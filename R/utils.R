@@ -12,6 +12,12 @@ hline <- function(nchar, symbol = "-") {
   paste(rep("", nchar), collapse = symbol)
 }
 
+## paste varlist into single string separated by OR operator for inclusive
+## search in ipeds_dict()
+create_search_str <- function(varlist) {
+  paste(varlist, collapse = "|")
+}
+
 ## -----------------------------------------------------------------------------
 ## helpers for conversion among hash environments
 ## -----------------------------------------------------------------------------
@@ -56,8 +62,11 @@ convert_hash_df <- function(df) {
 
 ## check zip file contents and get file name
 get_internal_file_name <- function(zfile, use_revised = TRUE) {
-  if (!use_revised) return(paste0(get_file_stub_name(zfile, lower = TRUE), ".csv"))
-  revised_exists <- utils::unzip(zfile, list = TRUE)[["Name"]] |> grepl(pattern = "_rv")
+  if (!use_revised) {
+    return(paste0(get_file_stub_name(zfile, lower = TRUE), ".csv"))
+  }
+  revised_exists <- utils::unzip(zfile, list = TRUE)[["Name"]] |>
+    grepl(pattern = "_rv")
   if (any(revised_exists)) {
     paste0(get_file_stub_name(zfile, lower = TRUE), "_rv.csv")
   } else {
@@ -90,6 +99,15 @@ get_file_stub_name <- function(file, lower = FALSE) {
 ## helper functions to support base R pipe chains / reduce code
 ## -----------------------------------------------------------------------------
 
+lower_names_df <- function(df) {
+  names(df) <- tolower(names(df))
+  df
+}
+
+bind_rows_df <- function(df_list) {
+  as.data.frame(do.call("rbind", df_list))
+}
+
 make_distinct <- function(df, cols) {
   if (missing(cols)) { cols <- names(df) }
   df[!duplicated(df[cols]),]
@@ -103,6 +121,10 @@ filter_in <- function(df, colname, x) {
   df[df[[colname]] %in% x, ]
 }
 
+filter_rows <- function(df, filter_df, by_vars = c("unitid", "year")) {
+  merge(df, filter_df, by = by_vars)
+}
+
 ## convert calendar year (YYYY) to academic year (YY/YY+1)
 cyear_to_ayear <- function(x) {
   paste0(substr(x, 3, 4), substr(x + 1, 3, 4))
@@ -113,17 +135,38 @@ order_vars <- function(varlist, split_character = ",") {
   trimws(unlist(strsplit(toString(varlist), split = split_character)))
 }
 
-lower_names_df <- function(df) {
-  names(df) <- tolower(names(df))
-  df
-}
-
-bind_rows_df <- function(df_list) {
-  as.data.frame(do.call("rbind", df_list))
-}
-
+## rolling full join on a list of data frames
 roll_join_full <- function(df_list, join_vars) {
   Reduce(function(x, y) merge(x, y, all = TRUE, by = join_vars), df_list)
+}
+
+## pull all the variable names from a dictionary (can be subset) for a
+## particular file; add unitid as a variable for linking purposes
+get_vars_from_file <- function(fname, dict) {
+  c("unitid", filter_equals(dict, "filename", fname)[["varname"]])
+}
+
+## get the year associated with a file name (useful because some files have
+## academic year splits in their name, e.g., 1819
+get_file_year <- function(fname) {
+  filter_equals(ipeds_file_table(), "file", fname) |>
+    make_distinct("file") |>
+    _[["year"]]
+}
+
+## return vector files for set of years
+subset_file_table_by_year <- function(years) {
+  ft <- ipeds_file_table()
+  ft[ft[["year"]] %in% years, "file"]
+}
+
+## starting with full ipeds_dict(), subset to only those files and years that
+## contain variables and years of interest
+subset_dict_by_var_year <- function(search_str, vars_to_keep, years_to_keep) {
+  ipeds_dict(search_str, search_col = "varname", return_dict = TRUE,
+             print_off = TRUE) |>
+    filter_in("varname", vars_to_keep) |>
+    filter_in("filename", years_to_keep)
 }
 
 ## -----------------------------------------------------------------------------

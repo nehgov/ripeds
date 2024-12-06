@@ -50,11 +50,9 @@ ipeds_select <- function(ipedscall, ...) {
     ## confirm variables exist in dictionary
     confirm_vars(vars)
 
-    ## store vars in order for later ordering
-    ipedscall[["select_order"]] <- order_vars(vars)
-
-    ## return
-    ipedscall[["select"]] <- vars
+    ## store vars in order for later ordering; return
+    ipedscall[["sorder"]] <- order_vars(vars)
+    ipedscall[["svars"]] <- vars
     ipedscall
   })
 

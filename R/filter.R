@@ -39,7 +39,7 @@ ipeds_filter <- function(ipedscall, ...) {
 
     ## return
     ipedscall[["filter"]] <- expr
-    ipedscall[["filter_vars"]] <- vars
+    ipedscall[["fvars"]] <- vars
     ipedscall
   })
 }

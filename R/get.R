@@ -1,3 +1,4 @@
+
 #' Get IPEDS data.
 #'
 #' This function gets IPEDS data by compiling and
@@ -16,7 +17,7 @@ ipeds_get <- function(ipedscall, bind = TRUE, join = TRUE) {
     confirm_chain(ipedscall)
 
     ## check if missing ipeds_select()
-    if (is.null(ipedscall[["select"]])) {
+    if (is.null(ipedscall[["svars"]])) {
       stop("No variables selected. Use ipeds_select() to choose variables.",
            call. = FALSE)
     }
@@ -30,107 +31,108 @@ ipeds_get <- function(ipedscall, bind = TRUE, join = TRUE) {
     ## subset all files in years of interest
     file_year <- subset_file_table_by_year(ipedscall[["year"]])
 
+    ## store opts
+    ldir <- ipedscall[["ldir"]]
+    revf <- ipedscall[["revfiles"]]
+
     ## -------------------------------------
-    ## set up search strings / variables
+    ## filter (if used)
     ## -------------------------------------
 
-    ## filter
-    if (!is.null(ipedscall[["filter_vars"]])) {
-      f_search_str <- paste(ipedscall[["filter_vars"]], collapse = "|")
-      f_keep_vars <- ipedscall[["filter_vars"]]
-    }
-
-    ## select
-    if (ipedscall[["include_filter_vars"]] && !is.null(ipedscall[["filter_vars"]])) {
-      s_search_str <- paste(c(ipedscall[["select"]], ipedscall[["filter_vars"]]), collapse = "|")
-      s_keep_vars <- c(ipedscall[["select"]], ipedscall[["filter_vars"]])
+    if (!is.null(ipedscall[["fvars"]])) {
+      ## set search/filter strings and variable lists
+      f_search_str <- create_search_str(ipedscall[["fvars"]])
+      s_search_str <- create_search_str(c(ipedscall[["svars"]], ipedscall[["fvars"]]))
+      f_keep_vars <- ipedscall[["fvars"]]
+      s_keep_vars <- c(ipedscall[["svars"]], ipedscall[["fvars"]])
+      ## create dictionary for filter variables
+      f_dict <- subset_dict_by_var_year(f_search_str, f_keep_vars, file_year)
+      ## get list of files
+      flist <- get_file_list(f_dict, ldir, revf)
+      ## bind into one large data frame
+      fdf <- bind_like_files(flist, f_dict) |> join_all_files()
+      ## filter and return data frame of relevant unitids and years
+      fdf <- get_filtered_id_years(fdf, ipedscall[["filter"]])
     } else {
-      s_search_str <- paste(ipedscall[["select"]], collapse = "|")
-      s_keep_vars <- ipedscall[["select"]]
+      ## set search strings and variable lists
+      s_search_str <- create_search_str(ipedscall[["svars"]])
+      s_keep_vars <- ipedscall[["svars"]]
     }
 
     ## -------------------------------------
-    ## make dictionaries
+    ## select
     ## -------------------------------------
 
-    # filter_dict <- subset_dictionary_by_var_year(f_search_str, f_keep_vars, file_year)
-    select_dict <- subset_dictionary_by_var_year(s_search_str, s_keep_vars, file_year)
+    ## create dictionary for selected variables
+    s_dict <- subset_dict_by_var_year(s_search_str, s_keep_vars, file_year)
+    ## get list of files, filtering if option chosen
+    if (exists("fdf", inherits = FALSE)) {
+      flist <- get_file_list(s_dict, ldir, revf, fdf)
+    } else {
+      flist <- get_file_list(s_dict, ldir, revf)
+    }
 
     ## -------------------------------------
-    ## get files
-    ## -------------------------------------
-
-    ## unique files; names
-    ufiles <- make_distinct(select_dict, "filename")[["filename"]]
-    out_list <- lapply(ufiles, \(x) {
-      read_select_vars_from_zip(x, select_dict, ipedscall[["local_dir"]], ipedscall[["revised_files"]])
-    })
-    names(out_list) <- unname(ufiles)
-
-    ## -----------------------------------------------------------------------------
     ## return
-    ## -----------------------------------------------------------------------------
+    ## -------------------------------------
     if (!bind) {
-      return(out_list)
+      return(unname(flist))
     } else if (bind) {
-      bound_outlist <- bind_like_files(out_list, select_dict)
+      bflist <- bind_like_files(flist, s_dict)
       if (join) {
-        join_all_files(bound_outlist)
+        join_all_files(bflist)
       } else {
-        return(bound_outlist)
+        return(bflist)
       }
     }
   })
 }
 
-read_select_vars_from_zip <- function(fname, dict, local_dir = NA, use_revised = TRUE) {
-  ## get zipfile name
+## wrapper function to use a subset dictionary to iteratively read in all files
+## associated with the variable and year selection
+get_file_list <- function(dict, local_dir = NA, use_revised = TRUE, filter_df = NULL) {
+  ufiles <- make_distinct(dict, "filename")[["filename"]]
+  out_list <- lapply(ufiles, \(x) {
+    read_select_vars_from_zip(x, dict, local_dir, use_revised, filter_df)
+  })
+  names(out_list) <- unname(ufiles)
+  out_list
+}
+
+## get variables from zipped csv data file, downloading if necessary; using
+## subset dictionary, select variables and interest; add year and file name to
+## data frame and return
+read_select_vars_from_zip <- function(fname, dict, local_dir = NA,
+                                      use_revised = TRUE, filter_df = NULL) {
   zf <- paste0(fname, ".zip")
-  ## get variables associated with this file to select
   select_vars <- get_vars_from_file(fname, dict)
-  ## file location / download if necessary
   zdir <- get_file_location_or_download(zf, local_dir)
-  ## internal file name to be read
   ifile <- get_internal_file_name(file.path(zdir, zf), use_revised)
-  ## read in CSV, lower column names, select variables
-  df <- utils::read.csv(unz(file.path(zdir, zf), ifile), na.strings = c("", NA, NULL, ".")) |>
+  df <- utils::read.csv(unz(file.path(zdir, zf), ifile),
+                        na.strings = c("", NA, NULL, ".")) |>
     lower_names_df() |>
     _[,select_vars]
-  ## add year and file name; return
   df[["year"]] <- get_file_year(fname)
   df[["file"]] <- fname
-  df
+  if (!is.null(filter_df)) {
+    filter_rows(df, filter_df)
+  } else {
+    df
+  }
 }
 
-subset_file_table_by_year <- function(years) {
-  ft <- ipeds_file_table()
-  ft[ft[["year"]] %in% years, "file"]
-}
-
-subset_dictionary_by_var_year <- function(search_str, vars_to_keep, years_to_keep) {
-  ipeds_dict(search_str, search_col = "varname", return_dict = TRUE, print_off = TRUE) |>
-    filter_in("varname", vars_to_keep) |>
-    filter_in("filename", years_to_keep)
-}
-
-get_file_year <- function(fname) {
-  filter_equals(ipeds_file_table(), "file", fname) |>
-    make_distinct("file") |>
-    _[["year"]]
-}
-
-get_vars_from_file <- function(fname, dict) {
-  c("unitid", filter_equals(dict, "filename", fname)[["varname"]])
-}
-
+## use dictionary to group tables that are the same, but just different years;
+## row bind those into a smaller list
 bind_like_files <- function(df_list, dict) {
-  ## get list of like data files based on having same variable (e.g., HD* or IC*)
+  ## get groups of like data files based on having same variable (e.g., HD* or IC*)
   vars <- make_distinct(dict, "varname")[["varname"]]
-  lname_groups <- lapply(vars, \(x) filter_equals(dict, "varname", x)[["filename"]]) |>
+  lname_groups <- lapply(vars, \(x) {
+    filter_equals(dict, "varname", x)[["filename"]]
+  }) |>
     bind_rows_df() |>
     make_distinct()
-  ## row bind only those from like files (they are just different years)
-  outlist <- apply(lname_groups, 1, function(x) {
+  ## row bind those from like files
+  outlist <- apply(lname_groups, 1, \(x) {
     fn <- unlist(x) |> stats::na.omit() |> c()
     out <- bind_rows_df(df_list[match(fn, names(df_list))])
     row.names(out) <- NULL
@@ -141,31 +143,19 @@ bind_like_files <- function(df_list, dict) {
   return(outlist)
 }
 
-join_all_files <- function(bound_outlist) {
+## takes list of files and attempts full join (may be messy with complex calls)
+join_all_files <- function(bound_outlist, by_vars = c("unitid", "year")) {
   lapply(bound_outlist, \(x) { subset(x, select = -c(file)) }) |>
-    roll_join_full(join_vars = c("unitid", "year"))
+    roll_join_full(join_vars = by_vars)
 }
 
-  ## filter if there is a filter string
-  ## TODO
-  ## Need to account for filter upper/lower
-  ## Need to track which files filter var lives in and only filter there (otherwise, the object isn't found)
-## Need to account for unitids / years that end up filtered so that those can be taken care of
-## in the end with the bind/join
-## if (!is.null(ipedscall[["filter"]])) {
-##   expr <- lapply(ipedscall[["filter"]], function(x) rlang::quo_get_expr(x))[[1]] |> deparse()
-##   out <- dplyr::filter(out, eval(!!rlang::parse_expr(expr)))
-##   ## include_filter_vars ? add them to order list at end : <>
-##   if (include_filter_vars) {
-##     to_add <- ipedscall[["filter_vars"]]
-##     to_add <- to_add[to_add %in% dplyr::pull(dict, varname)]
-##     ipedscall[["select_order"]] <- c(ipedscall[["select_order"]], to_add)
-##   }
-## }
-## put in order of variable request
-## out <- dplyr::select(out, dplyr::any_of(c("unitid",
-##                                           "year",
-##                                           ipedscall[["select_order"]],
-##                                           "file")))
-## ## save in list
-## out_list[[i]] <- out
+## iteratively work through a data frame, filtering based on list of filters;
+## this assumes and "&" for filters separated by commas
+get_filtered_id_years <- function(df, filter_list) {
+  df <- subset(df, eval(filter_list[[1]]))
+  if (length(filter_list) > 1) {
+    get_filtered_id_years(df, filter_list[-1])
+  } else {
+    return(subset(df, select = c("unitid", "year")))
+  }
+}
