@@ -1,6 +1,4 @@
-# ripeds
-
-## Download and Manipulate Integrated Postsecondary Education Data System (IPEDS) Data
+# ripeds; Download and Manipulate Integrated Postsecondary Education Data System (IPEDS) Data
 
 The ripeds package provides a series of piped functions to facilitate
 downloading Department of Education Integrated Postsecondary Education
@@ -18,12 +16,14 @@ and `ipeds_year()` come in any order in the pipe chain. Only
 
 # Example
 
+    ## perform data pull
     df <- ipeds_init() |>
       ipeds_select(instnm, pt_ug) |>
       ipeds_filter(stabbr == "KY") |>
       ipeds_year(2020:2021) |>
       ipeds_get()
 
+    ## show
     df |> head()
 
     ##   unitid year                      instnm stabbr pt_ug

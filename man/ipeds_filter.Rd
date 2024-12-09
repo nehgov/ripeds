@@ -15,3 +15,20 @@ functions in the chain (ignore)}
 \description{
 This function is used to filter downloaded IPEDS data.
 }
+\examples{
+\dontrun{
+# using non-standard evaluation, you can separate filters by a comma, which
+# will serve as an `&` (AND) boolean
+ipeds_filter(stabbr == "KY", control < 3)
+ipeds_filter(stabbr \%in\% c("KY","TN"))
+ipeds_filter(grepl("community", instnm))
+
+# more complex filters, such as those using an `|` (OR) operator, should be
+# input as a string, either directly or as stored in an object
+ipeds_filter("stabbr == 'KY' | stabbr == 'TN'")
+
+filter_str <- "stabbr == 'KY' | stabbr == 'TN'"
+ipeds_filter(filter_str)
+}
+
+}

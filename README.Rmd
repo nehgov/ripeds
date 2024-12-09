@@ -6,8 +6,7 @@ output: md_document
 ```{r, include = FALSE}
 options(width = 100)
 ```
-# ripeds 
-## Download and Manipulate Integrated Postsecondary Education Data System (IPEDS) Data
+# ripeds; Download and Manipulate Integrated Postsecondary Education Data System (IPEDS) Data
 
 The ripeds package provides a series of piped functions to facilitate
 downloading Department of Education Integrated Postsecondary Education Data
@@ -27,11 +26,13 @@ devtools::install_github("nehgov/ripeds")
 # Example
 
 ```{r}
+## perform data pull
 df <- ipeds_init() |>
   ipeds_select(instnm, pt_ug) |>
   ipeds_filter(stabbr == "KY") |>
   ipeds_year(2020:2021) |>
   ipeds_get()
 
+## show
 df |> head()
 ```
