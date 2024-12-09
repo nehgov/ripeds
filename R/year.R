@@ -28,14 +28,14 @@ ipeds_year <- function(ipedscall, year) {
     confirm_chain(ipedscall)
     ## check second argument isn't missing and is numeric
     if (missing(year) || !is.numeric(year)
-        || any(year < ipeds_file_table()[["year"]] |> min())
-        || any(year > ipeds_file_table()[["year"]] |> max())) {
+        || any(year < min(ipeds_file_table()[["year"]]))
+        || any(year > max(ipeds_file_table()[["year"]]))) {
       stop("Must provide a 4-digit year or vector of 4-digit years ",
            "within bounds of IPEDS years:\n\n",
            "Earliest available year:    ",
-           ipeds_file_table()[["year"]] |> min(), "\n",
+           min(ipeds_file_table()[["year"]]), "\n",
            "Most recent available year: ",
-           ipeds_file_table()[["year"]] |> max(),
+           max(ipeds_file_table()[["year"]]),
            call. = FALSE)
     }
     ipedscall[["year"]] <- year

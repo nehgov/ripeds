@@ -18,3 +18,4 @@
 ^test_api_pulls$
 ^\.github$
 ^_zip$
+^_pkgdown\.yml$

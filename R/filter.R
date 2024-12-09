@@ -31,7 +31,7 @@ ipeds_filter <- function(ipedscall, ...) {
            call. = FALSE)
     } else {
       expr <- lapply(list(...), \(x) parse(text = x)[[1]])
-      vars <- lapply(expr, \(x) all.vars(x)) |> unlist()
+      vars <- unlist(lapply(expr, \(x) all.vars(x)))
     }
 
     ## confirm variable(s) in dictionary

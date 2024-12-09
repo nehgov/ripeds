@@ -1,24 +1,40 @@
-## make_ipeds_dict.R
+## -----------------------------------------------------------------------------
+##
+## [ PROJ ] ripeds
+## [ FILE ] make_ipeds_dict.R
+##
+## -----------------------------------------------------------------------------
 
-## macros
+## NOTES
+##
+## Use this script to create underlying data dictionary / hash tables. Should be
+## run with each new update of IPEDS (approximately once a quarter).
+
+## -----------------------------------------------------------------------------
+## macros and paths
+## -----------------------------------------------------------------------------
+
 base_url <- "https://nces.ed.gov/ipeds/datacenter/data"
 f_ending <- "_Dict.zip"
+zipf_dir <- file.path("..", "_zip")
+data_dir <- file.path(zipf_dir, "data")
+dict_dir <- file.path(zipf_dir, "dict")
 
+## -----------------------------------------------------------------------------
 ## functions
+## -----------------------------------------------------------------------------
+
+## pull dictionary information from xls[x] spreadsheets
 parse_xlsx <- function(zipfile, dfile) {
-  ## unzip file
   f <- unzip(zipfile, dfile, exdir = tempdir())
-  ## get sheet names
   sheets <- readxl::excel_sheets(f)
-  ## get (V|v)arlist sheet
   sname <- sheets[grepl("[V|v]arlist", sheets)]
-  ## read
   out <- readxl::read_excel(f, sheet = sname)
-  ## clean up
   invisible(file.remove(f))
-  ## return
   out
 }
+
+## pull information from html files
 parse_html <- function(zipfile, dfile, dfvarname) {
   ## ## unzip file
   ## f <- unzip(zipfile, dfile, exdir = tempdir())
@@ -43,69 +59,81 @@ parse_html <- function(zipfile, dfile, dfvarname) {
   dplyr::tibble(varname = dfvarname |> dplyr::filter(file_name == fname) |> dplyr::pull(varname),
                 vartitle = dfvarname |> dplyr::filter(file_name == fname) |> dplyr::pull(varname))
 }
+
+## patch bad column names (as of 10 October 2024)
 patch_varname <- function(varname) {
-  ## patch for bad column names (10 October 2024)
   dplyr::case_when(
     varname == "XEFGNDRU...66" ~ "XEFGNDRUN",
     varname == "XEFGNDRU...70" ~ "XEFGNDRUA",
     TRUE ~ varname
   )
 }
-get_varnames <- function(zipfile) {
-  ## get files in zipfile
-  flist <- unzip(zipfile, list = TRUE)
-  ## return revised file (_rv) if exists
+
+## pull revised ("*_rv") name if there are more than two files listed, else just
+## pull the name of the file
+get_revised_if <- function(flist) {
   fnames <- flist[["Name"]]
-  fname <- ifelse(length(fnames) == 2, grep("_[R|r][V|v]", fnames, value = TRUE, invert = TRUE), fnames)
-  ## get variables (read header line only)
-  varname <- readr::read_csv(unz(zipfile, fname), n_max = 0, show_col_types = FALSE,
-                             name_repair = "unique") |> names()
-  ## fix
+  ifelse(length(fnames) == 2,
+         grep("_[R|r][V|v]",
+              fnames,
+              value = TRUE,
+              invert = TRUE),
+         fnames)
+}
+
+## pull variable names from zipped data files and patch as needed
+get_varnames <- function(zipfile) {
+  flist <- unzip(zipfile, list = TRUE)
+  fname <- get_revised_if(flist[["Name"]])
+  varname <- readr::read_csv(unz(zipfile, fname),
+                             n_max = 0,
+                             show_col_types = FALSE,
+                             name_repair = "unique") |>
+    names()
   varname <- patch_varname(varname)
 }
+
+## set up indicator for long files
 get_longfiles <- function(zipfile) {
-  ## get files in zipfile
   flist <- unzip(zipfile, list = TRUE)
-  ## return revised file (_rv) if exists
-  fnames <- flist[["Name"]]
-  fname <- ifelse(length(fnames) == 2, grep("_[R|r][V|v]", fnames, value = TRUE, invert = TRUE), fnames)
-  ## get variables (read header line only)
-  max_count <- readr::read_csv(unz(zipfile, fname), show_col_types = FALSE, name_repair = "unique") |>
+  fname <- get_revised_if(flist[["Name"]])
+  max_count <- readr::read_csv(unz(zipfile, fname),
+                               show_col_types = FALSE,
+                               name_repair = "unique") |>
     dplyr::rename_all(tolower) |>
     dplyr::count(unitid) |>
     dplyr::summarise(n = max(n)) |>
     dplyr::pull()
-  ## return
   ifelse(max_count > 1, 1, 0)
 }
 
+## -----------------------------------------------------------------------------
+## read
+## -----------------------------------------------------------------------------
+
 ## read variables from data files themselves
-dfiles <- list.files(file.path("_zip", "data"))
+dfiles <- list.files(data_dir)
 
 ## get column names attached to file
 df <- purrr::map(dfiles,
                  ~ dplyr::tibble(file_name = tools::file_path_sans_ext(.x),
-                                 varname = get_varnames(file.path("_zip", "data", .x)))
+                                 varname = get_varnames(file.path(data_dir, .x)))
                  ) |>
   dplyr::bind_rows()
 
 ## get file names that are long
 df_long <- purrr::map(dfiles,
                       ~ dplyr::tibble(file_name = tools::file_path_sans_ext(.x),
-                                      long = get_longfiles(file.path("_zip", "data", .x)))
+                                      long = get_longfiles(file.path(data_dir, .x)))
                       ) |>
   dplyr::bind_rows()
 
 ## get list of available IPEDS dictionary files
 itab <- ripeds::ipeds_file_table() |> dplyr::distinct(year, file)
 
-## -------------------------------------
-## TEMP FILTER
-## -------------------------------------
-
-## itab <- itab |> dplyr::filter(year >= 2012)
-
-## -------------------------------------
+## -----------------------------------------------------------------------------
+## set up dictionary
+## -----------------------------------------------------------------------------
 
 ## init list of proper size
 dict <- vector("list", length = nrow(itab))

@@ -50,7 +50,8 @@ ipeds_get <- function(ipedscall, bind = TRUE, join = TRUE) {
       ## get list of files
       flist <- get_file_list(f_dict, ldir, revf)
       ## bind into one large data frame
-      fdf <- bind_like_files(flist, f_dict) |> join_all_files()
+      fdf <- bind_like_files(flist, f_dict)
+      fdf <- join_all_files(fdf)
       ## filter and return data frame of relevant unitids and years
       fdf <- get_filtered_id_years(fdf, ipedscall[["filter"]])
     } else {
@@ -92,7 +93,7 @@ ipeds_get <- function(ipedscall, bind = TRUE, join = TRUE) {
 ## associated with the variable and year selection
 get_file_list <- function(dict, local_dir = NA, use_revised = TRUE, filter_df = NULL) {
   ufiles <- make_distinct(dict, "filename")[["filename"]]
-  out_list <- lapply(ufiles, \(x) {
+  out_list <- lapply(ufiles, function(x) {
     read_select_vars_from_zip(x, dict, local_dir, use_revised, filter_df)
   })
   names(out_list) <- unname(ufiles)
@@ -109,9 +110,9 @@ read_select_vars_from_zip <- function(fname, dict, local_dir = NA,
   zdir <- get_file_location_or_download(zf, local_dir)
   ifile <- get_internal_file_name(file.path(zdir, zf), use_revised)
   df <- utils::read.csv(unz(file.path(zdir, zf), ifile),
-                        na.strings = c("", NA, NULL, ".")) |>
-    lower_names_df() |>
-    _[,select_vars]
+                        na.strings = c("", NA, NULL, "."))
+  df <- lower_names_df(df)
+  df <- df[,select_vars]
   df[["year"]] <- get_file_year(fname)
   df[["file"]] <- fname
   if (!is.null(filter_df)) {
@@ -126,14 +127,14 @@ read_select_vars_from_zip <- function(fname, dict, local_dir = NA,
 bind_like_files <- function(df_list, dict) {
   ## get groups of like data files based on having same variable (e.g., HD* or IC*)
   vars <- make_distinct(dict, "varname")[["varname"]]
-  lname_groups <- lapply(vars, \(x) {
+  lname_groups <- lapply(vars, function(x) {
     filter_equals(dict, "varname", x)[["filename"]]
-  }) |>
-    bind_rows_df() |>
-    make_distinct()
+  })
+  lname_groups <- bind_rows_df(lname_groups)
+  lname_groups <- make_distinct(lname_groups)
   ## row bind those from like files
-  outlist <- apply(lname_groups, 1, \(x) {
-    fn <- unlist(x) |> stats::na.omit() |> c()
+  outlist <- apply(lname_groups, 1, function(x) {
+    fn <- c(stats::na.omit(unlist(x)))
     out <- bind_rows_df(df_list[match(fn, names(df_list))])
     row.names(out) <- NULL
     out
@@ -145,8 +146,8 @@ bind_like_files <- function(df_list, dict) {
 
 ## takes list of files and attempts full join (may be messy with complex calls)
 join_all_files <- function(bound_outlist, by_vars = c("unitid", "year")) {
-  lapply(bound_outlist, \(x) { subset(x, select = -c(file)) }) |>
-    roll_join_full(join_vars = by_vars)
+  olist <- lapply(bound_outlist, function(x) { subset(x, select = -c(file)) })
+  roll_join_full(olist, join_vars = by_vars)
 }
 
 ## iteratively work through a data frame, filtering based on list of filters;

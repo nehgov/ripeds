@@ -149,9 +149,9 @@ get_vars_from_file <- function(fname, dict) {
 ## get the year associated with a file name (useful because some files have
 ## academic year splits in their name, e.g., 1819
 get_file_year <- function(fname) {
-  filter_equals(ipeds_file_table(), "file", fname) |>
-    make_distinct("file") |>
-    _[["year"]]
+  df <- filter_equals(ipeds_file_table(), "file", fname)
+  df <- make_distinct(df, "file")
+  df[["year"]]
 }
 
 ## return vector files for set of years
@@ -163,10 +163,11 @@ subset_file_table_by_year <- function(years) {
 ## starting with full ipeds_dict(), subset to only those files and years that
 ## contain variables and years of interest
 subset_dict_by_var_year <- function(search_str, vars_to_keep, years_to_keep) {
-  ipeds_dict(search_str, search_col = "varname", return_dict = TRUE,
-             print_off = TRUE) |>
-    filter_in("varname", vars_to_keep) |>
-    filter_in("filename", years_to_keep)
+  dict <- ipeds_dict(search_str, search_col = "varname", return_dict = TRUE,
+                     print_off = TRUE)
+  dict <- filter_in(dict, "varname", vars_to_keep)
+  dict <- filter_in(dict, "filename", years_to_keep)
+  dict
 }
 
 ## -----------------------------------------------------------------------------
