@@ -1,0 +1,19 @@
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/LICENSE-text.html</loc></url>
+<url><loc>/LICENSE.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/ipeds_dict.html</loc></url>
+<url><loc>/reference/ipeds_download_to_disk.html</loc></url>
+<url><loc>/reference/ipeds_file_table.html</loc></url>
+<url><loc>/reference/ipeds_filter.html</loc></url>
+<url><loc>/reference/ipeds_get.html</loc></url>
+<url><loc>/reference/ipeds_init.html</loc></url>
+<url><loc>/reference/ipeds_select.html</loc></url>
+<url><loc>/reference/ipeds_temp_to_disk.html</loc></url>
+<url><loc>/reference/ipeds_year.html</loc></url>
+<url><loc>/reference/ripeds-package.html</loc></url>
+</urlset>
+
