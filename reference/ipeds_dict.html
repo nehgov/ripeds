@@ -25,7 +25,26 @@
       <ul class="nav navbar-nav"><li>
   <a href="../reference/index.html">Reference</a>
 </li>
-      </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Articles
+
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/introduction.html">Introduction</a>
+    </li>
+    <li>
+      <a href="../articles/workflow.html">Workflow</a>
+    </li>
+  </ul></li>
+      </ul><ul class="nav navbar-nav navbar-right"><li>
+  <a href="https://github.com/nehgov/ripeds/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
+
+  </a>
+</li>
+      </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
@@ -35,7 +54,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Search data dictionary.</h1>
-
+    <small class="dont-index">Source: <a href="https://github.com/nehgov/ripeds/blob/main/R/dictionary.R" class="external-link"><code>R/dictionary.R</code></a></small>
     <div class="hidden name"><code>ipeds_dict.Rd</code></div>
     </div>
 
@@ -96,6 +115,44 @@ matched in search'</p></dd>
 tibble of dictionary values.</p></dd>
 
 </dl></div>
+    <div id="interactive-dictionary">
+    <h2>Interactive dictionary</h2>
+
+
+
+<p>When using <code>ipeds_dict()</code> interactively (the default), formatted output will
+be returned to the console.</p>
+<p></p><div class="sourceCode r"><pre><code>&gt; ipeds_dict("efydesom")
+
+=====================================================================
+VARIABLE: efydesom
+=====================================================================
+
+:::::::::::::::::::          DESCRIPTION          :::::::::::::::::::
+
+Students enrolled in some but not all distance education courses
+
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+../FILES
+
+ |__ EFFY2020_DIST*
+ |__ EFFY2021_DIST*
+ |__ EFFY2022_DIST*
+ |__ EFFY2023_DIST*
+
+ * Denotes a long file in which institutions may have more than one
+ record (UNITID values repeated across multiple rows).
+
+=====================================================================
+Printed information for 1 of out 1 variables.
+</code></pre><p></p></div>
+<p>Output includes:</p><ul><li><p>Variable name</p></li>
+<li><p>Each unique description found across dictionary files provided by NCES</p></li>
+<li><p>All complete data files in which the variable with that description is found</p></li>
+<li><p>A flag (*) if necessary to denote the data file is a long file</p></li>
+<li><p>A note to indicate if more results are available than the limit are available</p></li>
+</ul></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
