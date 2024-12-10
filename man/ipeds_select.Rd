@@ -13,11 +13,14 @@ functions in the chain (ignore)}
 \item{...}{Desired variable names separated by commas (not case sensitive)}
 }
 \description{
-This function is used to select the variables returned in the final dataset.
-By default, non-standard evaluation is assumed, meaning that you can input
-variable names without quotation, separated by commas. If you set
-\code{use_nse = FALSE} in \code{\link[=ipeds_init]{ipeds_init()}}, then you must use quotations around
-column names or use an external object.
+Select the variables returned in the final dataset. By default, non-standard
+evaluation is assumed, meaning that you can input variable names without
+quotation, separated by commas. If \code{use_nse = FALSE} is set in
+\code{\link[=ipeds_init]{ipeds_init()}}, then you must use standard evaluation, e.g., string variable
+names or an external object which contains string variable names.
+}
+\details{
+\code{\link[=ipeds_select]{ipeds_select()}} is a required part of the \verb{ipeds_*()} chain.
 }
 \examples{
 \dontrun{
@@ -26,7 +29,7 @@ ipeds_select(UNITID)
 ipeds_select(UNITID, INSTNM)
 ipeds_select(unitid, instnm)
 
-# without non-standard evaluation
+# with standard evaluation: ipeds_init(use_nse = FALSE)
 ipeds_select("UNITID")
 ipeds_select("unitid", "instnm")
 ipeds_select(c("unitid", "instnm"))

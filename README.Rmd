@@ -6,9 +6,9 @@ output: md_document
 ```{r, include = FALSE}
 options(width = 100)
 ```
-# ripeds; Download and Manipulate Integrated Postsecondary Education Data System (IPEDS) Data
+# Download and Manipulate Integrated Postsecondary Education Data System (IPEDS) Data
 
-The ripeds package provides a series of piped functions to facilitate
+The `ripeds` R package provides a series of piped functions to facilitate
 downloading Department of Education Integrated Postsecondary Education Data
 System (IPEDS) complete data files.
 

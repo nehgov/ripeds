@@ -10,7 +10,7 @@ ipeds_year(ipedscall, year)
 \item{ipedscall}{Current list of parameters carried forward from prior
 functions in the chain (ignore)}
 
-\item{year}{Four-digit year or string \code{latest} for latest data.}
+\item{year}{Four-digit year or numeric vector of years.}
 }
 \description{
 This function is used to select the year of the data.
@@ -29,6 +29,7 @@ years (fall to spring), it is likely the year represents the fall data (\emph{e.
 \examples{
 \dontrun{
 ipeds_year(2012)
+ipeds_year(c(2010, 2012, 2014))
 ipeds_year(2010:2013)
 }
 }

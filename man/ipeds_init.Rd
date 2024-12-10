@@ -17,11 +17,21 @@ revised files. Default is TRUE.}
 \item{use_nse}{Use non-standard evaluation in chain. Default is TRUE.}
 }
 \description{
-This function initializes the data request. It should always be
-the first in the series of piped functions.
+Initialize the data request. It should always be the first in the series of
+piped functions.
 }
 \examples{
 \dontrun{
 ipeds_init()
+
+# set local directory to search first for existing IPEDS data files and in
+# which to save any that must be downloaded
+ipeds_init(local_dir = ".")
+
+# use original files even if revise files exist
+ipeds_init(use_revised_files = FALSE)
+
+# use standard evaluation throughout the ipeds_*() chain
+ipeds_init(use_nse = FALSE)
 }
 }

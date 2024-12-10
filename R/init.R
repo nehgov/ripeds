@@ -1,7 +1,7 @@
 #' Initialize chained request.
 #'
-#' This function initializes the data request. It should always be
-#' the first in the series of piped functions.
+#' Initialize the data request. It should always be the first in the series of
+#' piped functions.
 #'
 #' @param local_dir Local directory to check for complete IPEDS zip files that
 #'   have already been downloaded. Newly downloaded files will be placed here as
@@ -13,6 +13,16 @@
 #' @examples
 #' \dontrun{
 #' ipeds_init()
+#'
+#' # set local directory to search first for existing IPEDS data files and in
+#' # which to save any that must be downloaded
+#' ipeds_init(local_dir = ".")
+#'
+#' # use original files even if revise files exist
+#' ipeds_init(use_revised_files = FALSE)
+#'
+#' # use standard evaluation throughout the ipeds_*() chain
+#' ipeds_init(use_nse = FALSE)
 #' }
 
 #' @export

@@ -19,3 +19,4 @@
 ^\.github$
 ^_zip$
 ^_pkgdown\.yml$
+^vignettes/articles$

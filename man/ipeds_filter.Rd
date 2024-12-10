@@ -13,17 +13,25 @@ functions in the chain (ignore)}
 \item{...}{Expressions to evaluate}
 }
 \description{
-This function is used to filter downloaded IPEDS data.
+Filter downloaded IPEDS data. Simple filters separated by commas will be
+treated as if separated by an \code{&} (\code{AND}) boolean. More complex multi-part
+filters, such as those using an \code{|} (OR) boolean, must be input as a string
+or via an object which stores the string filter.
+}
+\details{
+Non-standard evaluation may be used for simple filters and when
+\code{ipeds_init(use_nse = TRUE)}. In all other cases, a string filter must be
+used.
 }
 \examples{
 \dontrun{
 # using non-standard evaluation, you can separate filters by a comma, which
-# will serve as an `&` (AND) boolean
+# will serve as an (AND) boolean
 ipeds_filter(stabbr == "KY", control < 3)
 ipeds_filter(stabbr \%in\% c("KY","TN"))
 ipeds_filter(grepl("community", instnm))
 
-# more complex filters, such as those using an `|` (OR) operator, should be
+# more complex filters, such as those using an | (OR) operator, should be
 # input as a string, either directly or as stored in an object
 ipeds_filter("stabbr == 'KY' | stabbr == 'TN'")
 

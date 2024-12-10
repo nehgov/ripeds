@@ -1,8 +1,8 @@
-# ripeds; Download and Manipulate Integrated Postsecondary Education Data System (IPEDS) Data
+# Download and Manipulate Integrated Postsecondary Education Data System (IPEDS) Data
 
-The ripeds package provides a series of piped functions to facilitate
-downloading Department of Education Integrated Postsecondary Education
-Data System (IPEDS) complete data files.
+The `ripeds` R package provides a series of piped functions to
+facilitate downloading Department of Education Integrated Postsecondary
+Education Data System (IPEDS) complete data files.
 
 All command pipes must start with `ipeds_init()`, end with
 `ipeds_get()`, and be linked with the base pipe, `|>`, or magrittr pipe

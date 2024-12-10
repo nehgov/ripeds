@@ -1,14 +1,44 @@
-
 #' Get IPEDS data.
 #'
-#' This function gets IPEDS data by compiling and
-#' converting all the previous piped output into a single URL string
-#' that is used to get the data.
+#' Retrieve IPEDS data by establishing which data files are required for
+#' filtering (if included) and those required for selected variables.
 #'
 #' @param ipedscall Current list of parameters carried forward from prior
 #'   functions in the chain (ignore)
 #' @param bind Row bind all same name survey files (e.g., HD2022 and HD2023)
-#' @param join Join different name survey files by UNITID and year
+#' @param join Join different name survey files by UNITID and year. If `bind =
+#'   FALSE`, then `join` will be set to `FALSE` and the function argument
+#'   ignored.
+#'
+#' @return Depending on argument combination, the chain will return one of the
+#'   following objects:
+#'
+#' 1. `bind = FALSE, join = FALSE`: A list of files with no further
+#' processing (each unique complete data file required returned as a list item).
+#' 2. `bind = TRUE, join = FALSE`: A list of files in which like files
+#' (e.g., HD*, IC*) are row bound together but unjoined to unlike files
+#' 3. `bind = TRUE, join = TRUE`: A data frame in which like files
+#' are bound and all are joined
+#'
+#' NOTE: The more complicated the data call (many selected variables, many
+#' selected years, more complex filter), the longer the data request may take,
+#' particularly if downloading files, and the greater the likelihood of
+#' unexpected behavior with the join. Users may wish to break up large complex
+#' requests into multiple smaller requests or elect to return a list of unbound
+#' / unjoined data frames they can manipulate directly.
+#'
+#' @examples
+#' \dontrun{
+#' # default: bind = TRUE, join = TRUE
+#' ipeds_get()
+#'
+#' # bind only
+#' ipeds_get(join = FALSE)
+#'
+#' # non-bind, non-join
+#' ipeds_get(bind = FALSE, join = FALSE)
+#' ipeds_get(bind = FALSE) # join will be set to FALSE by default
+#' }
 #'
 #' @export
 ipeds_get <- function(ipedscall, bind = TRUE, join = TRUE) {

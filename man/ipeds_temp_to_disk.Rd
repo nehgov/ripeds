@@ -20,7 +20,7 @@ directory.}
 
 \item{remove_from_tempdir}{Remove files from temporary directory after saving
 in local directory (they otherwise will be removed at the end of the R
-session by default).}
+session by default). Default is \code{FALSE}.}
 
 \item{create_dir}{Recursively create directory path specified by user if it
 does not exist. Default is \code{TRUE}.}
@@ -30,4 +30,22 @@ Save IPEDS data files (zip) stored in temporary directory to disk for future
 use. By default, the function saves a copy of the files in the local
 directory while leaving a copy in the temporary directory. In addition the
 function will create subdirectories as necessary to save the files.
+}
+\examples{
+\dontrun{
+# save any files in tempdir() that match names from ipeds_file_table() to
+# local directory, preferring local copies, or, if missing, creating
+# directory if necessary; files will be left in tempdir() until session is closed
+ipeds_temp_to_disk(local_dir = ".")
+
+# will error if directory does not exist
+ipeds_temp_to_disk(local_dir = file.path(".", "data"), create_dir = FALSE)
+
+# overwrite local versions of files if they exist
+ipeds_temp_to_disk(local_dir = ".", overwrite = TRUE)
+
+# remove saved files from tempdir() after copy
+ipeds_temp_to_disk(local_dir = ".", remove_from_tempdir = TRUE)
+}
+
 }

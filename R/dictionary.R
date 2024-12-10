@@ -19,6 +19,46 @@
 #' @param print_off Do not print to console; useful if you only want to return a
 #'   tibble of dictionary values.
 #'
+#' @section Interactive dictionary:
+#'
+#' When using `ipeds_dict()` interactively (the default), formatted output will
+#' be returned to the console.
+#'
+#' ```r
+#' > ipeds_dict("efydesom")
+#'
+#' =====================================================================
+#' VARIABLE: efydesom
+#' =====================================================================
+#'
+#' :::::::::::::::::::          DESCRIPTION          :::::::::::::::::::
+#'
+#' Students enrolled in some but not all distance education courses
+#'
+#' :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#'
+#' ../FILES
+#'
+#'  |__ EFFY2020_DIST*
+#'  |__ EFFY2021_DIST*
+#'  |__ EFFY2022_DIST*
+#'  |__ EFFY2023_DIST*
+#'
+#'  * Denotes a long file in which institutions may have more than one
+#'  record (UNITID values repeated across multiple rows).
+#'
+#' =====================================================================
+#' Printed information for 1 of out 1 variables.
+#' ```
+#'
+#' Output includes:
+#'
+#' * Variable name
+#' * Each unique description found across dictionary files provided by NCES
+#' * All complete data files in which the variable with that description is found
+#' * A flag (*) if necessary to denote the data file is a long file
+#' * A note to indicate if more results are available than the limit are available
+#'
 #' @examples
 #' \dontrun{
 #' ## simple search for "state" in any part of the dictionary

@@ -11,13 +11,30 @@
 #'   directory.
 #' @param remove_from_tempdir Remove files from temporary directory after saving
 #'   in local directory (they otherwise will be removed at the end of the R
-#'   session by default).
+#'   session by default). Default is `FALSE`.
 #' @param create_dir Recursively create directory path specified by user if it
 #'   does not exist. Default is `TRUE`.
 #'
+#' @examples
+#' \dontrun{
+#' # save any files in tempdir() that match names from ipeds_file_table() to
+#' # local directory, preferring local copies, or, if missing, creating
+#' # directory if necessary; files will be left in tempdir() until session is closed
+#' ipeds_temp_to_disk(local_dir = ".")
+#'
+#' # will error if directory does not exist
+#' ipeds_temp_to_disk(local_dir = file.path(".", "data"), create_dir = FALSE)
+#'
+#' # overwrite local versions of files if they exist
+#' ipeds_temp_to_disk(local_dir = ".", overwrite = TRUE)
+#'
+#' # remove saved files from tempdir() after copy
+#' ipeds_temp_to_disk(local_dir = ".", remove_from_tempdir = TRUE)
+#' }
+#'
 #' @export
 ipeds_temp_to_disk <- function(to_dir, overwrite = FALSE, remove_from_tempdir = FALSE,
-                              create_dir = TRUE) {
+                               create_dir = TRUE) {
   ## check path and create if doesn't exist (or give warning if user sets
   ## create_directory = FALSE
   if (!dir.exists(to_dir)) {

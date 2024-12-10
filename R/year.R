@@ -4,7 +4,7 @@
 #'
 #' @param ipedscall Current list of parameters carried forward from prior
 #'     functions in the chain (ignore)
-#' @param year Four-digit year or string \code{latest} for latest data.
+#' @param year Four-digit year or numeric vector of years.
 #'
 #' @section Important notes:
 #' \enumerate{
@@ -18,6 +18,7 @@
 #' @examples
 #' \dontrun{
 #' ipeds_year(2012)
+#' ipeds_year(c(2010, 2012, 2014))
 #' ipeds_year(2010:2013)
 #' }
 

@@ -4,14 +4,28 @@
 \name{ripeds-package}
 \alias{ripeds}
 \alias{ripeds-package}
-\title{ripeds: Download and Manipulate Integrated Postsecondary Education Data System (IPEDS) Data}
+\title{Download and Manipulate Integrated Postsecondary Education Data System (IPEDS) Data}
 \description{
-Download and manipulate Integrated Postsecondary Education Data System (IPEDS) complete data files using a series of piped functions to facilitate.
+Download and manipulate Integrated Postsecondary Education Data System (IPEDS) complete data files using a series of piped functions.
+}
+\details{
+The \code{ripeds} R package provides a series of piped functions to facilitate
+downloading Department of Education Integrated Postsecondary Education Data
+System (IPEDS) complete data files.
+
+Use \code{ipeds_dict()} to help find variable names and available years. Next
+perform a data pull using a chain of piped commands. All command pipes must
+start with \code{ipeds_init()}, end with \code{ipeds_get()}, and be linked with the
+base pipe, \verb{|>}, or magrittr pipe function, \verb{\%>\%}. Internal commands,
+\code{ipeds_select()}, \code{ipeds_filter()}, and \code{ipeds_year()} come in any order in
+the pipe chain. Only \code{ipeds_select()} is required in addition to
+\code{ipeds_init()} and \code{ipeds_get()}.
 }
 \seealso{
 Useful links:
 \itemize{
   \item \url{https://potential-adventure-6knn6m6.pages.github.io/}
+  \item Report bugs at \url{https://github.com/nehgov/ripeds/issues}
 }
 
 }
@@ -19,4 +33,4 @@ Useful links:
 \strong{Maintainer}: Benjamin Skinner \email{bskinner@neh.gov} (\href{https://orcid.org/0000-0002-0337-7415}{ORCID})
 
 }
-\keyword{internal}
+\keyword{package}

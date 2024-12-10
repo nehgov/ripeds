@@ -5,15 +5,18 @@ Authors@R: person("Benjamin", "Skinner",
            email = "bskinner@neh.gov",
            role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-0337-7415"))
-Description: Download and manipulate Integrated Postsecondary Education Data System (IPEDS) complete data files using a series of piped functions to facilitate.
+Description: Download and manipulate Integrated Postsecondary Education Data
+    System (IPEDS) complete data files using a series of piped functions.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Imports: rvest
-Depends: 
+Depends:
     R (>= 3.5)
-Suggests: 
+Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 URL: https://potential-adventure-6knn6m6.pages.github.io/
+BugReports: https://github.com/nehgov/ripeds/issues
+Config/Needs/website: rmarkdown

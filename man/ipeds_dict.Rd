@@ -41,6 +41,48 @@ tibble of dictionary values.}
 \description{
 This function is used to search the IPEDS data dictionary.
 }
+\section{Interactive dictionary}{
+
+
+When using \code{ipeds_dict()} interactively (the default), formatted output will
+be returned to the console.
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{> ipeds_dict("efydesom")
+
+=====================================================================
+VARIABLE: efydesom
+=====================================================================
+
+:::::::::::::::::::          DESCRIPTION          :::::::::::::::::::
+
+Students enrolled in some but not all distance education courses
+
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+../FILES
+
+ |__ EFFY2020_DIST*
+ |__ EFFY2021_DIST*
+ |__ EFFY2022_DIST*
+ |__ EFFY2023_DIST*
+
+ * Denotes a long file in which institutions may have more than one
+ record (UNITID values repeated across multiple rows).
+
+=====================================================================
+Printed information for 1 of out 1 variables.
+}\if{html}{\out{</div>}}
+
+Output includes:
+\itemize{
+\item Variable name
+\item Each unique description found across dictionary files provided by NCES
+\item All complete data files in which the variable with that description is found
+\item A flag (*) if necessary to denote the data file is a long file
+\item A note to indicate if more results are available than the limit are available
+}
+}
+
 \examples{
 \dontrun{
 ## simple search for "state" in any part of the dictionary
