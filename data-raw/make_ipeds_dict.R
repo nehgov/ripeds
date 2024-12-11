@@ -16,7 +16,7 @@
 
 base_url <- "https://nces.ed.gov/ipeds/datacenter/data"
 f_ending <- "_Dict.zip"
-zipf_dir <- file.path("..", "_zip")
+zipf_dir <- file.path(".", "_zip")
 data_dir <- file.path(zipf_dir, "data")
 dict_dir <- file.path(zipf_dir, "dict")
 
@@ -29,35 +29,33 @@ parse_xlsx <- function(zipfile, dfile) {
   f <- unzip(zipfile, dfile, exdir = tempdir())
   sheets <- readxl::excel_sheets(f)
   sname <- sheets[grepl("[V|v]arlist", sheets)]
-  out <- readxl::read_excel(f, sheet = sname)
+  out <- readxl::read_excel(f, sheet = sname) |>
+     dplyr::filter(tolower(varname) != "unitid")
   invisible(file.remove(f))
   out
 }
 
 ## pull information from html files
-parse_html <- function(zipfile, dfile, dfvarname) {
-  ## ## unzip file
-  ## f <- unzip(zipfile, dfile, exdir = tempdir())
-  ## ## read in html
-  ## f <- readLines(f, warn = FALSE)
-  ## ## strip unicode
-  ## f <- iconv(f, "latin1", "ascii", sub = "")
-  ## ## keep only those that:
-  ## ## 1. start with text
-  ## ## 2. start with <br><br>TEXT and end with <hr>
-  ## ## reg1 <- "^[[:upper:][:digit:]]{3,}.+-?[[:digit:]]*- ?[[:upper:]].+$"
-  ## f <- grep("^[[:upper:][:digit:]]{3,}.+-[[:digit:]]+-[[:alpha:]].+$|<br><br>\\w.+</table><hr>", f, value = TRUE)
-  ## ## pull out relevant variable name for the <br><br> values
-  ## f <- gsub("^<br><br>.+</table><hr>(.+)$", "\\1", f)
-  ## ## split
-  ## varname <- gsub("^([[:upper:][:digit:]]{3,}_?[[:alnum:]]*)-.+$", "\\1", f)
-  ## vartitle <- gsub("^([[:upper:][:digit:]]{3,}_?[[:alnum:]]*)-([[:digit:]]*)?-?([Imputation]*.+)$", "\\3", f)
-  ## ## put into tibble
-  ## dplyr::tibble(varname = varname,
-  ##               vartitle = vartitle)
-  fname <- tools::file_path_sans_ext(basename(zipfile)) |> gsub(pattern = "_Dict", replacement = "")
-  dplyr::tibble(varname = dfvarname |> dplyr::filter(file_name == fname) |> dplyr::pull(varname),
-                vartitle = dfvarname |> dplyr::filter(file_name == fname) |> dplyr::pull(varname))
+parse_html <- function(zipfile, dfile, dfvars) {
+  ## unzip file
+  f <- unzip(zipfile, dfile, exdir = tempdir())
+  ## read in html
+  f <- readLines(f, warn = FALSE)
+  ## strip unicode
+  f <- iconv(f, "latin1", "ascii", sub = "")
+  ## split on <hr>
+  f <- unlist(strsplit(f, "<hr>"))
+  ## get row associated with var
+  f <- lapply(dfvars |> tolower(), \(x) f[grepl(paste0("^\\b", x, "\\b-"), f |> tolower())])
+  ## set regex
+  exp <- paste0("^([[:upper:][:digit:]]{3,}_?[[:alnum:]]*)", # (1) varname
+                "( ?- ?[[:digit:]]*)? ?- ?",                 # (2) varcode (note always there)
+                "([Imputation]*.+)$")                        # (3) vartitle
+  ## get vartitle
+  vartitle <- gsub(exp, "\\3", f)
+  ## put into tibble
+  dplyr::tibble(varname = dfvars,
+                vartitle = vartitle)
 }
 
 ## patch bad column names (as of 10 October 2024)
@@ -84,11 +82,12 @@ get_revised_if <- function(flist) {
 ## pull variable names from zipped data files and patch as needed
 get_varnames <- function(zipfile) {
   flist <- unzip(zipfile, list = TRUE)
-  fname <- get_revised_if(flist[["Name"]])
+  fname <- get_revised_if(flist)
   varname <- readr::read_csv(unz(zipfile, fname),
                              n_max = 0,
                              show_col_types = FALSE,
-                             name_repair = "unique") |>
+                             name_repair = "unique",
+                             progress = FALSE) |>
     names()
   varname <- patch_varname(varname)
 }
@@ -96,10 +95,11 @@ get_varnames <- function(zipfile) {
 ## set up indicator for long files
 get_longfiles <- function(zipfile) {
   flist <- unzip(zipfile, list = TRUE)
-  fname <- get_revised_if(flist[["Name"]])
+  fname <- get_revised_if(flist)
   max_count <- readr::read_csv(unz(zipfile, fname),
                                show_col_types = FALSE,
-                               name_repair = "unique") |>
+                               name_repair = "unique",
+                               progress = FALSE) |>
     dplyr::rename_all(tolower) |>
     dplyr::count(unitid) |>
     dplyr::summarise(n = max(n)) |>
@@ -115,10 +115,10 @@ get_longfiles <- function(zipfile) {
 dfiles <- list.files(data_dir)
 
 ## get column names attached to file
-df <- purrr::map(dfiles,
-                 ~ dplyr::tibble(file_name = tools::file_path_sans_ext(.x),
-                                 varname = get_varnames(file.path(data_dir, .x)))
-                 ) |>
+df_vars <- purrr::map(dfiles,
+                      ~ dplyr::tibble(file_name = tools::file_path_sans_ext(.x),
+                                      varname = get_varnames(file.path(data_dir, .x)))
+                      ) |>
   dplyr::bind_rows()
 
 ## get file names that are long
@@ -161,7 +161,12 @@ for (i in 1:length(dict)) {
   if (ftype %in% c("xlsx", "xls")) {
     out <- parse_xlsx(file.path(tdir, zipf), fname)
   } else {
-    out <- parse_html(file.path(tdir, zipf), fname, df)
+    ## subset variables for file
+    dfvars <- df_vars |>
+      dplyr::filter(file_name == itab[["file"]][i],
+                    tolower(varname) != "unitid") |>
+      dplyr::pull(varname)
+    out <- parse_html(file.path(tdir, zipf), fname, dfvars)
   }
   ## munge and add to list
   dict[[i]] <- out |>
