@@ -109,11 +109,22 @@ ipeds_get <- function(ipedscall, bind = TRUE, join = TRUE) {
     if (!bind) {
       return(unname(flist))
     } else if (bind) {
+      if (length(flist) == 1) {
+        if (join) {
+          return(flist[[1]])
+        } else {
+          return(unname(flist))
+        }
+      }
       bflist <- bind_like_files(flist, s_dict)
       if (join) {
-        join_all_files(bflist)
+        if (length(bflist) > 1) {
+          join_all_files(bflist)
+        } else {
+          return(bflist[[1]])
+        }
       } else {
-        return(bflist)
+        return(unname(bflist))
       }
     }
   })
@@ -162,6 +173,10 @@ bind_like_files <- function(df_list, dict) {
   })
   lname_groups <- bind_rows_df(lname_groups)
   lname_groups <- make_distinct(lname_groups)
+  if (is.vector(lname_groups)) {
+    names(df_list) <- NULL
+    return(df_list)
+  }
   ## row bind those from like files
   outlist <- apply(lname_groups, 1, function(x) {
     fn <- c(stats::na.omit(unlist(x)))
@@ -169,7 +184,7 @@ bind_like_files <- function(df_list, dict) {
     row.names(out) <- NULL
     out
   })
-  ## remove row names and return
+  ## remove list names and return
   names(outlist) <- NULL
   return(outlist)
 }
