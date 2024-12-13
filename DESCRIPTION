@@ -1,6 +1,6 @@
 Package: ripeds
 Title: Download and Manipulate Integrated Postsecondary Education Data System (IPEDS) Data
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: person("Benjamin", "Skinner",
            email = "bskinner@neh.gov",
            role = c("aut", "cre"),
