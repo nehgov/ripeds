@@ -133,7 +133,7 @@ ipeds_dict <- function(search_string,
   ## return message if 0
   ## ----------------------
   if (length(vals) == 0) {
-    return(cat("\nNo matches! Try again with new string or column.\n\n"))
+    stop("\nNo matches! Try again with new string or column.\n\n", call. = FALSE)
   }
 
   ## ----------------------

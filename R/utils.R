@@ -196,6 +196,9 @@ confirm_chain <- function(x) {
     ## 3. contains "ipeds_init_list" == TRUE
   } else if (is.list(x) && length(x) > 1 && x[["ipeds_init_list"]]) {
     res
+    ## if no try-error, but ipeds_year() is called, this will catch that
+  } else if (all(!is.na(as.numeric(x))) | is.numeric(x)) {
+    stop(m, call. = FALSE)
   }
 }
 
