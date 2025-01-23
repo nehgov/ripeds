@@ -7,7 +7,8 @@
 ipeds_download_to_disk(
   to_dir,
   files = NULL,
-  ipeds_dict = NULL,
+  use_ipeds_dict = NULL,
+  type = c("data", "dictionary"),
   overwrite = FALSE,
   create_dir = TRUE
 )
@@ -19,9 +20,11 @@ not exist unless \code{create_dir} is set to \code{FALSE}).}
 \item{files}{Vector of survey file names without ending to download (e.g.,
 HD2023).}
 
-\item{ipeds_dict}{Output from \code{\link[=ipeds_dict]{ipeds_dict()}} in which \code{return_dict = TRUE};
+\item{use_ipeds_dict}{Output from \code{\link[=ipeds_dict]{ipeds_dict()}} in which \code{return_dict = TRUE};
 if argument isn't missing, it will be chosen over input to files argument
 if also included.}
+
+\item{type}{Download the data file (default) or associated dictionary file.}
 
 \item{overwrite}{Overwrite files on local directory with those in temporary
 directory. Default is \code{FALSE} (keep already existing files).}
@@ -45,6 +48,9 @@ ipeds_download_to_disk(".", files)
 # using return from ipeds_file_table() to down all 2020 files
 dict <- ipeds_file_table()
 ipeds_download_to_disk(".", ipeds_dict = dict[dict$year == 2020,])
+
+# download associated dictionary files
+ipeds_download_to_disk(".", c("HD2020", "HD2021"), type = "dictionary")
 }
 
 }

@@ -76,9 +76,10 @@ ipeds_temp_to_disk <- function(to_dir, overwrite = FALSE, remove_from_tempdir = 
 #'   not exist unless `create_dir` is set to `FALSE`).
 #' @param files Vector of survey file names without ending to download (e.g.,
 #'   HD2023).
-#' @param ipeds_dict Output from [ipeds_dict()] in which `return_dict = TRUE`;
+#' @param use_ipeds_dict Output from [ipeds_dict()] in which `return_dict = TRUE`;
 #'   if argument isn't missing, it will be chosen over input to files argument
 #'   if also included.
+#' @param type Download the data file (default) or associated dictionary file.
 #' @param overwrite Overwrite files on local directory with those in temporary
 #'   directory. Default is `FALSE` (keep already existing files).
 #' @param create_dir Recursively create directory path specified by user if it
@@ -95,15 +96,19 @@ ipeds_temp_to_disk <- function(to_dir, overwrite = FALSE, remove_from_tempdir = 
 #' # using return from ipeds_file_table() to down all 2020 files
 #' dict <- ipeds_file_table()
 #' ipeds_download_to_disk(".", ipeds_dict = dict[dict$year == 2020,])
+#'
+#' # download associated dictionary files
+#' ipeds_download_to_disk(".", c("HD2020", "HD2021"), type = "dictionary")
 #' }
 #'
 #' @export
-ipeds_download_to_disk <- function(to_dir, files = NULL, ipeds_dict = NULL,
+ipeds_download_to_disk <- function(to_dir, files = NULL, use_ipeds_dict = NULL,
+                                   type = c("data", "dictionary"),
                                    overwrite = FALSE, create_dir = TRUE) {
   ## choose dictionary first
   using_dict <- FALSE
-  if (!is.null(ipeds_dict)) {
-    files <- make_distinct(ipeds_dict, "filename")[["filename"]]
+  if (!is.null(use_ipeds_dict)) {
+    files <- make_distinct(use_ipeds_dict, "filename")[["filename"]]
     using_dict <- TRUE
   }
   ## confirm files in IPEDS
@@ -130,6 +135,10 @@ ipeds_download_to_disk <- function(to_dir, files = NULL, ipeds_dict = NULL,
            .call = FALSE)
     }
   }
+  ## set ending if dictionary files are chosen
+  if (match.arg(type) == "dictionary") {
+    files <- paste0(files, "_Dict")
+  }
   ## check for already downloaded
   if (!overwrite) {
     existing <- tools::file_path_sans_ext(list.files(to_dir))
@@ -151,7 +160,7 @@ ipeds_download_to_disk <- function(to_dir, files = NULL, ipeds_dict = NULL,
   ## set base url
   base_url <- "https://nces.ed.gov/ipeds/datacenter/data"
   ## loop through
-  for (i in length(fzipvec)) {
+  for (i in 1:length(fzipvec)) {
     f <- fzipvec[i]
     if (!file.exists(file.path(to_dir, f))) {
       ## download to local directory
