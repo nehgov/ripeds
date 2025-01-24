@@ -1,0 +1,140 @@
+---
+title: "Batch download files"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Depending on your analysis, you may wish to download a number of data files to
+your hard disk. This can save time when working on large scale projects. In
+addition, downloading and saving the raw data files used in your analysis can
+support future reproduction. Should files on the server be revised or modified,
+you will have a copy of the files as they existed at the time of your original
+analysis.
+
+You can also download the dictionary files that accompany each complete data
+file. While `iped_dict()` provides useful information, the full data files may
+contain more detailed definitions and distributional information (_e.g._,
+frequencies, means, _etc._).
+
+
+```{r setup}
+library(ripeds)
+```
+
+## `ipeds_download_to_disk()`
+
+To download either complete data files or the accompanying dictionary files, use
+the `ipeds_download_to_disk()` function.
+
+There are two basic ways to download the files:
+
+1. Using file names directly;
+1. Using results from the helper function `ipeds_file_table()`
+   
+### Using file names
+
+If you know the file names you need, you can use them directly. Be sure to give
+a local directory for the download. If the directory doesn't exist, R will try
+to create it, unless you set `create_dir = FALSE`.
+
+```r
+## single file to current working directory
+ipeds_download_to_disk(to_dir = ".", files = "IC2022")
+```
+
+Note that you do not need to specify the file ending, only the file stub name.
+Whichever files you choose, you will end up with a zip file
+(<file\_stub\_name.zip>: `IC2022.zip`) that contains:
+
+1. The CSV file (typically lowercase): `ic2022.csv`
+1. A revised version of the file, if one exists, ending in `*_rv`: `ic2022_rv.csv` 
+
+You can pass an object with vector of names.
+
+```r
+## multiple files stored in object
+files_to_get <- c("IC2020", "IC2021", "IC2022")
+ipeds_download_to_disk(to_dir = ".", files = files_to_get)
+```
+The zipped version of each of these files will be downloaded to the `to_dir`.
+
+### Using results from helper function `ipeds_file_table()`
+
+If you don't know the specific file names or simply want to download a larger
+number of files without listing them all, you can use results from
+`ipeds_file_table()`.
+
+For example, if you want to download all files associated with 2020, you can
+filter the results of `ipeds_file_table()` to that year:
+
+```r
+## save results from ipeds_file_table() to object
+dict <- ipeds_file_table()
+```
+```r
+## pull all files from 2020
+ipeds_download_to_disk(".", use_ipeds_dict = dict[dict$year == 2020,])
+```
+
+Note that for files with academic year naming conventions (_e.g._, 9899), the
+fall semester is the year associated with the file: 2020 will select 20-21 files.
+
+You can also filter on other values. Broadly, IPEDS survey components fall into
+a few categories:
+
+```{r}
+dict$surve |> unique()
+```
+
+You can filter to return all **Institutional Characteristics** survey files:
+
+```r
+## download all surveys under the Institutional Characteristics category
+ipeds_download_to_disk(".", use_ipeds_dict = dict[dict$survey == "Institutional Characteristics",])
+```
+
+You can filter by key words in the survey titles. For example, if you
+want to save all files related to directory information:
+
+```r
+## download using regular expressions to grab files with "Directory" in title
+ipeds_download_to_disk(".", use_ipeds_dict = dict[grepl("Directory", dict$title),])
+```
+
+Finally, you can download the entirety of IPEDS if you use `ipeds_file_table()` with no filter:
+
+```r
+## download all files
+ipeds_download_to_disk(".", use_ipeds_dict = dict)
+```
+
+Note, however, that IPEDS is very large. It both will take a while to download
+and take up substantial disk space (> 1GB as of January 2025). 
+
+## Dictionary files
+
+Download accompanying dictionary files by setting `type = "dictionary"`:
+  
+```r
+## get dictionary file
+ipeds_download_to_disk(".", "IC2020", type = "dictionary")
+```
+
+These files will be named using the stub name plus `*_Dict` ending and also
+stored inside a zip directory: _e.g._, `IC2020_Dict.zip`.
+
+## Overwrite
+
+By default, `ipeds_download_to_disk()` won't overwrite existing files. This is
+to save time and bandwidth. If you wish to download all input files, set `overwrite = TRUE`:
+
+```r
+## overwrite
+files_to_get <- c("IC2020", "IC2021", "IC2022")
+ipeds_download_to_disk(to_dir = ".", files = files_to_get, overwrite = TRUE)
+```
