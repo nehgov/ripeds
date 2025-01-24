@@ -85,13 +85,8 @@ Note that for files with academic year naming conventions (_e.g._, 9899), the
 fall semester is the year associated with the file: 2020 will select 20-21 files.
 
 You can also filter on other values. Broadly, IPEDS survey components fall into
-a few categories:
-
-```{r}
-dict$surve |> unique()
-```
-
-You can filter to return all **Institutional Characteristics** survey files:
+a few categories. You can filter to return all **Institutional Characteristics**
+survey files:
 
 ```r
 ## download all surveys under the Institutional Characteristics category
