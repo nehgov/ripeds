@@ -9,7 +9,7 @@
 
 ## make ascii hline
 hline <- function(nchar, symbol = "-") {
-  paste(rep("", nchar), collapse = symbol)
+  paste(rep(symbol, nchar), collapse = "")
 }
 
 ## paste varlist into single string separated by OR operator for inclusive

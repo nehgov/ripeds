@@ -226,28 +226,28 @@ ipeds_dict <- function(search_string,
         cat("\n")
         if (length(udesc) > 1) {
           if (j < 10) {
-            desch <- hline(20, ":") %+%
+            desch <- hline(19, ":") %+%
               hline(9, " ") %+%
               "DESCRIPTION (" %+%
               j %+% ")" %+%
-              hline(9, " ") %+%
-              hline(20, ":") %+%
+              hline(8, " ") %+%
+              hline(19, ":") %+%
               "\n\n"
           } else {
-            desch <- hline(20, ":")  %+%
-              hline(9, " ") %+%
+            desch <- hline(19, ":")  %+%
+              hline(8, " ") %+%
               "DESCRIPTION (" %+%
               j %+%
               ")" %+%
               hline(8, " ") %+%
-              hline(20, ":") %+%
+              hline(19, ":") %+%
               "\n\n"
           }
         } else {
           desch <- hline(20, ":") %+%
-            hline(11, " ") %+%
+            hline(10, " ") %+%
             "DESCRIPTION" %+%
-            hline(11, " ") %+%
+            hline(9, " ") %+%
             hline(20, ":") %+%
             "\n\n"
         }
