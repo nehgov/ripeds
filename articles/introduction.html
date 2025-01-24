@@ -87,8 +87,80 @@
 
     
     
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://potential-adventure-6knn6m6.pages.github.io/" class="external-link">ripeds</a></span><span class="op">)</span></span></code></pre></div>
+<div class="section level2">
+<h2 id="integrated-postsecondary-education-data-system">Integrated Postsecondary Education Data System<a class="anchor" aria-label="anchor" href="#integrated-postsecondary-education-data-system"></a>
+</h2>
+<p>For those interested in data in higher education institutions in the
+United States, IPEDS is an invaluable resource. What is IPEDS? From the
+National Center for Education Statistics (NCES) <a href="https://nces.ed.gov/ipeds/about-ipeds" class="external-link">web site</a>:</p>
+<blockquote>
+<p>IPEDS is the Integrated Postsecondary Education Data System. It is a
+system of interrelated surveys conducted annually by the U.S. Department
+of Education’s National Center for Education Statistics (NCES). IPEDS
+gathers information from every college, university, and technical and
+vocational institution that participates in the federal student
+financial aid programs. The Higher Education Act of 1965, as amended,
+requires that institutions that participate in federal student aid
+programs report data on enrollments, program completions, graduation
+rates, faculty and staff, finances, institutional prices, and student
+financial aid.</p>
+</blockquote>
+<p>IPEDS covers most higher education institutions (though not all):</p>
+<blockquote>
+<p>The completion of all IPEDS surveys is mandatory for institutions
+that participate in or are applicants for participation in any federal
+student financial aid program (such as Pell grants and federal student
+loans) authorized by Title IV of the Higher Education Act of 1965, as
+amended (20 USC 1094, Section 487(a)(17) and 34 CFR 668.14(b)(19)).</p>
+</blockquote>
+<blockquote>
+<p>Institutions that complete IPEDS surveys each year include research
+universities, state colleges and universities, private religious and
+liberal arts colleges, for-profit institutions, community and technical
+colleges, non-degree-granting institutions such as beauty colleges, and
+others.</p>
+</blockquote>
+</div>
+<div class="section level2">
+<h2 id="using-ipeds">Using IPEDS<a class="anchor" aria-label="anchor" href="#using-ipeds"></a>
+</h2>
+<p>There are a number of ways to use IPEDS data. For information on
+single institutions, a person can use the <a href="https://nces.ed.gov/collegenavigator/" class="external-link">College Navigator</a>. NCES
+also provides a [Data Explorer}(<a href="https://nces.ed.gov/ipeds/search" class="external-link uri">https://nces.ed.gov/ipeds/search</a>) with a number pre-made
+tables that some may find sufficient.</p>
+<p>For researchers interested in analyses across many institutions,
+however, the complete data files, either as shared via Microsoft Access
+databases or separate CSV files are the most useful. Whereas Access
+databases go back to the 2004-2005 school year, the CSV versions of the
+data files contain some information as far back as 1980.</p>
+</div>
+<div class="section level2">
+<h2 id="ipeds-does-not-have-an-api-and-is-complex">IPEDS does not have an API and is complex<a class="anchor" aria-label="anchor" href="#ipeds-does-not-have-an-api-and-is-complex"></a>
+</h2>
+<p>Unlike some other federal data sources on higher education (like the
+<a href="https://collegescorecard.ed.gov" class="external-link">College Scorecard</a>), IPEDS
+does not have an API that allows users to directly pull data for
+analyses or applications.</p>
+<p>In addition, the structure of IPEDS can be complex. Downloading
+separate CSV files requires users to both understand where to find
+variables of interest and how to append / join these files into a single
+data frame that can be analyzed.</p>
+</div>
+<div class="section level2">
+<h2 id="purpose-of-ripeds">Purpose of <code>ripeds</code><a class="anchor" aria-label="anchor" href="#purpose-of-ripeds"></a>
+</h2>
+<p>The purpose of this package is threefold:</p>
+<ol style="list-style-type: decimal">
+<li>To provide an API-like interface between IPEDS and R;</li>
+<li>To facilitate finding and pulling relevant variables without
+requiring detailed knowledge IPEDS’s structure via an interactive
+dictionary function;</li>
+<li>To make it easy to batch download large parts of IPEDS (including
+full dictionary files) for power users who need to save the original
+files on their machine, but would like an easier and automated way of
+getting them.</li>
+</ol>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
