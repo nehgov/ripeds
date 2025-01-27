@@ -15,7 +15,6 @@
 ^docs$
 ^vignettes$
 ^CODE_OF_CONDUCT\.md$
-^test_api_pulls$
 ^\.github$
 ^_zip$
 ^_pkgdown\.yml$
