@@ -1,0 +1,11 @@
+url: https://potential-adventure-6knn6m6.pages.github.io/
+template:
+  bootstrap: 5
+
+articles:
+  - title: Introduction
+    contents: "articles/introduction.Rmd"
+  - title: Workflow
+    contents: "articles/workflow.Rmd"
+  - title: Batch download
+    contents: "articles/batch_download.Rmd"
