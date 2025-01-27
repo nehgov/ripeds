@@ -4,8 +4,8 @@ template:
 
 articles:
   - title: Introduction
-    contents: "articles/introduction.Rmd"
+    contents: "introduction.Rmd"
   - title: Workflow
-    contents: "articles/workflow.Rmd"
+    contents: "workflow.Rmd"
   - title: Batch download
-    contents: "articles/batch_download.Rmd"
+    contents: "batch_download.Rmd"
