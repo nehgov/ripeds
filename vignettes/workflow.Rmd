@@ -1,5 +1,11 @@
 ---
 title: "Workflow"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Workflow}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+  % VignetteDepends{tidyverse}
 ---
 
 ```{r, include = FALSE}
@@ -9,6 +15,108 @@ knitr::opts_chunk$set(
 )
 ```
 
+# Setup
+
 ```{r setup}
 library(ripeds)
+library(tidyverse)
 ```
+
+# Example 1: institution locations
+
+## Search dictionary
+```{r}
+ipeds_dict("longitude|latitude")
+```
+
+## Pull most recent year
+
+```{r}
+df <- ipeds_init() |>
+  ipeds_select(latitude, longitud) |>
+  ipeds_year(2023) |> 
+  ipeds_get() |>
+  as_tibble()
+```
+```{r}
+df
+```
+
+## Pull past 10 years
+
+```{r}
+df <- ipeds_init() |>
+  ipeds_select(latitude, longitud) |>
+  ipeds_year(2014:2023) |> 
+  ipeds_get() |>
+  as_tibble()
+```
+```{r}
+df
+```
+
+## Add other useful variables
+
+```{r}
+df <- ipeds_init() |>
+  ipeds_select(instnm, sector, latitude, longitud) |>
+  ipeds_year(2014:2023) |>
+  ipeds_filter(stabbr == "KY") |> 
+  ipeds_get() |>
+  as_tibble()
+```
+```{r}
+df
+```
+
+
+# Example 2: exclusively online students
+
+## Searching
+
+```{r}
+ipeds_dict("distance")
+```
+
+
+```{r}
+ipeds_dict("efde", search_col = "varname")
+```
+
+
+```{r}
+df <- ipeds_init() |>
+  ipeds_select(efdeexc) |>
+  ipeds_year(2022) |> 
+  ipeds_get() |>
+  as_tibble()
+```
+```{r}
+df
+```
+
+```{r}
+unzip(file.path(tempdir(), "EF2022A_DIST.zip"), list = T)
+```
+
+
+```{r}
+tmp <- read_csv(unzip(file.path(tempdir(), "EF2022A_DIST.zip"),
+                      "ef2022a_dist_rv.csv")) |>
+  rename_all(tolower)
+```
+
+## Check dictionary file
+
+## Filter
+
+```{r}
+df <- ipeds_init() |>
+  ipeds_select(efdeexc) |>
+  ipeds_filter("efdelev == 2") |> 
+  ipeds_year(2022) |> 
+  ipeds_get() |>
+  as_tibble()
+
+```
+

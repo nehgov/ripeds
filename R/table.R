@@ -42,9 +42,9 @@ ipeds_file_table <- function(redownload = FALSE) {
     base_url <- "https://nces.ed.gov/ipeds/datacenter/DataFiles.aspx"
     opts <- "year=-1&surveyNumber=-1"
     ## get file table
-    download.file(url = paste(base_url, opts, sep = "?"),
-                  destfile = file.path(tempdir(), "scrape.html"),
-                  quiet = TRUE)
+    utils::download.file(url = paste(base_url, opts, sep = "?"),
+                         destfile = file.path(tempdir(), "scrape.html"),
+                         quiet = TRUE)
     ## ftab <- rvest::read_html(paste(base_url, opts, sep = "?"), "utf-8")
     ftab <- rvest::read_html(file.path(tempdir(), "scrape.html"))
     ftab <- rvest::html_element(ftab, "#contentPlaceHolder_tblResult")

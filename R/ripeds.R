@@ -12,6 +12,7 @@
 #' the pipe chain. Only `ipeds_select()` is required in addition to
 #' `ipeds_init()` and `ipeds_get()`.
 #'
+#' @name ripeds
 #' @aliases ripeds-package
-#' @keywords package
+#' @keywords package internal
 "_PACKAGE"

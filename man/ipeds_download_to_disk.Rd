@@ -45,9 +45,9 @@ ipeds_download_to_disk(".", c("HD2020", "HD2021"), overwrite = TRUE)
 files <- c("HD2020", "HD2021")
 ipeds_download_to_disk(".", files)
 
-# using return from ipeds_file_table() to down all 2020 files
+# using return from ipeds_file_table() to download all 2020 files
 dict <- ipeds_file_table()
-ipeds_download_to_disk(".", ipeds_dict = dict[dict$year == 2020,])
+ipeds_download_to_disk(".", use_ipeds_dict = dict[dict$year == 2020,])
 
 # download associated dictionary files
 ipeds_download_to_disk(".", c("HD2020", "HD2021"), type = "dictionary")

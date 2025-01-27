@@ -1,11 +1,49 @@
 url: https://potential-adventure-6knn6m6.pages.github.io/
+
+
 template:
   bootstrap: 5
 
+navbar:
+  title: "ripeds"
+  left:
+    - icon: fa-home fa-lg
+      href: index.html
+      aria-label: Get started
+    - text: "Vignettes"
+      href: articles/index.html
+    - text: "Functions"
+      href: reference/index.html
+    - text: "News"
+      href: news/index.html
+
 articles:
-  - title: Introduction
-    contents: "introduction.Rmd"
-  - title: Workflow
-    contents: "workflow.Rmd"
-  - title: Batch download
-    contents: "batch_download.Rmd"
+  - title: "Getting Started"
+    desc: >
+      These vignettes introduce **ripeds**, offer an example workflow, and
+      show how users can batch download complete IPEDS data files.
+    contents:
+      - introduction
+      - workflow
+      - batch_download
+
+reference:
+  - title: Begin and end call
+    contents:
+    - ipeds_init
+    - ipeds_get
+  - title: Select and filter variables
+    contents:
+    - matches('select')
+    - matches('filter')
+    - ipeds_year
+  - title: Search data elements
+    contents:
+    - ipeds_dict
+  - title: Downloading files
+    contents:
+    - ipeds_temp_to_disk
+    - ipeds_download_to_disk
+  - title: Utility
+    contents:
+    - ipeds_file_table
