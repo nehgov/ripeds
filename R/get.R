@@ -119,9 +119,9 @@ ipeds_get <- function(ipedscall, bind = TRUE, join = TRUE) {
       bflist <- bind_like_files(flist, s_dict)
       if (join) {
         if (length(bflist) > 1) {
-          join_all_files(bflist)
+          get_filtered_df(join_all_files(bflist), ipedscall[["filter"]])
         } else {
-          return(bflist[[1]])
+          get_filtered_df(bflist[[1]], ipedscall[["filter"]])
         }
       } else {
         return(unname(bflist))
@@ -196,12 +196,24 @@ join_all_files <- function(bound_outlist, by_vars = c("unitid", "year")) {
 }
 
 ## iteratively work through a data frame, filtering based on list of filters;
-## this assumes and "&" for filters separated by commas
+## this assumes and "&" for filters separated by commas; return data frame of
+## of only unitid and year
 get_filtered_id_years <- function(df, filter_list) {
   df <- subset(df, eval(filter_list[[1]]))
   if (length(filter_list) > 1) {
     get_filtered_id_years(df, filter_list[-1])
   } else {
     return(subset(df, select = c("unitid", "year")))
+  }
+}
+
+## iteratively work through a data frame, filtering based on list of filters;
+## this assumes and "&" for filters separated by commas; return full data frame
+get_filtered_df <- function(df, filter_list) {
+  df <- subset(df, eval(filter_list[[1]]))
+  if (length(filter_list) > 1) {
+    get_filtered_df(df, filter_list[-1])
+  } else {
+    df
   }
 }
