@@ -160,13 +160,19 @@ subset_file_table_by_year <- function(years) {
   ft[ft[["year"]] %in% years, "file"]
 }
 
+## return 1 for long data files
+is_long_file <- function(filename) {
+  lapply(filename, function(x) (file_hash[[x]] %in% long_hash[["long"]]))
+}
+
 ## starting with full ipeds_dict(), subset to only those files and years that
 ## contain variables and years of interest
-subset_dict_by_var_year <- function(search_str, vars_to_keep, years_to_keep) {
+subset_dict_by_var_year <- function(search_str, vars_to_keep, fyears_to_keep) {
   dict <- ipeds_dict(search_str, search_col = "varname", return_dict = TRUE,
                      print_off = TRUE)
   dict <- filter_in(dict, "varname", vars_to_keep)
-  dict <- filter_in(dict, "filename", years_to_keep)
+  dict <- filter_in(dict, "filename", fyears_to_keep)
+  dict[["long"]] <- is_long_file(dict[["filename"]])
   dict
 }
 
