@@ -65,6 +65,9 @@ ipeds_get <- function(ipedscall, bind = TRUE, join = TRUE) {
     ldir <- ipedscall[["ldir"]]
     revf <- ipedscall[["revfiles"]]
 
+    ## init long switch as FALSE
+    long <- FALSE
+
     ## -------------------------------------
     ## filter (if used)
     ## -------------------------------------
@@ -77,6 +80,8 @@ ipeds_get <- function(ipedscall, bind = TRUE, join = TRUE) {
       s_keep_vars <- c(ipedscall[["svars"]], ipedscall[["fvars"]])
       ## create dictionary for filter variables
       f_dict <- subset_dict_by_var_year(f_search_str, f_keep_vars, file_year)
+      ## check if any files necessary for filter are long
+      long <- any(f_dict[["long"]])
       ## get list of files
       flist <- get_file_list(f_dict, ldir, revf)
       ## bind into one large data frame
@@ -106,27 +111,7 @@ ipeds_get <- function(ipedscall, bind = TRUE, join = TRUE) {
     ## -------------------------------------
     ## return
     ## -------------------------------------
-    if (!bind) {
-      return(unname(flist))
-    } else if (bind) {
-      if (length(flist) == 1) {
-        if (join) {
-          return(flist[[1]])
-        } else {
-          return(unname(flist))
-        }
-      }
-      bflist <- bind_like_files(flist, s_dict)
-      if (join) {
-        if (length(bflist) > 1) {
-          get_filtered_df(join_all_files(bflist), ipedscall[["filter"]])
-        } else {
-          get_filtered_df(bflist[[1]], ipedscall[["filter"]])
-        }
-      } else {
-        return(unname(bflist))
-      }
-    }
+    return_by_option(ipedscall, flist, s_dict, bind, join, long)
   })
 }
 
@@ -215,5 +200,112 @@ get_filtered_df <- function(df, filter_list) {
     get_filtered_df(df, filter_list[-1])
   } else {
     df
+  }
+}
+
+## try filter on unjoined data; return original data frame and message if
+## unsuccessful; returned filtered data frame if successful
+try_filter <- function(flist, dict, ipedscall) {
+  file_list <- list()
+  for (i in 1:length(flist)) {
+    ## only pull list elements for long data files
+    if (any(dict[dict[["filename"]] == names(flist)[i], "long"])) {
+      ## possible filters
+      pfilters <- lapply(colnames(flist[[i]]),
+                         function(x) {
+                           grep(x, ipedscall[["filter"]], value = TRUE)
+                         })
+      ## filter to potential filters
+      pfilters <- Filter(function(x) length(x) > 0, pfilters)
+      ## move on if no filter for long
+      if (length(pfilters) == 0) next
+      ## try filters
+      errvec <- c()
+      for (j in pfilters) {
+        flist[[i]] <- tryCatch(subset(flist[[i]],
+                                      subset = eval(parse(text = j[[1]]))),
+                               error = function(e) {
+                                 errvec <<- c(errvec, j[[1]])
+                                 return(flist[[i]])
+                               })
+      }
+
+    }
+    file_list[names(flist)[i]] <- errvec
+  }
+  file_df <- as.data.frame(do.call(rbind, file_list))
+  colnames(file_df) <- ""
+  m <- paste0("An error occurred trying to apply the following filter(s) ",
+              "to complete data file(s):\n", " ",
+              paste(capture.output(file_df), collapse = "\n"), "\n\n",
+              "This error is likely because the filter(s) ",
+              "contain(s) variables not in this complete data file(s), ",
+              "which means it is unlikely the filter(s) worked as ",
+              "expected. Your options are:\n\n",
+              " (1) Filter the returned data set with a new filter\n",
+              " (2) Set ipeds_get(join == TRUE) and rerun to apply the ",
+              "original filter to the fully joined final data set\n",
+              " (3) Rerun using a less complex filter\n")
+  message(m)
+  return(flist)
+}
+
+return_by_option <- function(ipedscall, flist, dict, bind, join, long) {
+  flist_one <- (length(flist) == 1)
+  ## ----------------------
+  ## !bind / !join
+  ## ----------------------
+  if (!bind && long && flist_one) {
+    get_filtered_df(flist[[1]], ipedscall[["filter"]])
+  }
+  if (!bind && long && !flist_one) {
+    flist <- try_filter(flist, dict, ipedscall)
+    return(unname(flist))
+  }
+  if (!bind && !long) {
+    return(unname(flist))
+  }
+  ## ----------------------
+  ## bind / !join
+  ## ----------------------
+  if (bind && long && flist_one) {
+    return(get_filtered_df(flist[[1]], ipedscall[["filter"]]))
+  }
+  if (bind && !long && flist_one && join) {
+    return(flist[[1]])
+  }
+  if (bind && long && !flist_one && !join) {
+    flist <- try_filter(flist, dict, ipedscall)
+    blist <- bind_like_files(flist, dict)
+    return(unname(blist))
+  }
+  if (bind && !long && !flist_one && !join) {
+    blist <- bind_like_files(flist, dict)
+    return(unname(blist))
+  }
+  ## ----------------------
+  ## bind / join
+  ## ----------------------
+  if (join && long && flist_one) {
+    return(get_filtered_df(flist[[1]], ipedscall[["filter"]]))
+  }
+  if (join && long && !flist_one) {
+    blist <- bind_like_files(flist, dict)
+    if (length(blist) == 1) {
+      return(get_filtered_df(blist[[1]], ipedscall[["filter"]]))
+    } else {
+      return(get_filtered_df(join_all_files(blist), ipedscall[["filter"]]))
+    }
+  }
+  if (join && !long && flist_one) {
+    return(unname(flist))
+  }
+  if (join && !long && !flist_one) {
+    blist <- bind_like_files(flist, dict)
+    if (length(blist) == 1) {
+      return(blist[[1]])
+    } else {
+      return(join_all_files(blist))
+    }
   }
 }
