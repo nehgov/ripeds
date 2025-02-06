@@ -15,7 +15,9 @@ Imports: rvest
 Depends:
     R (>= 3.5)
 Suggests:
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    dplyr,
+    tibble
 Config/testthat/edition: 3
 URL: https://potential-adventure-6knn6m6.pages.github.io/
 BugReports: https://github.com/nehgov/ripeds/issues
