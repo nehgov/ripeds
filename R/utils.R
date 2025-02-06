@@ -162,7 +162,7 @@ subset_file_table_by_year <- function(years) {
 
 ## return 1 for long data files
 is_long_file <- function(filename) {
-  lapply(filename, function(x) (file_hash[[x]] %in% long_hash[["long"]]))
+  sapply(filename, function(x) (file_hash[[x]] %in% long_hash[["long"]]))
 }
 
 ## starting with full ipeds_dict(), subset to only those files and years that
