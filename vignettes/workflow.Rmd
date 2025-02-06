@@ -5,7 +5,7 @@ vignette: >
   %\VignetteIndexEntry{Workflow}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-  % VignetteDepends{tidyverse}
+  % VignetteDepends{dplyr,tibble}
 ---
 
 ```{r, include = FALSE}
@@ -19,7 +19,8 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(ripeds)
-library(tidyverse)
+library(dplyr)
+library(tibble)
 ```
 
 # Example 1: institution locations
