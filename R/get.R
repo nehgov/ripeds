@@ -199,6 +199,7 @@ get_filtered_df <- function(df, filter_list) {
   if (length(filter_list) > 1) {
     get_filtered_df(df, filter_list[-1])
   } else {
+    rownames(df) <- NULL
     df
   }
 }
@@ -229,67 +230,121 @@ try_filter <- function(flist, dict, ipedscall) {
                                  return(flist[[i]])
                                })
       }
-
+      file_list[names(flist)[i]] <- errvec
+      rownames(flist[[i]]) <- NULL
+    } else {
+      next
     }
-    file_list[names(flist)[i]] <- errvec
   }
   file_df <- as.data.frame(do.call(rbind, file_list))
-  colnames(file_df) <- ""
-  m <- paste0("An error occurred trying to apply the following filter(s) ",
-              "to complete data file(s):\n", " ",
-              paste(capture.output(file_df), collapse = "\n"), "\n\n",
-              "This error is likely because the filter(s) ",
-              "contain(s) variables not in this complete data file(s), ",
-              "which means it is unlikely the filter(s) worked as ",
-              "expected. Your options are:\n\n",
-              " (1) Filter the returned data set with a new filter\n",
-              " (2) Set ipeds_get(join == TRUE) and rerun to apply the ",
-              "original filter to the fully joined final data set\n",
-              " (3) Rerun using a less complex filter\n")
-  message(m)
+  if (nrow(file_df) > 0) {
+    colnames(file_df) <- ""
+    m <- paste0("An error occurred trying to apply the following filter(s) ",
+                "to complete data file(s):\n", " ",
+                paste(utils::capture.output(file_df), collapse = "\n"), "\n\n",
+                "This error is likely because the filter(s) ",
+                "contain(s) variables not in this complete data file(s), ",
+                "which means it is unlikely the filter(s) worked as ",
+                "expected. Your options are:\n\n",
+                " (1) Filter the returned data set with a new filter\n",
+                " (2) Set ipeds_get(join == TRUE) and rerun to apply the ",
+                "original filter to the fully joined final data set\n",
+                " (3) Rerun using a less complex filter\n")
+    message(m)
+  }
   return(flist)
 }
 
+## choosing return format depending on argument choice and type of filter
 return_by_option <- function(ipedscall, flist, dict, bind, join, long) {
+  ## NOTES:
+  ## - only concerned about long file filters here since normal wide files are
+  ##   already filtered by unitid and year by this point
+  ## - when bind == FALSE, should return a list for consistency, even if the
+  ##   list only has one item
+
+  ## check if file list contains only one file
   flist_one <- (length(flist) == 1)
-  ## ----------------------
+
+  ## -------------------------------------
   ## !bind / !join
-  ## ----------------------
+  ## -------------------------------------
+
+  ## bind: FALSE
+  ## join: (ignored since flist_one = TRUE)
+  ## long: TRUE
+  ## flist_one: TRUE
   if (!bind && long && flist_one) {
-    get_filtered_df(flist[[1]], ipedscall[["filter"]])
+    return(list(get_filtered_df(flist[[1]], ipedscall[["filter"]])))
   }
+  ## bind: FALSE
+  ## join: (ignored since bind = FALSE)
+  ## long: TRUE
+  ## flist_one: FALSE
   if (!bind && long && !flist_one) {
     flist <- try_filter(flist, dict, ipedscall)
     return(unname(flist))
   }
+  ## bind: FALSE
+  ## join: (ignored since bind = FALSE)
+  ## long: FALSE
+  ## flist_one: (ignored since bind = FALSE)
   if (!bind && !long) {
     return(unname(flist))
   }
-  ## ----------------------
+
+  ## -------------------------------------
   ## bind / !join
-  ## ----------------------
-  if (bind && long && flist_one) {
-    return(get_filtered_df(flist[[1]], ipedscall[["filter"]]))
+  ## -------------------------------------
+
+  ## bind: TRUE
+  ## join: FALSE
+  ## long: FALSE
+  ## flist_one: TRUE
+  if (bind && !long && flist_one && !join) {
+    return(unname(flist))
   }
-  if (bind && !long && flist_one && join) {
-    return(flist[[1]])
+  ## bind: TRUE
+  ## join: FALSE
+  ## long: TRUE
+  ## flist_one: TRUE
+  if (bind && long && flist_one && !join) {
+    return(list(get_filtered_df(flist[[1]], ipedscall[["filter"]])))
   }
+  ## bind: TRUE
+  ## join: FALSE
+  ## long: TRUE
+  ## flist_one: FALSE
   if (bind && long && !flist_one && !join) {
     flist <- try_filter(flist, dict, ipedscall)
     blist <- bind_like_files(flist, dict)
-    return(unname(blist))
+    return(unname(flist))
   }
+  ## bind: TRUE
+  ## join: FALSE
+  ## long: FALSE
+  ## flist_one: FALSE
   if (bind && !long && !flist_one && !join) {
     blist <- bind_like_files(flist, dict)
     return(unname(blist))
   }
-  ## ----------------------
+
+  ## -------------------------------------
   ## bind / join
-  ## ----------------------
-  if (join && long && flist_one) {
+  ## -------------------------------------
+
+  ## bind: (ignored since join = TRUE)
+  ## join: TRUE
+  ## long: TRUE
+  ## flist_one: TRUE
+  if (long && flist_one && join) {
     return(get_filtered_df(flist[[1]], ipedscall[["filter"]]))
   }
-  if (join && long && !flist_one) {
+  ## bind: (ignored since join = TRUE)
+  ## join: TRUE
+  ## long: TRUE
+  ## flist_one: FALSE
+  if (long && !flist_one && join) {
     blist <- bind_like_files(flist, dict)
     if (length(blist) == 1) {
       return(get_filtered_df(blist[[1]], ipedscall[["filter"]]))
@@ -297,10 +352,18 @@ return_by_option <- function(ipedscall, flist, dict, bind, join, long) {
       return(get_filtered_df(join_all_files(blist), ipedscall[["filter"]]))
     }
   }
-  if (join && !long && flist_one) {
-    return(unname(flist))
+  ## bind: (ignored since join = TRUE)
+  ## join: TRUE
+  ## long: FALSE
+  ## flist_one: TRUE
+  if (!long && flist_one && join) {
+    return(unname(flist)[[1]])
   }
-  if (join && !long && !flist_one) {
+  ## bind: (ignored since join = TRUE)
+  ## join: TRUE
+  ## long: FALSE
+  ## flist_one: FALSE
+  if (!long && !flist_one && join) {
     blist <- bind_like_files(flist, dict)
     if (length(blist) == 1) {
       return(blist[[1]])
