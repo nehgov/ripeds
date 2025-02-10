@@ -26,17 +26,35 @@ processing (each unique complete data file required returned as a list item).
 \item \verb{bind = TRUE, join = TRUE}: A data frame in which like files
 are bound and all are joined
 }
+}
+\description{
+Retrieve IPEDS data by establishing which data files are required for
+filtering (if included) and those required for selected variables.
+}
+\details{
+Notes on filters:
 
-NOTE: The more complicated the data call (many selected variables, many
+Filters will be attempted depending on how the user selects to return the
+data. By default (\code{join = TRUE}), the complete filter will be applied to the
+final joined data set.
+
+When the user chooses only to bind like files (\code{join = FALSE}) or return all
+files separately (\code{bind = FALSE}), attempts will be made to apply the filter
+to the files to which they apply. This may be impossible if the filter is
+complex, requiring consideration of variables across multiple files that the
+user chose not to join. Users will receive a warning message in this
+situation and the return of the unfiltered data files. In the situation in
+which a filter applies only to one type of data file and works, but also
+removes missing (\code{NA}) values, other data files nominally unaffected by the
+filter may also have rows removed if that institution had completely missing
+data in the filtered file.
+
+The more complicated the data call (many selected variables, many
 selected years, more complex filter), the longer the data request may take,
 particularly if downloading files, and the greater the likelihood of
 unexpected behavior with the join. Users may wish to break up large complex
 requests into multiple smaller requests or elect to return a list of unbound
 / unjoined data frames they can manipulate directly.
-}
-\description{
-Retrieve IPEDS data by establishing which data files are required for
-filtering (if included) and those required for selected variables.
 }
 \examples{
 \dontrun{

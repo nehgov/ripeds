@@ -4,11 +4,13 @@
 \alias{ipeds_file_table}
 \title{Return a table of all currently available complete data files}
 \usage{
-ipeds_file_table(redownload = FALSE)
+ipeds_file_table(redownload = FALSE, return_table = TRUE)
 }
 \arguments{
 \item{redownload}{Re-scrape NCES website to generate table of files. Defaults
 to \code{FALSE}.}
+
+\item{return_table}{Return table (Default = \code{TRUE}).}
 }
 \value{
 A data frame with the following columns:
