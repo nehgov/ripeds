@@ -10,6 +10,7 @@
 #'
 #' @param redownload Re-scrape NCES website to generate table of files. Defaults
 #'   to `FALSE`.
+#' @param return_table Return table (Default = `TRUE`).
 #'
 #' @return A data frame with the following columns:
 #'
@@ -31,13 +32,11 @@
 #' }
 #'
 #' @export
-ipeds_file_table <- function(redownload = FALSE) {
+ipeds_file_table <- function(redownload = FALSE, return_table = TRUE) {
   ## file
   f <- file.path(tempdir(), "ipeds_file_list.RDS")
   ## check for file
-  if (file.exists(f) & !redownload) {
-    readRDS(f)
-  } else {
+  if (!file.exists(f) | redownload) {
     ## base url; options (select all)
     base_url <- "https://nces.ed.gov/ipeds/datacenter/DataFiles.aspx"
     opts <- "year=-1&surveyNumber=-1"
@@ -57,7 +56,8 @@ ipeds_file_table <- function(redownload = FALSE) {
     ftab <- make_distinct(ftab, names(ftab))
     ## store
     saveRDS(ftab, file.path(tempdir(), "ipeds_file_list.RDS"))
-    ## return
-    ftab
+  }
+  if (return_table) {
+    readRDS(f)
   }
 }
