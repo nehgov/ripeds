@@ -24,7 +24,9 @@ articles:
       show how users can batch download complete IPEDS data files.
     contents:
       - introduction
+      - design
       - workflow
+      - filter_behavior
       - batch_download
 
 reference:

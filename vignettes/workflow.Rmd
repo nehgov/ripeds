@@ -5,7 +5,7 @@ vignette: >
   %\VignetteIndexEntry{Workflow}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-  % VignetteDepends{dplyr,tibble}
+  % VignetteDepends{dplyr,readr,tibble}
 ---
 
 ```{r, include = FALSE}
@@ -18,9 +18,8 @@ knitr::opts_chunk$set(
 # Setup
 
 ```{r setup}
-library(ripeds)
-library(dplyr)
-library(tibble)
+libs <- c("dplyr", "readr", "tibble", "ripeds")
+sapply(libs, require, character.only = TRUE)
 ```
 
 # Example 1: institution locations
@@ -103,7 +102,8 @@ unzip(file.path(tempdir(), "EF2022A_DIST.zip"), list = T)
 
 ```{r}
 tmp <- read_csv(unzip(file.path(tempdir(), "EF2022A_DIST.zip"),
-                      "ef2022a_dist_rv.csv")) |>
+                      "ef2022a_dist_rv.csv",
+                      exdir = tempdir())) |>
   rename_all(tolower)
 ```
 
