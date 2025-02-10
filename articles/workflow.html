@@ -4,117 +4,875 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Workflow • ripeds</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
-<script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Workflow">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Workflow">
 </head>
-<body data-spy="scroll" data-target="#toc">
+<body>
+    <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <div class="container template-article">
-      <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">ripeds</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
-      </span>
-    </div>
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
 
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-<li>
-  <a href="../reference/index.html">Reference</a>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Articles
+    <a class="navbar-brand me-2" href="../index.html">ripeds</a>
 
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="../articles/batch_download.html">Batch download files</a>
-    </li>
-    <li>
-      <a href="../articles/introduction.html">Introduction</a>
-    </li>
-    <li>
-      <a href="../articles/workflow.html">Workflow</a>
-    </li>
-  </ul>
-</li>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
+
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="navbar" class="collapse navbar-collapse ms-3">
+      <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="../index.html" aria-label="Get started"><span class="fa fa-home fa-lg"></span></a></li>
+<li class="active nav-item"><a class="nav-link" href="../articles/index.html">Vignettes</a></li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Functions</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">News</a></li>
       </ul>
-<ul class="nav navbar-nav navbar-right">
-<li>
-  <a href="https://github.com/nehgov/ripeds/" class="external-link">
-    <span class="fab fa-github fa-lg"></span>
-
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
+</form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/nehgov/ripeds/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
-<!--/.nav-collapse -->
+
+
   </div>
-<!--/.container -->
-</div>
-<!--/.navbar -->
+</nav><div class="container template-article">
 
 
 
-      </header><div class="row">
-  <div class="col-md-9 contents">
-    <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Workflow</h1>
+
+<div class="row">
+  <main id="main" class="col-md-9"><div class="page-header">
+
+      <h1>Workflow</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/nehgov/ripeds/blob/main/vignettes/articles/workflow.Rmd" class="external-link"><code>vignettes/articles/workflow.Rmd</code></a></small>
-      <div class="hidden name"><code>workflow.Rmd</code></div>
-
+      <small class="dont-index">Source: <a href="https://github.com/nehgov/ripeds/blob/main/vignettes/workflow.Rmd" class="external-link"><code>vignettes/workflow.Rmd</code></a></small>
+      <div class="d-none name"><code>workflow.Rmd</code></div>
     </div>
 
     
     
+<div class="section level2">
+<h2 id="setup">Setup<a class="anchor" aria-label="anchor" href="#setup"></a>
+</h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://potential-adventure-6knn6m6.pages.github.io/" class="external-link">ripeds</a></span><span class="op">)</span></span></code></pre></div>
-  </div>
-
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-
-      </div>
-
+<code class="sourceCode R"><span><span class="va">libs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dplyr"</span>, <span class="st">"readr"</span>, <span class="st">"tibble"</span>, <span class="st">"ripeds"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">libs</span>, <span class="va">require</span>, character.only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required package: dplyr</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'dplyr'</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:stats':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     filter, lag</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span>
+<span><span class="co">#&gt; Loading required package: readr</span></span>
+<span><span class="co">#&gt; Loading required package: tibble</span></span>
+<span><span class="co">#&gt; Loading required package: ripeds</span></span>
+<span><span class="co">#&gt;  dplyr  readr tibble ripeds </span></span>
+<span><span class="co">#&gt;   TRUE   TRUE   TRUE   TRUE</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="example-1-institution-locations">Example 1: institution locations<a class="anchor" aria-label="anchor" href="#example-1-institution-locations"></a>
+</h2>
+<div class="section level3">
+<h3 id="search-dictionary">Search dictionary<a class="anchor" aria-label="anchor" href="#search-dictionary"></a>
+</h3>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/ipeds_dict.html">ipeds_dict</a></span><span class="op">(</span><span class="st">"longitude|latitude"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; VARIABLE: pclatitude</span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::          DESCRIPTION         ::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Latitude location of institution</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ../FILES </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  |__ IC2021_CAMPUSES*</span></span>
+<span><span class="co">#&gt;  |__ IC2022_CAMPUSES*</span></span>
+<span><span class="co">#&gt;  |__ IC2023_CAMPUSES*</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  * Denotes a long file in which institutions may have more than one </span></span>
+<span><span class="co">#&gt;  record (UNITID values repeated across multiple rows).</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; VARIABLE: latitude</span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; NOTE: This variable has (2) unique descriptions.</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; :::::::::::::::::::         DESCRIPTION (1)        :::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Latitude location of institution</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ../FILES </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  |__ HD2010</span></span>
+<span><span class="co">#&gt;  |__ HD2011</span></span>
+<span><span class="co">#&gt;  |__ HD2012</span></span>
+<span><span class="co">#&gt;  |__ HD2013</span></span>
+<span><span class="co">#&gt;  |__ HD2014</span></span>
+<span><span class="co">#&gt;  |__ HD2015</span></span>
+<span><span class="co">#&gt;  |__ HD2016</span></span>
+<span><span class="co">#&gt;  |__ HD2017</span></span>
+<span><span class="co">#&gt;  |__ HD2018</span></span>
+<span><span class="co">#&gt;  |__ HD2019</span></span>
+<span><span class="co">#&gt;  |__ HD2020</span></span>
+<span><span class="co">#&gt;  |__ HD2021</span></span>
+<span><span class="co">#&gt;  |__ HD2022</span></span>
+<span><span class="co">#&gt;  |__ HD2023</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; :::::::::::::::::::         DESCRIPTION (2)        :::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; latitude</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ../FILES </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  |__ HD2009</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; VARIABLE: longitud</span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::          DESCRIPTION         ::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Longitude location of institution</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ../FILES </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  |__ HD2010</span></span>
+<span><span class="co">#&gt;  |__ HD2011</span></span>
+<span><span class="co">#&gt;  |__ HD2012</span></span>
+<span><span class="co">#&gt;  |__ HD2013</span></span>
+<span><span class="co">#&gt;  |__ HD2014</span></span>
+<span><span class="co">#&gt;  |__ HD2015</span></span>
+<span><span class="co">#&gt;  |__ HD2016</span></span>
+<span><span class="co">#&gt;  |__ HD2017</span></span>
+<span><span class="co">#&gt;  |__ HD2018</span></span>
+<span><span class="co">#&gt;  |__ HD2019</span></span>
+<span><span class="co">#&gt;  |__ HD2020</span></span>
+<span><span class="co">#&gt;  |__ HD2021</span></span>
+<span><span class="co">#&gt;  |__ HD2022</span></span>
+<span><span class="co">#&gt;  |__ HD2023</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; VARIABLE: pclongitud</span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::          DESCRIPTION         ::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Longitude location of institution</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ../FILES </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  |__ IC2021_CAMPUSES*</span></span>
+<span><span class="co">#&gt;  |__ IC2022_CAMPUSES*</span></span>
+<span><span class="co">#&gt;  |__ IC2023_CAMPUSES*</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  * Denotes a long file in which institutions may have more than one </span></span>
+<span><span class="co">#&gt;  record (UNITID values repeated across multiple rows).</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; Printed information for 4 of out 4 variables.</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="pull-most-recent-year">Pull most recent year<a class="anchor" aria-label="anchor" href="#pull-most-recent-year"></a>
+</h3>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ipeds_init.html">ipeds_init</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/ipeds_select.html">ipeds_select</a></span><span class="op">(</span><span class="va">latitude</span>, <span class="va">longitud</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/ipeds_year.html">ipeds_year</a></span><span class="op">(</span><span class="fl">2023</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="../reference/ipeds_get.html">ipeds_get</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">as_tibble</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">df</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6,163 × 5</span></span></span>
+<span><span class="co">#&gt;    unitid latitude longitud  year file  </span></span>
+<span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> <span style="text-decoration: underline;">100</span>654     34.8    -<span style="color: #BB0000;">86.6</span>  <span style="text-decoration: underline;">2</span>023 HD2023</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> <span style="text-decoration: underline;">100</span>663     33.5    -<span style="color: #BB0000;">86.8</span>  <span style="text-decoration: underline;">2</span>023 HD2023</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> <span style="text-decoration: underline;">100</span>690     32.4    -<span style="color: #BB0000;">86.2</span>  <span style="text-decoration: underline;">2</span>023 HD2023</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> <span style="text-decoration: underline;">100</span>706     34.7    -<span style="color: #BB0000;">86.6</span>  <span style="text-decoration: underline;">2</span>023 HD2023</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> <span style="text-decoration: underline;">100</span>724     32.4    -<span style="color: #BB0000;">86.3</span>  <span style="text-decoration: underline;">2</span>023 HD2023</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> <span style="text-decoration: underline;">100</span>733     33.2    -<span style="color: #BB0000;">87.5</span>  <span style="text-decoration: underline;">2</span>023 HD2023</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> <span style="text-decoration: underline;">100</span>751     33.2    -<span style="color: #BB0000;">87.5</span>  <span style="text-decoration: underline;">2</span>023 HD2023</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> <span style="text-decoration: underline;">100</span>760     32.9    -<span style="color: #BB0000;">85.9</span>  <span style="text-decoration: underline;">2</span>023 HD2023</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> <span style="text-decoration: underline;">100</span>812     34.8    -<span style="color: #BB0000;">87.0</span>  <span style="text-decoration: underline;">2</span>023 HD2023</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> <span style="text-decoration: underline;">100</span>830     32.4    -<span style="color: #BB0000;">86.2</span>  <span style="text-decoration: underline;">2</span>023 HD2023</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 6,153 more rows</span></span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="pull-past-10-years">Pull past 10 years<a class="anchor" aria-label="anchor" href="#pull-past-10-years"></a>
+</h3>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ipeds_init.html">ipeds_init</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/ipeds_select.html">ipeds_select</a></span><span class="op">(</span><span class="va">latitude</span>, <span class="va">longitud</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/ipeds_year.html">ipeds_year</a></span><span class="op">(</span><span class="fl">2014</span><span class="op">:</span><span class="fl">2023</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="../reference/ipeds_get.html">ipeds_get</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">as_tibble</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">df</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 68,572 × 5</span></span></span>
+<span><span class="co">#&gt;    unitid latitude longitud  year file  </span></span>
+<span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> <span style="text-decoration: underline;">100</span>654     34.8    -<span style="color: #BB0000;">86.6</span>  <span style="text-decoration: underline;">2</span>023 HD2023</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> <span style="text-decoration: underline;">100</span>663     33.5    -<span style="color: #BB0000;">86.8</span>  <span style="text-decoration: underline;">2</span>023 HD2023</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> <span style="text-decoration: underline;">100</span>690     32.4    -<span style="color: #BB0000;">86.2</span>  <span style="text-decoration: underline;">2</span>023 HD2023</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> <span style="text-decoration: underline;">100</span>706     34.7    -<span style="color: #BB0000;">86.6</span>  <span style="text-decoration: underline;">2</span>023 HD2023</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> <span style="text-decoration: underline;">100</span>724     32.4    -<span style="color: #BB0000;">86.3</span>  <span style="text-decoration: underline;">2</span>023 HD2023</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> <span style="text-decoration: underline;">100</span>733     33.2    -<span style="color: #BB0000;">87.5</span>  <span style="text-decoration: underline;">2</span>023 HD2023</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> <span style="text-decoration: underline;">100</span>751     33.2    -<span style="color: #BB0000;">87.5</span>  <span style="text-decoration: underline;">2</span>023 HD2023</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> <span style="text-decoration: underline;">100</span>760     32.9    -<span style="color: #BB0000;">85.9</span>  <span style="text-decoration: underline;">2</span>023 HD2023</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> <span style="text-decoration: underline;">100</span>812     34.8    -<span style="color: #BB0000;">87.0</span>  <span style="text-decoration: underline;">2</span>023 HD2023</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> <span style="text-decoration: underline;">100</span>830     32.4    -<span style="color: #BB0000;">86.2</span>  <span style="text-decoration: underline;">2</span>023 HD2023</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 68,562 more rows</span></span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="add-other-useful-variables">Add other useful variables<a class="anchor" aria-label="anchor" href="#add-other-useful-variables"></a>
+</h3>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ipeds_init.html">ipeds_init</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/ipeds_select.html">ipeds_select</a></span><span class="op">(</span><span class="va">instnm</span>, <span class="va">sector</span>, <span class="va">latitude</span>, <span class="va">longitud</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/ipeds_year.html">ipeds_year</a></span><span class="op">(</span><span class="fl">2014</span><span class="op">:</span><span class="fl">2023</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/ipeds_filter.html">ipeds_filter</a></span><span class="op">(</span><span class="va">stabbr</span> <span class="op">==</span> <span class="st">"KY"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="../reference/ipeds_get.html">ipeds_get</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">as_tibble</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">df</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 979 × 8</span></span></span>
+<span><span class="co">#&gt;    unitid  year instnm                     sector latitude stabbr longitud file </span></span>
+<span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> <span style="text-decoration: underline;">156</span>189  <span style="text-decoration: underline;">2</span>023 Alice Lloyd College             2     37.3 KY        -<span style="color: #BB0000;">82.9</span> HD20…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> <span style="text-decoration: underline;">156</span>213  <span style="text-decoration: underline;">2</span>023 Asbury University               2     37.9 KY        -<span style="color: #BB0000;">84.7</span> HD20…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> <span style="text-decoration: underline;">156</span>222  <span style="text-decoration: underline;">2</span>023 Asbury Theological Semina…      2     37.9 KY        -<span style="color: #BB0000;">84.7</span> HD20…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> <span style="text-decoration: underline;">156</span>231  <span style="text-decoration: underline;">2</span>023 Ashland Community and Tec…      4     38.5 KY        -<span style="color: #BB0000;">82.7</span> HD20…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> <span style="text-decoration: underline;">156</span>286  <span style="text-decoration: underline;">2</span>023 Bellarmine University           2     38.2 KY        -<span style="color: #BB0000;">85.7</span> HD20…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> <span style="text-decoration: underline;">156</span>295  <span style="text-decoration: underline;">2</span>023 Berea College                   2     37.6 KY        -<span style="color: #BB0000;">84.3</span> HD20…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> <span style="text-decoration: underline;">156</span>310  <span style="text-decoration: underline;">2</span>023 PJ's College of Cosmetolo…      9     37.0 KY        -<span style="color: #BB0000;">86.5</span> HD20…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> <span style="text-decoration: underline;">156</span>338  <span style="text-decoration: underline;">2</span>023 Southcentral Kentucky Com…      4     37.0 KY        -<span style="color: #BB0000;">86.5</span> HD20…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> <span style="text-decoration: underline;">156</span>356  <span style="text-decoration: underline;">2</span>023 Brescia University              2     37.8 KY        -<span style="color: #BB0000;">87.1</span> HD20…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> <span style="text-decoration: underline;">156</span>365  <span style="text-decoration: underline;">2</span>023 Campbellsville University       2     37.3 KY        -<span style="color: #BB0000;">85.3</span> HD20…</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 969 more rows</span></span></span></code></pre></div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="example-2-exclusively-online-students">Example 2: exclusively online students<a class="anchor" aria-label="anchor" href="#example-2-exclusively-online-students"></a>
+</h2>
+<div class="section level3">
+<h3 id="searching">Searching<a class="anchor" aria-label="anchor" href="#searching"></a>
+</h3>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/ipeds_dict.html">ipeds_dict</a></span><span class="op">(</span><span class="st">"distance"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; VARIABLE: pcert4des</span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::          DESCRIPTION         ::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Certificates of 2 years, but less than 4 years - some programs in a</span></span>
+<span><span class="co">#&gt;  CIP code can be completed entirely via distance education</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ../FILES </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  |__ C2020DEP*</span></span>
+<span><span class="co">#&gt;  |__ C2021DEP*</span></span>
+<span><span class="co">#&gt;  |__ C2022DEP*</span></span>
+<span><span class="co">#&gt;  |__ C2023DEP*</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  * Denotes a long file in which institutions may have more than one </span></span>
+<span><span class="co">#&gt;  record (UNITID values repeated across multiple rows).</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; VARIABLE: pcudeexc</span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::          DESCRIPTION         ::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Percent of undergraduate students enrolled exclusively in distance</span></span>
+<span><span class="co">#&gt;  education courses</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ../FILES </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  |__ DRVEF2021</span></span>
+<span><span class="co">#&gt;  |__ DRVEF2022</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; VARIABLE: dstnugc</span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::          DESCRIPTION         ::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Undergraduate level distance education courses offered</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ../FILES </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  |__ IC2017</span></span>
+<span><span class="co">#&gt;  |__ IC2018</span></span>
+<span><span class="co">#&gt;  |__ IC2019</span></span>
+<span><span class="co">#&gt;  |__ IC2020</span></span>
+<span><span class="co">#&gt;  |__ IC2021</span></span>
+<span><span class="co">#&gt;  |__ IC2022</span></span>
+<span><span class="co">#&gt;  |__ IC2023</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; VARIABLE: pcte12graddeexc</span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::          DESCRIPTION         ::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Percent of graduate 12-month unduplicated headcount enrolled</span></span>
+<span><span class="co">#&gt;  exclusively in distance education courses</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ../FILES </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  |__ DRVEF122021</span></span>
+<span><span class="co">#&gt;  |__ DRVEF122022</span></span>
+<span><span class="co">#&gt;  |__ DRVEF122023</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; VARIABLE: pcert1bdes</span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::          DESCRIPTION         ::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Certificates of at least 12 weeks, but less than 1 year - some</span></span>
+<span><span class="co">#&gt;  programs in a CIP code can be completed entirely via distance</span></span>
+<span><span class="co">#&gt;  education</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ../FILES </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  |__ C2020DEP*</span></span>
+<span><span class="co">#&gt;  |__ C2021DEP*</span></span>
+<span><span class="co">#&gt;  |__ C2022DEP*</span></span>
+<span><span class="co">#&gt;  |__ C2023DEP*</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  * Denotes a long file in which institutions may have more than one </span></span>
+<span><span class="co">#&gt;  record (UNITID values repeated across multiple rows).</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; VARIABLE: efydeexc</span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::          DESCRIPTION         ::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Students enrolled exclusively in distance education courses</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ../FILES </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  |__ EFFY2020_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EFFY2021_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EFFY2022_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EFFY2023_DIST*</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  * Denotes a long file in which institutions may have more than one </span></span>
+<span><span class="co">#&gt;  record (UNITID values repeated across multiple rows).</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; VARIABLE: efdeexc</span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::          DESCRIPTION         ::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Students enrolled exclusively in distance education courses</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ../FILES </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  |__ EF2012A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2013A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2014A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2015A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2016A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2017A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2018A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2019A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2020A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2021A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2022A_DIST*</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  * Denotes a long file in which institutions may have more than one </span></span>
+<span><span class="co">#&gt;  record (UNITID values repeated across multiple rows).</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; VARIABLE: efdeex1</span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::          DESCRIPTION         ::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Students enrolled exclusively in distance education courses and are</span></span>
+<span><span class="co">#&gt;  located in same state/jurisdiction as institution</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ../FILES </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  |__ EF2012A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2013A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2014A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2015A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2016A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2017A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2018A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2019A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2020A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2021A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2022A_DIST*</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  * Denotes a long file in which institutions may have more than one </span></span>
+<span><span class="co">#&gt;  record (UNITID values repeated across multiple rows).</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; VARIABLE: pcte12ugdeexc</span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::          DESCRIPTION         ::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Percent of undergraduate 12-month unduplicated headcount enrolled</span></span>
+<span><span class="co">#&gt;  exclusively in distance education courses</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ../FILES </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  |__ DRVEF122021</span></span>
+<span><span class="co">#&gt;  |__ DRVEF122022</span></span>
+<span><span class="co">#&gt;  |__ DRVEF122023</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; VARIABLE: pbachlde</span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; NOTE: This variable has (2) unique descriptions.</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; :::::::::::::::::::         DESCRIPTION (1)        :::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Number of Bachelor's degree programs offered via distance education</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ../FILES </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  |__ C2013DEP*</span></span>
+<span><span class="co">#&gt;  |__ C2014DEP*</span></span>
+<span><span class="co">#&gt;  |__ C2015DEP*</span></span>
+<span><span class="co">#&gt;  |__ C2016DEP*</span></span>
+<span><span class="co">#&gt;  |__ C2017DEP*</span></span>
+<span><span class="co">#&gt;  |__ C2018DEP*</span></span>
+<span><span class="co">#&gt;  |__ C2019DEP*</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  * Denotes a long file in which institutions may have more than one </span></span>
+<span><span class="co">#&gt;  record (UNITID values repeated across multiple rows).</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; :::::::::::::::::::         DESCRIPTION (2)        :::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Bachelor's degree - all programs in a CIP code can be completed</span></span>
+<span><span class="co">#&gt;  entirely via distance education</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ../FILES </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  |__ C2020DEP*</span></span>
+<span><span class="co">#&gt;  |__ C2021DEP*</span></span>
+<span><span class="co">#&gt;  |__ C2022DEP*</span></span>
+<span><span class="co">#&gt;  |__ C2023DEP*</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  * Denotes a long file in which institutions may have more than one </span></span>
+<span><span class="co">#&gt;  record (UNITID values repeated across multiple rows).</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; Printed information for 10 of out 70 variables.</span></span>
+<span><span class="co">#&gt; Increase limit to see more variables.</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/ipeds_dict.html">ipeds_dict</a></span><span class="op">(</span><span class="st">"efde"</span>, search_col <span class="op">=</span> <span class="st">"varname"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; VARIABLE: efdesom</span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::          DESCRIPTION         ::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Students enrolled in some but not all distance education courses</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ../FILES </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  |__ EF2012A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2013A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2014A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2015A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2016A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2017A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2018A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2019A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2020A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2021A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2022A_DIST*</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  * Denotes a long file in which institutions may have more than one </span></span>
+<span><span class="co">#&gt;  record (UNITID values repeated across multiple rows).</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; VARIABLE: efdetot</span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::          DESCRIPTION         ::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; All students enrolled</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ../FILES </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  |__ EF2012A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2013A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2014A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2015A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2016A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2017A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2018A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2019A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2020A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2021A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2022A_DIST*</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  * Denotes a long file in which institutions may have more than one </span></span>
+<span><span class="co">#&gt;  record (UNITID values repeated across multiple rows).</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; VARIABLE: efdeexc</span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::          DESCRIPTION         ::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Students enrolled exclusively in distance education courses</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ../FILES </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  |__ EF2012A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2013A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2014A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2015A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2016A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2017A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2018A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2019A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2020A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2021A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2022A_DIST*</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  * Denotes a long file in which institutions may have more than one </span></span>
+<span><span class="co">#&gt;  record (UNITID values repeated across multiple rows).</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; VARIABLE: efdeex1</span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::          DESCRIPTION         ::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Students enrolled exclusively in distance education courses and are</span></span>
+<span><span class="co">#&gt;  located in same state/jurisdiction as institution</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ../FILES </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  |__ EF2012A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2013A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2014A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2015A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2016A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2017A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2018A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2019A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2020A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2021A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2022A_DIST*</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  * Denotes a long file in which institutions may have more than one </span></span>
+<span><span class="co">#&gt;  record (UNITID values repeated across multiple rows).</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; VARIABLE: efdeex2</span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::          DESCRIPTION         ::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Students enrolled exclusively in distance education courses and are</span></span>
+<span><span class="co">#&gt;  located in U.S., not in same state/jurisdiction as institution</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ../FILES </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  |__ EF2012A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2013A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2014A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2015A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2016A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2017A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2018A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2019A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2020A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2021A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2022A_DIST*</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  * Denotes a long file in which institutions may have more than one </span></span>
+<span><span class="co">#&gt;  record (UNITID values repeated across multiple rows).</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; VARIABLE: efdeex3</span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::          DESCRIPTION         ::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Students enrolled exclusively in distance education courses and are</span></span>
+<span><span class="co">#&gt;  located in U.S., state/jurisdiction unknown</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ../FILES </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  |__ EF2012A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2013A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2014A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2015A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2016A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2017A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2018A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2019A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2020A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2021A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2022A_DIST*</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  * Denotes a long file in which institutions may have more than one </span></span>
+<span><span class="co">#&gt;  record (UNITID values repeated across multiple rows).</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; VARIABLE: efdeex4</span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::          DESCRIPTION         ::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Students enrolled exclusively in distance education courses and are</span></span>
+<span><span class="co">#&gt;  located outside U.S.</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ../FILES </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  |__ EF2012A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2013A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2014A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2015A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2016A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2017A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2018A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2019A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2020A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2021A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2022A_DIST*</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  * Denotes a long file in which institutions may have more than one </span></span>
+<span><span class="co">#&gt;  record (UNITID values repeated across multiple rows).</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; VARIABLE: efdeex5</span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::          DESCRIPTION         ::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Students enrolled exclusively in distance education courses and</span></span>
+<span><span class="co">#&gt;  location of student unknown/not reported</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ../FILES </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  |__ EF2012A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2013A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2014A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2015A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2016A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2017A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2018A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2019A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2020A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2021A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2022A_DIST*</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  * Denotes a long file in which institutions may have more than one </span></span>
+<span><span class="co">#&gt;  record (UNITID values repeated across multiple rows).</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; VARIABLE: efdelev</span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::          DESCRIPTION         ::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Level of student</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ../FILES </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  |__ EF2012A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2013A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2014A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2015A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2016A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2017A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2018A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2019A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2020A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2021A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2022A_DIST*</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  * Denotes a long file in which institutions may have more than one </span></span>
+<span><span class="co">#&gt;  record (UNITID values repeated across multiple rows).</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; VARIABLE: efdenon</span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::          DESCRIPTION         ::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Student not enrolled in any distance education courses</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ../FILES </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  |__ EF2012A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2013A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2014A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2015A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2016A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2017A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2018A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2019A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2020A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2021A_DIST*</span></span>
+<span><span class="co">#&gt;  |__ EF2022A_DIST*</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  * Denotes a long file in which institutions may have more than one </span></span>
+<span><span class="co">#&gt;  record (UNITID values repeated across multiple rows).</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; Printed information for 10 of out 10 variables.</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ipeds_init.html">ipeds_init</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/ipeds_select.html">ipeds_select</a></span><span class="op">(</span><span class="va">efdeexc</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/ipeds_year.html">ipeds_year</a></span><span class="op">(</span><span class="fl">2022</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="../reference/ipeds_get.html">ipeds_get</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">as_tibble</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">df</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 22,247 × 4</span></span></span>
+<span><span class="co">#&gt;    unitid efdeexc  year file        </span></span>
+<span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> <span style="text-decoration: underline;">100</span>654     429  <span style="text-decoration: underline;">2</span>022 EF2022A_DIST</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> <span style="text-decoration: underline;">100</span>654     249  <span style="text-decoration: underline;">2</span>022 EF2022A_DIST</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> <span style="text-decoration: underline;">100</span>654     246  <span style="text-decoration: underline;">2</span>022 EF2022A_DIST</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> <span style="text-decoration: underline;">100</span>654       3  <span style="text-decoration: underline;">2</span>022 EF2022A_DIST</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> <span style="text-decoration: underline;">100</span>654     180  <span style="text-decoration: underline;">2</span>022 EF2022A_DIST</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> <span style="text-decoration: underline;">100</span>663    <span style="text-decoration: underline;">5</span>984  <span style="text-decoration: underline;">2</span>022 EF2022A_DIST</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> <span style="text-decoration: underline;">100</span>663    <span style="text-decoration: underline;">2</span>436  <span style="text-decoration: underline;">2</span>022 EF2022A_DIST</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> <span style="text-decoration: underline;">100</span>663    <span style="text-decoration: underline;">2</span>316  <span style="text-decoration: underline;">2</span>022 EF2022A_DIST</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> <span style="text-decoration: underline;">100</span>663     120  <span style="text-decoration: underline;">2</span>022 EF2022A_DIST</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> <span style="text-decoration: underline;">100</span>663    <span style="text-decoration: underline;">3</span>548  <span style="text-decoration: underline;">2</span>022 EF2022A_DIST</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 22,237 more rows</span></span></span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/unzip.html" class="external-link">unzip</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"EF2022A_DIST.zip"</span><span class="op">)</span>, list <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                  Name  Length                Date</span></span>
+<span><span class="co">#&gt; 1    ef2022a_dist.csv 1554619 2023-10-16 07:56:00</span></span>
+<span><span class="co">#&gt; 2 ef2022a_dist_rv.csv 1555213 2024-09-23 08:38:00</span></span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu">read_csv</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/unzip.html" class="external-link">unzip</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"EF2022A_DIST.zip"</span><span class="op">)</span>,</span>
+<span>                      <span class="st">"ef2022a_dist_rv.csv"</span>,</span>
+<span>                      exdir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">rename_all</span><span class="op">(</span><span class="va">tolower</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">22247</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">20</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────────</span></span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Delimiter:</span> ","</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">chr</span>  (9): XEFDETOT, XEFDEEXC, XEFDESOM, XEFDENON, XEFDEEX1, XEFDEEX2, XEFDEE...</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">dbl</span> (11): UNITID, EFDELEV, EFDETOT, EFDEEXC, EFDESOM, EFDENON, EFDEEX1, EFDE...</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="check-dictionary-file">Check dictionary file<a class="anchor" aria-label="anchor" href="#check-dictionary-file"></a>
+</h3>
+</div>
+<div class="section level3">
+<h3 id="filter">Filter<a class="anchor" aria-label="anchor" href="#filter"></a>
+</h3>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ipeds_init.html">ipeds_init</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/ipeds_select.html">ipeds_select</a></span><span class="op">(</span><span class="va">efdeexc</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/ipeds_filter.html">ipeds_filter</a></span><span class="op">(</span><span class="st">"efdelev == 2"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="../reference/ipeds_year.html">ipeds_year</a></span><span class="op">(</span><span class="fl">2022</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="../reference/ipeds_get.html">ipeds_get</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">as_tibble</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
 
-      <footer><div class="copyright">
-  <p></p>
-<p>Developed by Benjamin Skinner.</p>
+    <footer><div class="pkgdown-footer-left">
+  <p>Developed by Benjamin Skinner.</p>
 </div>
 
-<div class="pkgdown">
-  <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+<div class="pkgdown-footer-right">
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
-      </footer>
+    </footer>
 </div>
-
 
 
 

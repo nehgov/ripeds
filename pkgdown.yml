@@ -2,7 +2,12 @@ pandoc: 3.1.11
 pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
-  articles/batch_download: batch_download.html
-  articles/introduction: introduction.html
-  articles/workflow: workflow.html
-last_built: 2025-01-24T22:09Z
+  batch_download: batch_download.html
+  design: design.html
+  filter_behavior: filter_behavior.html
+  introduction: introduction.html
+  workflow: workflow.html
+last_built: 2025-02-10T22:00Z
+urls:
+  reference: https://potential-adventure-6knn6m6.pages.github.io/reference
+  article: https://potential-adventure-6knn6m6.pages.github.io/articles
