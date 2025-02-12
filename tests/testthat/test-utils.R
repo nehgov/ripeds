@@ -6,9 +6,10 @@
 ## read temp files necessary for tests
 ## -------------------------------------
 
-lapply(c(paste0(c("EF2021A_DIST", "EF2022A_DIST"), ".zip")),
+lapply(c(paste0(c("EF2021A_DIST", "EF2022A_DIST"), ".zip"),
+         "ipeds_file_list.RDS"),
        function(x) {
-         file.copy(file.path("inst", "extdata", x),
+         file.copy(file.path("..", "..", "inst", "extdata", x),
                    file.path(tempdir(), x))
        })
 
@@ -111,11 +112,10 @@ test_that("get_internal_file_name", {
 ## get_file_location_or_download
 test_that("get_file_location_or_download", {
   zf <- "HD2021.zip"
+  ldir <- file.path("..", "..", "inst", "extdata")
   expect_equal(get_file_location_or_download(zf), tempdir())
   file.remove(file.path(tempdir(), zf))
-  expect_equal(get_file_location_or_download(zf,
-                                             local_dir = file.path("inst", "extdata")),
-               file.path("inst", "extdata"))
+  expect_equal(get_file_location_or_download(zf, local_dir = ldir), ldir)
 })
 
 ## -------------------------------------
@@ -172,15 +172,105 @@ test_that("cyear_to_ayear", {
 })
 
 ## order_vars
+test_that("order_vars", {
+  expect_equal(order_vars("a,b,c"), c("a", "b", "c"))
+  expect_equal(order_vars("a;b;c", ";"), c("a", "b", "c"))
+})
+
 ## roll_join_full
+test_that("roll_join_full", {
+  ## perfect alignment
+  x <- data.frame(a = 1:3,
+                  b = 4:6,
+                  c = 7:9)
+  y <- data.frame(a = 1:3,
+                  b = 4:6,
+                  d = 10:12)
+  z <- data.frame(a = 1:3,
+                  b = 4:6,
+                  e = 13:15)
+  df <- data.frame(a = 1:3,
+                   b = 4:6,
+                   c = 7:9,
+                   d = 10:12,
+                   e = 13:15)
+  expect_equal(roll_join_full(list(x,y,z), c("a","b")), df)
+  ## misalignment creating some NAs
+  z <- data.frame(a = 1:3,
+                  b = c(5,5,6),
+                  e = 13:15)
+  df <- data.frame(a = c(1,1,2,3),
+                   b = c(4,5,5,6),
+                   c = c(7,NA,8,9),
+                   d = c(10,NA,11,12),
+                   e = c(NA,13,14,15))
+  expect_equal(roll_join_full(list(x,y,z), c("a","b")), df)
+})
+
 ## get_vars_from_file
+test_that("get_vars_from_file", {
+  vars <- get_vars_from_file("HD2020", ipeds_dict(".", return_dict = TRUE, print_off = TRUE))
+  comp <- c("unitid", "instnm", "ialias", "addr", "city", "stabbr", "zip",
+            "fips", "obereg", "chfnm", "chftitle", "gentele", "ein", "duns",
+            "opeid", "opeflag", "webaddr", "adminurl", "faidurl", "applurl",
+            "npricurl", "veturl", "athurl", "disaurl", "sector", "iclevel",
+            "control", "hloffer", "ugoffer", "groffer", "hdegofr1", "deggrant",
+            "hbcu", "hospital", "medical", "tribal", "locale", "openpubl",
+            "act", "newid", "deathyr", "closedat", "cyactive", "postsec",
+            "pseflag", "pset4flg", "rptmth", "instcat", "c18basic", "c18ipug",
+            "c18ipgrd", "c18ugprf", "c18enprf", "c18szset", "c15basic",
+            "ccbasic", "carnegie", "landgrnt", "instsize", "f1systyp",
+            "f1sysnam", "f1syscod", "cbsa", "cbsatype", "csa", "necta",
+            "countycd", "countynm", "cngdstcd", "longitud", "latitude",
+            "dfrcgid", "dfrcuscg")
+  expect_equal(vars, comp)
+})
+
 ## get_file_year
+test_that("get_file_year", {
+  expect_equal(get_file_year("HD2020"), 2020)
+  expect_equal(get_file_year("SFA1718"), 2018)
+})
+
 ## subset_file_table_by_year
+test_that("subset_file_table_by_year", {
+  comp <- c("ADM2020", "AL2020", "C2020_A", "C2020_B", "C2020_C", "C2020DEP",
+            "EAP2020", "EF2020A", "EF2020A_DIST", "EF2020B", "EF2020C",
+            "EF2020CP", "EF2020D", "EFFY2020", "EFFY2020_DIST", "EFIA2020",
+            "F1920_F1A", "F1920_F2", "F1920_F3", "FLAGS2020", "GR200_20",
+            "GR2020", "GR2020_L2", "GR2020_PELL_SSL", "HD2020", "IC2020",
+            "IC2020_AY", "IC2020_PY", "OM2020", "S2020_IS", "S2020_NH",
+            "S2020_OC", "S2020_SIS", "SAL2020_IS", "SAL2020_NIS", "SFA1920",
+            "SFAV1920")
+  expect_equal(subset_file_table_by_year(2020), comp)
+})
+
 ## subset_dict_by_var_year
+test_that("subset_dict_by_var_year", {
+  comp <- data.frame(filename = "HD2020",
+                     varname = "instnm",
+                     description = "Institution (entity) name",
+                     long = FALSE)
+  expect_equal(subset_dict_by_var_year("instnm", "instnm", "HD2020"), comp)
+})
 
 ## -------------------------------------
 ## package structure helpers
 ## -------------------------------------
 
 ## confirm_chain
+test_that("confirm_chain", {
+  good_chain <- ipeds_init()
+  expect_equal(confirm_chain(good_chain), good_chain)
+  expect_error(confirm_chain(a),
+               "Chain not properly initialized. Be sure to start with ipeds_init().")
+})
+
 ## confirm_vars
+test_that("confirm_vars", {
+  expect_equal(confirm_vars("unitid"), list(NULL))
+  expect_error(confirm_vars("x"),
+               paste0("Variable \"x\" not found in dictionary. ",
+                      "Please check your spelling or search dictionary: ",
+                      "?ipeds_dict)"))
+})
