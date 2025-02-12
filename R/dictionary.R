@@ -169,7 +169,8 @@ ipeds_dict <- function(search_string,
       dict_sublist[[j]] <- data.frame(
         "idxf" = idxf,
         "idxv" = idxv,
-        "idxd" = idxd
+        "idxd" = idxd,
+        row.names = NULL
       )
     }
     ## bind sublists into main list
