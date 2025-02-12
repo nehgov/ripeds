@@ -1,4 +1,7 @@
+## -----------------------------------------------------------------------------
 ## -- dictionary --
+## -----------------------------------------------------------------------------
+
 
 test_that("Dictionary does not return correct object", {
   varn <- ipeds_dict("stabbr", exact_match = TRUE, return_dict = TRUE, print_off = TRUE)[1, "varname"]
