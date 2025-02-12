@@ -143,7 +143,7 @@ roll_join_full <- function(df_list, join_vars) {
 ## pull all the variable names from a dictionary (can be subset) for a
 ## particular file; add unitid as a variable for linking purposes
 get_vars_from_file <- function(fname, dict) {
-  c("unitid", filter_equals(dict, "filename", fname)[["varname"]])
+  unique(c("unitid", filter_equals(dict, "filename", fname)[["varname"]]))
 }
 
 ## get the year associated with a file name (useful because some files have
@@ -157,7 +157,9 @@ get_file_year <- function(fname) {
 ## return vector files for set of years
 subset_file_table_by_year <- function(years) {
   ft <- ipeds_file_table()
-  ft[ft[["year"]] %in% years, "file"]
+  ft <- ft[ft[["year"]] %in% years, "file"]
+  ft <- unique(ft)
+  sort(ft)
 }
 
 ## return 1 for long data files
@@ -173,6 +175,7 @@ subset_dict_by_var_year <- function(search_str, vars_to_keep, fyears_to_keep) {
   dict <- filter_in(dict, "varname", vars_to_keep)
   dict <- filter_in(dict, "filename", fyears_to_keep)
   dict[["long"]] <- is_long_file(dict[["filename"]])
+  rownames(dict) <- NULL
   dict
 }
 
