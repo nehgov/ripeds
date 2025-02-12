@@ -20,7 +20,7 @@ test_that("Errors for missing ipeds_select()", {
 lapply(c(paste0(c("HD2021", "HD2022", "EF2021A_DIST", "EF2022A_DIST"), ".zip"),
          "ipeds_file_list.RDS"),
        function(x) {
-         file.copy(file.path("inst", "extdata", x),
+         file.copy(file.path("..", "..", "inst", "extdata", x),
                    file.path(tempdir(), x))
        })
 
