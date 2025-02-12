@@ -241,7 +241,7 @@ test_that("subset_file_table_by_year", {
             "GR2020", "GR2020_L2", "GR2020_PELL_SSL", "HD2020", "IC2020",
             "IC2020_AY", "IC2020_PY", "OM2020", "S2020_IS", "S2020_NH",
             "S2020_OC", "S2020_SIS", "SAL2020_IS", "SAL2020_NIS", "SFA1920",
-            "SFAV1920")
+            "SFAV1920") |> sort()
   expect_equal(subset_file_table_by_year(2020), comp)
 })
 
@@ -270,7 +270,7 @@ test_that("confirm_chain", {
 test_that("confirm_vars", {
   expect_equal(confirm_vars("unitid"), list(NULL))
   expect_error(confirm_vars("x"),
-               paste0("Variable \"x\" not found in dictionary. ",
-                      "Please check your spelling or search dictionary: ",
-                      "?ipeds_dict)"))
+               label = paste0("Variable \"x\" not found in dictionary. ",
+                              "Please check your spelling or search dictionary: ",
+                              "?ipeds_dict()"))
 })
