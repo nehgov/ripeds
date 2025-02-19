@@ -13,3 +13,19 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
+
+ripeds makes a distinction between filters that use variables from wide data
+files versus those from long data files. In general, ripeds will apply filters
+as follows:
+
+- **wide**: filter(s) applied in a preprocessing step that will produce a
+  data.frame of UNITID by YEAR, which will be used in the primary selection
+  stage to keep only those institution/year pairs returned by the filter
+- **long**: filter(s) applied in a postprocessing step after primary selection
+  stage
+  
+### Preprocessing filter
+
+Preprocessing filters 
+
+### Postprocessing filter

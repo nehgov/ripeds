@@ -13,4 +13,154 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
+# IPEDS structure
+
+IPEDS does not have a true API for accessing its data files. For users who want
+complete data files, there are two primary download options:
+
+1. [Microsoft Access data bases](https://nces.ed.gov/ipeds/use-the-data/download-access-database)
+1. [Complete data files](https://nces.ed.gov/ipeds/datacenter/DataFiles.aspx)
+
+Each version has benefits and drawbacks. Whereas Access databases helpfully
+provide all data tables for a given year, the files are large and in a special
+database format. Access databases also only go back to the 2004-2005 academic
+year data collection.
+
+On the other hand, the complete data files are smaller --- effectively zipped
+CSV versions of the database tables. They also include all available data, which
+in some cases goes back to 1980. However, it can be difficult to know which
+files contain variables of interest without downloading multiple dictionary
+files. And once the correct files are identified, there are potentially many
+files to download.
+
+ripeds simulates an API by smartly downloading, reading, and wrangling complete
+data files. For users who already have the complete data files they need on
+their computer, ripeds can instead use those files, saving bandwidth and the
+time necessary to download. 
+
+Using complete data files rather than Access databases allows for complete
+coverage of IPEDS data and doesn't require users to install extra external
+database tools. To aid users not already familiar with the structure of IPEDS,
+ripeds also provides a searchable data dictionary that can be used to find and
+request variables of interest.
+
+# Design principles
+
+ripeds is built with the following design principles, in general order of
+importance:
+
+1. Support users who don't already know IPEDS structure
+1. Allow the user maximum flexibility in terms of variables selected, filters,
+   and how output is returned
+1. Try to give the user what they request and, if not possible, give an
+   informative error
+1. Be as memory and bandwidth efficient as possible
+
+In some instances, these design principles are at odds with each other. Allowing
+users more flexibility in choosing filters means that there might be instances
+in which many files need to be downloaded (breaking 4) or that the request to
+return unjoined files in a list cannot also correctly apply the filter (breaking
+3). Based on the complexity of IPEDS, there is unfortunately no way around some
+incommensurable requests. Users who understand these design choices, however,
+can find ways to mitigate unintended output and ultimately gather the data they
+need in the format required for their analysis.
+
 # How it works
+
+The general process for returning data from a call is as follows:
+
+1. Using an internal data dictionary, generate a list of complete data files
+     that contain selected variables alongside chosen years
+1. Read complete data files into memory --- downloading if necessary ---
+   selecting variables as requested
+1. Return output: list of each individual file used, list of files in which like
+   files across years have been binded, or single joined data frame
+   
+As an example, take the following call:
+
+```r
+ipeds_init() |>
+  ipeds_select(instnm, stabbr) |>
+  ipeds_year(2023) |>
+  ipeds_get()
+```
+
+This call would generate the following work flow:
+
+1. Filter potential data files to those released for 2023, and check data
+   dictionary for `instnm` and `stabbr`
+   - _both are found in `HD2023` data file_
+1. Check `tempdir()` for `HD2023.zip`. If it's not there, download to
+   `tempdir()` since no local directory to search is given
+   - _HD2023.zip is either found or downloaded to `tempdir()`_
+1. Read in `hd2023.csv` (or revised version, `hd2023_rv.csv`, if it exists by
+   default), selecting `instnm` and `stabbr` as well as `unitid` 
+1. Return data frame
+
+
+## Using a filter
+
+With a filter, the process becomes a little more complex. Because filtering
+variables might be located in different data files, these data files must first
+be read into memory and combined as necessary so that the filter can be applied. 
+
+As an added wrinkle, while most complete data files are in a wide format, with
+each table row representing a unique institution (by UNITID), some are in long
+format, in which each institution can have multiple rows in the table.
+
+For more detailed information on how filters work with ripeds, see the [vignette
+on filtering behavior](./filter_behavior.html).
+
+# Return
+
+By default, ripeds will attempt to combine all files into a single data.frame. This
+is a two step process:
+
+1. Bind like files, meaning those that contain the same variables, but in
+   different years. This means files can simply be row appended.
+1. Join different file types by UNITID and year. A full or outer join is used,
+   so as not to artificially subset the resulting data.frame based on the order
+   of the joins. This may result in missing values depending the specific nature
+   of the call.
+   
+The user can also choose to return files row bound only with like files, but not
+joined across files or entirely individually. Both of these options will result
+in the return of a list.
+
+If the user chooses only to bind like files, but the result is a single bound
+data.frame, output will be a list with one item. For example,
+
+```r
+ipeds_init() |>
+  ipeds_select(instnm, stabbr) |>
+  ipeds_year(2022:2023) |>
+  ipeds_get(join = FALSE)
+```
+
+returns a list with one item: a data.frame with two observations per unique
+UNITID containing the UNITID, institution name, state abbreviation, year, and
+file name. Choosing not to bind (which by default also sets `join = FALSE`),
+
+```r
+ipeds_init() |>
+  ipeds_select(instnm, stabbr) |>
+  ipeds_year(2022:2023) |>
+  ipeds_get(bind = FALSE)
+```
+
+returns a list of two items: a separate data.frame containing UNITID,
+institution name, state abbreviation, file name, and year for each year.
+Returning to the original call, choosing either `join = FALSE` or `bind = FALSE`,
+
+```r
+ipeds_init() |>
+  ipeds_select(instnm, stabbr) |>
+  ipeds_year(2023) |>
+  ipeds_get(bind = FALSE)
+```
+
+will return a single data.frame in a list. Even though this is the same data
+(with the addition of the file name in the data.frame) as was returned in the
+first call since all the requested data come from a single complete data file,
+ripeds returns a list instead of a data.frame object for the sake of
+consistency.
