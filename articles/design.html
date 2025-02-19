@@ -62,10 +62,169 @@
     
     
 <div class="section level2">
+<h2 id="ipeds-structure">IPEDS structure<a class="anchor" aria-label="anchor" href="#ipeds-structure"></a>
+</h2>
+<p>IPEDS does not have a true API for accessing its data files. For
+users who want complete data files, there are two primary download
+options:</p>
+<ol style="list-style-type: decimal">
+<li><a href="https://nces.ed.gov/ipeds/use-the-data/download-access-database" class="external-link">Microsoft
+Access data bases</a></li>
+<li><a href="https://nces.ed.gov/ipeds/datacenter/DataFiles.aspx" class="external-link">Complete data
+files</a></li>
+</ol>
+<p>Each version has benefits and drawbacks. Whereas Access databases
+helpfully provide all data tables for a given year, the files are large
+and in a special database format. Access databases also only go back to
+the 2004-2005 academic year data collection.</p>
+<p>On the other hand, the complete data files are smaller — effectively
+zipped CSV versions of the database tables. They also include all
+available data, which in some cases goes back to 1980. However, it can
+be difficult to know which files contain variables of interest without
+downloading multiple dictionary files. And once the correct files are
+identified, there are potentially many files to download.</p>
+<p>ripeds simulates an API by smartly downloading, reading, and
+wrangling complete data files. For users who already have the complete
+data files they need on their computer, ripeds can instead use those
+files, saving bandwidth and the time necessary to download.</p>
+<p>Using complete data files rather than Access databases allows for
+complete coverage of IPEDS data and doesn’t require users to install
+extra external database tools. To aid users not already familiar with
+the structure of IPEDS, ripeds also provides a searchable data
+dictionary that can be used to find and request variables of
+interest.</p>
+</div>
+<div class="section level2">
+<h2 id="design-principles">Design principles<a class="anchor" aria-label="anchor" href="#design-principles"></a>
+</h2>
+<p>ripeds is built with the following design principles, in general
+order of importance:</p>
+<ol style="list-style-type: decimal">
+<li>Support users who don’t already know IPEDS structure</li>
+<li>Allow the user maximum flexibility in terms of variables selected,
+filters, and how output is returned</li>
+<li>Try to give the user what they request and, if not possible, give an
+informative error</li>
+<li>Be as memory and bandwidth efficient as possible</li>
+</ol>
+<p>In some instances, these design principles are at odds with each
+other. Allowing users more flexibility in choosing filters means that
+there might be instances in which many files need to be downloaded
+(breaking 4) or that the request to return unjoined files in a list
+cannot also correctly apply the filter (breaking 3). Based on the
+complexity of IPEDS, there is unfortunately no way around some
+incommensurable requests. Users who understand these design choices,
+however, can find ways to mitigate unintended output and ultimately
+gather the data they need in the format required for their analysis.</p>
+</div>
+<div class="section level2">
 <h2 id="how-it-works">How it works<a class="anchor" aria-label="anchor" href="#how-it-works"></a>
 </h2>
+<p>The general process for returning data from a call is as follows:</p>
+<ol style="list-style-type: decimal">
+<li>Using an internal data dictionary, generate a list of complete data
+files that contain selected variables alongside chosen years</li>
+<li>Read complete data files into memory — downloading if necessary —
+selecting variables as requested</li>
+<li>Return output: list of each individual file used, list of files in
+which like files across years have been binded, or single joined data
+frame</li>
+</ol>
+<p>As an example, take the following call:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/ipeds_init.html">ipeds_init</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/ipeds_select.html">ipeds_select</a></span><span class="op">(</span><span class="va">instnm</span>, <span class="va">stabbr</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/ipeds_year.html">ipeds_year</a></span><span class="op">(</span><span class="fl">2023</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/ipeds_get.html">ipeds_get</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>This call would generate the following work flow:</p>
+<ol style="list-style-type: decimal">
+<li>Filter potential data files to those released for 2023, and check
+data dictionary for <code>instnm</code> and <code>stabbr</code>
+<ul>
+<li><em>both are found in <code>HD2023</code> data file</em></li>
+</ul>
+</li>
+<li>Check <code><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir()</a></code> for <code>HD2023.zip</code>. If it’s
+not there, download to <code><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir()</a></code> since no local directory
+to search is given
+<ul>
+<li><em>HD2023.zip is either found or downloaded to
+<code><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir()</a></code></em></li>
+</ul>
+</li>
+<li>Read in <code>hd2023.csv</code> (or revised version,
+<code>hd2023_rv.csv</code>, if it exists by default), selecting
+<code>instnm</code> and <code>stabbr</code> as well as
+<code>unitid</code>
+</li>
+<li>Return data frame</li>
+</ol>
+<div class="section level3">
+<h3 id="using-a-filter">Using a filter<a class="anchor" aria-label="anchor" href="#using-a-filter"></a>
+</h3>
+<p>With a filter, the process becomes a little more complex. Because
+filtering variables might be located in different data files, these data
+files must first be read into memory and combined as necessary so that
+the filter can be applied.</p>
+<p>As an added wrinkle, while most complete data files are in a wide
+format, with each table row representing a unique institution (by
+UNITID), some are in long format, in which each institution can have
+multiple rows in the table.</p>
+<p>For more detailed information on how filters work with ripeds, see
+the <a href="./filter_behavior.html">vignette on filtering
+behavior</a>.</p>
 </div>
-  </main>
+</div>
+<div class="section level2">
+<h2 id="return">Return<a class="anchor" aria-label="anchor" href="#return"></a>
+</h2>
+<p>By default, ripeds will attempt to combine all files into a single
+data.frame. This is a two step process:</p>
+<ol style="list-style-type: decimal">
+<li>Bind like files, meaning those that contain the same variables, but
+in different years. This means files can simply be row appended.</li>
+<li>Join different file types by UNITID and year. A full or outer join
+is used, so as not to artificially subset the resulting data.frame based
+on the order of the joins. This may result in missing values depending
+the specific nature of the call.</li>
+</ol>
+<p>The user can also choose to return files row bound only with like
+files, but not joined across files or entirely individually. Both of
+these options will result in the return of a list.</p>
+<p>If the user chooses only to bind like files, but the result is a
+single bound data.frame, output will be a list with one item. For
+example,</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/ipeds_init.html">ipeds_init</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/ipeds_select.html">ipeds_select</a></span><span class="op">(</span><span class="va">instnm</span>, <span class="va">stabbr</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/ipeds_year.html">ipeds_year</a></span><span class="op">(</span><span class="fl">2022</span><span class="op">:</span><span class="fl">2023</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/ipeds_get.html">ipeds_get</a></span><span class="op">(</span>join <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<p>returns a list with one item: a data.frame with two observations per
+unique UNITID containing the UNITID, institution name, state
+abbreviation, year, and file name. Choosing not to bind (which by
+default also sets <code>join = FALSE</code>),</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/ipeds_init.html">ipeds_init</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/ipeds_select.html">ipeds_select</a></span><span class="op">(</span><span class="va">instnm</span>, <span class="va">stabbr</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/ipeds_year.html">ipeds_year</a></span><span class="op">(</span><span class="fl">2022</span><span class="op">:</span><span class="fl">2023</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/ipeds_get.html">ipeds_get</a></span><span class="op">(</span>bind <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<p>returns a list of two items: a separate data.frame containing UNITID,
+institution name, state abbreviation, file name, and year for each year.
+Returning to the original call, choosing either
+<code>join = FALSE</code> or <code>bind = FALSE</code>,</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/ipeds_init.html">ipeds_init</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/ipeds_select.html">ipeds_select</a></span><span class="op">(</span><span class="va">instnm</span>, <span class="va">stabbr</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/ipeds_year.html">ipeds_year</a></span><span class="op">(</span><span class="fl">2023</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/ipeds_get.html">ipeds_get</a></span><span class="op">(</span>bind <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<p>will return a single data.frame in a list. Even though this is the
+same data (with the addition of the file name in the data.frame) as was
+returned in the first call since all the requested data come from a
+single complete data file, ripeds returns a list instead of a data.frame
+object for the sake of consistency.</p>
+</div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
