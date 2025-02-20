@@ -61,27 +61,161 @@
 
     
     
-<p>ripeds makes a distinction between filters that use variables from
-wide data files versus those from long data files. In general, ripeds
-will apply filters as follows:</p>
+<div class="section level2">
+<h2 id="how-ripeds-uses-filters">How <code>ripeds</code> uses filters<a class="anchor" aria-label="anchor" href="#how-ripeds-uses-filters"></a>
+</h2>
+<p>When using <code><a href="../reference/ipeds_filter.html">ipeds_filter()</a></code> in a call chain,
+<code>ripeds</code> makes a distinction between filters that use
+variables from wide data files versus those from long (or narrow) data
+files.</p>
+<p><strong>Wide</strong></p>
+<table class="table">
+<thead><tr class="header">
+<th align="left">unitid</th>
+<th align="left">instnm</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">100654</td>
+<td align="left">Alabama A &amp; M University</td>
+</tr>
+<tr class="even">
+<td align="left">100663</td>
+<td align="left">University of Alabama at Birmingham</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Long</strong></p>
+<table class="table">
+<thead><tr class="header">
+<th align="left">unitid</th>
+<th align="right">efdelev</th>
+<th align="right">efdetot</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">100654</td>
+<td align="right">1</td>
+<td align="right">6007</td>
+</tr>
+<tr class="even">
+<td align="left">100654</td>
+<td align="right">2</td>
+<td align="right">5206</td>
+</tr>
+<tr class="odd">
+<td align="left">100654</td>
+<td align="right">3</td>
+<td align="right">5196</td>
+</tr>
+<tr class="even">
+<td align="left">100654</td>
+<td align="right">11</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">100654</td>
+<td align="right">12</td>
+<td align="right">801</td>
+</tr>
+<tr class="even">
+<td align="left">100663</td>
+<td align="right">1</td>
+<td align="right">21639</td>
+</tr>
+<tr class="odd">
+<td align="left">100663</td>
+<td align="right">2</td>
+<td align="right">13032</td>
+</tr>
+<tr class="even">
+<td align="left">100663</td>
+<td align="right">3</td>
+<td align="right">12776</td>
+</tr>
+<tr class="odd">
+<td align="left">100663</td>
+<td align="right">11</td>
+<td align="right">256</td>
+</tr>
+<tr class="even">
+<td align="left">100663</td>
+<td align="right">12</td>
+<td align="right">8607</td>
+</tr>
+</tbody>
+</table>
+<p>In general, <code>ripeds</code> will apply filters as follows:</p>
 <ul>
 <li>
-<strong>wide</strong>: filter(s) applied in a preprocessing step
-that will produce a data.frame of UNITID by YEAR, which will be used in
-the primary selection stage to keep only those institution/year pairs
-returned by the filter</li>
+<strong>wide</strong>: filter(s) applied in a preprocessing
+step</li>
 <li>
-<strong>long</strong>: filter(s) applied in a postprocessing step
-after primary selection stage</li>
+<strong>long</strong>: filter(s) applied in a postprocessing
+step</li>
 </ul>
-<div class="section level3">
-<h3 id="preprocessing-filter">Preprocessing filter<a class="anchor" aria-label="anchor" href="#preprocessing-filter"></a>
-</h3>
-<p>Preprocessing filters</p>
+<div class="section level4">
+<h4 id="preprocessing-filter">Preprocessing filter<a class="anchor" aria-label="anchor" href="#preprocessing-filter"></a>
+</h4>
+<p>Preprocessing filters require that a single data.frame containing all
+filtering variables is built prior to the main data request. Once
+constructed, all filters are applied and a single data.frame consisting
+of two columns, UNITID by YEAR, is returned. This data.frame will then
+be used in the primary data selection stage to keep only those
+institution/year pairs returned by the filter.</p>
 </div>
-<div class="section level3">
-<h3 id="postprocessing-filter">Postprocessing filter<a class="anchor" aria-label="anchor" href="#postprocessing-filter"></a>
-</h3>
+<div class="section level4">
+<h4 id="postprocessing-filter">Postprocessing filter<a class="anchor" aria-label="anchor" href="#postprocessing-filter"></a>
+</h4>
+<p>Because long files are not unique by UNITID and YEAR, the filtering
+data.frame produced by a preprocessing filter will not adequately handle
+a filter like <code>efdelev == 3</code>.</p>
+<p>A postprocessing filter is applied in the case of variables sourced
+from long data files. After the preprocessing filter and primary data
+call, any filter containing a variable from a long data file will be
+applied to the output requested by the user.</p>
+<p>The result will depend on the complexity of the filter(s) and the
+type of output chosen by the user:</p>
+<ul>
+<li>[<code>join = TRUE</code> (default)] Filter(s) will be applied to
+the single joined data.frame, which should always be successful</li>
+<li>[<code>join = FALSE</code>, <code>bind = TRUE|FALSE</code>]
+Filter(s) will be applied as applicable to the individual data.frames
+contained in the output list. This means that if a filter contains a
+variable found a particular long data file, there will be an attempt to
+apply the filter to that data file. This may not be successful.</li>
+</ul>
+<p>A postprocessing filter will fail when a complex filter containing
+variables across multiple data files is requested alongside
+<code>join = FALSE</code>. Since the complex filter is applied to only
+one data file or data file type in this situation, the filter will not
+be able to find some of the variables. In this situation, an error
+message alerting the user will occur and the unfiltered data.frame will
+be returned.</p>
+<p>When this error message is returned, the user should either set
+<code>join = TRUE</code> (the default), use a less complex filter, or
+filter the results in a separate process.</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="considerations">Considerations<a class="anchor" aria-label="anchor" href="#considerations"></a>
+</h2>
+<p>When applying filters using <code><a href="../reference/ipeds_filter.html">ipeds_filter()</a></code>, a user
+should keep in mind the trade-off between complex filters with large
+data requests, memory / time required to fulfill the request, and the
+potential for errors.</p>
+<p>As a filter or set of filters becomes more complex, the data.frame
+needed for the preprocessing step will grow in size. When long data
+files are used, so too will the time and/or memory needed for the
+postprocessing steps. And in cases the user chooses not to join final
+output, there is increased chance of error or unexpected behavior. These
+issues will only scale as more variables and data years are
+requested.</p>
+<p>In situations requiring complex filtering behavior alongside large
+data requests, the user may benefit from breaking the request into
+smaller chunks or with fewer filters and wrangling the results using
+other R tools (such as those in the <a href="https://www.tidyverse.org" class="external-link">Tidyverse</a>). In all cases, the user
+should confirm that output matches expectations.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
