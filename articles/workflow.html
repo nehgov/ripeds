@@ -85,11 +85,16 @@
 <div class="section level2">
 <h2 id="example-1-institution-locations">Example 1: institution locations<a class="anchor" aria-label="anchor" href="#example-1-institution-locations"></a>
 </h2>
+<p>For this first request, we’ll search for institution coordinates.
+Since we don’t know the exact variable names, we can use
+<code><a href="../reference/ipeds_dict.html">ipeds_dict()</a></code>. By default, <code><a href="../reference/ipeds_dict.html">ipeds_dict()</a></code> will
+search variable names, descriptions, and filenames. We’ll start with
+<strong>latitude</strong>:</p>
 <div class="section level3">
 <h3 id="search-dictionary">Search dictionary<a class="anchor" aria-label="anchor" href="#search-dictionary"></a>
 </h3>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/ipeds_dict.html">ipeds_dict</a></span><span class="op">(</span><span class="st">"longitude|latitude"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/ipeds_dict.html">ipeds_dict</a></span><span class="op">(</span><span class="st">"latitude"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ======================================================================</span></span>
 <span><span class="co">#&gt; VARIABLE: pclatitude</span></span>
@@ -150,6 +155,15 @@
 <span><span class="co">#&gt;  |__ HD2009</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ======================================================================</span></span>
+<span><span class="co">#&gt; Printed information for 2 of out 2 variables.</span></span></code></pre></div>
+<p>The dictionary output shows two variables, <em>pclatitude</em> and
+<em>latitude</em>. Both have similar descriptions, but <em>latitude</em>
+has a longer stretch of years available. Now we’ll search for
+<strong>longitude</strong>:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/ipeds_dict.html">ipeds_dict</a></span><span class="op">(</span><span class="st">"longitude"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ======================================================================</span></span>
 <span><span class="co">#&gt; VARIABLE: longitud</span></span>
 <span><span class="co">#&gt; ======================================================================</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -196,18 +210,26 @@
 <span><span class="co">#&gt;  record (UNITID values repeated across multiple rows).</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ======================================================================</span></span>
-<span><span class="co">#&gt; Printed information for 4 of out 4 variables.</span></span></code></pre></div>
+<span><span class="co">#&gt; Printed information for 2 of out 2 variables.</span></span></code></pre></div>
+<p>Similar output, but we note that <strong>longitude</strong> is
+represented by a variable that drops the final <strong>e</strong>:
+<em>longitud</em>. We have our variables.</p>
 </div>
 <div class="section level3">
 <h3 id="pull-most-recent-year">Pull most recent year<a class="anchor" aria-label="anchor" href="#pull-most-recent-year"></a>
 </h3>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<p>To begin, we pull only the most recent year, which we can see from
+the output of the data dictionary under <code>../FILES</code>: 2023.
+We’ll run the default chain and add a call to
+<code><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">dplyr::as_tibble()</a></code> at the end to covert the data.frame
+output to a tibble for nicer viewing:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ipeds_init.html">ipeds_init</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/ipeds_select.html">ipeds_select</a></span><span class="op">(</span><span class="va">latitude</span>, <span class="va">longitud</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/ipeds_year.html">ipeds_year</a></span><span class="op">(</span><span class="fl">2023</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="../reference/ipeds_get.html">ipeds_get</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">as_tibble</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6,163 × 4</span></span></span>
 <span><span class="co">#&gt;    unitid latitude longitud  year</span></span>
@@ -223,17 +245,23 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> <span style="text-decoration: underline;">100</span>812     34.8    -<span style="color: #BB0000;">87.0</span>  <span style="text-decoration: underline;">2</span>023</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> <span style="text-decoration: underline;">100</span>830     32.4    -<span style="color: #BB0000;">86.2</span>  <span style="text-decoration: underline;">2</span>023</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 6,153 more rows</span></span></span></code></pre></div>
+<p>The output contains the requested variables, plus the unique
+institutional <strong>unitid</strong>, and year associated with the
+request.</p>
 </div>
 <div class="section level3">
 <h3 id="pull-past-10-years">Pull past 10 years<a class="anchor" aria-label="anchor" href="#pull-past-10-years"></a>
 </h3>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<p>Modifying the request slightly, we can request the past 10 years of
+data. Most institutions don’t move, but some do and that might be
+interesting!</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ipeds_init.html">ipeds_init</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/ipeds_select.html">ipeds_select</a></span><span class="op">(</span><span class="va">latitude</span>, <span class="va">longitud</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/ipeds_year.html">ipeds_year</a></span><span class="op">(</span><span class="fl">2014</span><span class="op">:</span><span class="fl">2023</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="../reference/ipeds_get.html">ipeds_get</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">as_tibble</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 68,572 × 4</span></span></span>
 <span><span class="co">#&gt;    unitid latitude longitud  year</span></span>
@@ -251,16 +279,24 @@
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 68,562 more rows</span></span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="add-other-useful-variables">Add other useful variables<a class="anchor" aria-label="anchor" href="#add-other-useful-variables"></a>
+<h3 id="add-other-useful-variables-with-a-filter">Add other useful variables with a filter<a class="anchor" aria-label="anchor" href="#add-other-useful-variables-with-a-filter"></a>
 </h3>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<p>In the next step, we can add more variables, including
+<em>instnm</em> (institution name), and <em>sector</em>, which gives the
+level (sub two-year, two-year, and four-year) by control (public,
+private not-for-profit, and private for-profit). We can also limit to
+institutions in Kentucky by using the filter
+<code>stabbr == "KY"</code>. Because neither the additional variables
+nor the filtering variables come from different files than those already
+downloaded and in memory, this request should be faster.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ipeds_init.html">ipeds_init</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/ipeds_select.html">ipeds_select</a></span><span class="op">(</span><span class="va">instnm</span>, <span class="va">sector</span>, <span class="va">latitude</span>, <span class="va">longitud</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/ipeds_year.html">ipeds_year</a></span><span class="op">(</span><span class="fl">2014</span><span class="op">:</span><span class="fl">2023</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/ipeds_filter.html">ipeds_filter</a></span><span class="op">(</span><span class="va">stabbr</span> <span class="op">==</span> <span class="st">"KY"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="../reference/ipeds_get.html">ipeds_get</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">as_tibble</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 979 × 7</span></span></span>
 <span><span class="co">#&gt;    unitid  year instnm                           sector latitude stabbr longitud</span></span>
@@ -284,8 +320,8 @@
 <div class="section level3">
 <h3 id="searching">Searching<a class="anchor" aria-label="anchor" href="#searching"></a>
 </h3>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/ipeds_dict.html">ipeds_dict</a></span><span class="op">(</span><span class="st">"distance"</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/ipeds_dict.html">ipeds_dict</a></span><span class="op">(</span><span class="st">"distance"</span>, limit <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ======================================================================</span></span>
 <span><span class="co">#&gt; VARIABLE: pcert4des</span></span>
@@ -325,202 +361,9 @@
 <span><span class="co">#&gt;  |__ DRVEF2022</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ======================================================================</span></span>
-<span><span class="co">#&gt; VARIABLE: dstnugc</span></span>
-<span><span class="co">#&gt; ======================================================================</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ::::::::::::::::::::          DESCRIPTION         ::::::::::::::::::::</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Undergraduate level distance education courses offered</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ../FILES </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  |__ IC2017</span></span>
-<span><span class="co">#&gt;  |__ IC2018</span></span>
-<span><span class="co">#&gt;  |__ IC2019</span></span>
-<span><span class="co">#&gt;  |__ IC2020</span></span>
-<span><span class="co">#&gt;  |__ IC2021</span></span>
-<span><span class="co">#&gt;  |__ IC2022</span></span>
-<span><span class="co">#&gt;  |__ IC2023</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ======================================================================</span></span>
-<span><span class="co">#&gt; VARIABLE: pcte12graddeexc</span></span>
-<span><span class="co">#&gt; ======================================================================</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ::::::::::::::::::::          DESCRIPTION         ::::::::::::::::::::</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Percent of graduate 12-month unduplicated headcount enrolled</span></span>
-<span><span class="co">#&gt;  exclusively in distance education courses</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ../FILES </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  |__ DRVEF122021</span></span>
-<span><span class="co">#&gt;  |__ DRVEF122022</span></span>
-<span><span class="co">#&gt;  |__ DRVEF122023</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ======================================================================</span></span>
-<span><span class="co">#&gt; VARIABLE: pcert1bdes</span></span>
-<span><span class="co">#&gt; ======================================================================</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ::::::::::::::::::::          DESCRIPTION         ::::::::::::::::::::</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Certificates of at least 12 weeks, but less than 1 year - some</span></span>
-<span><span class="co">#&gt;  programs in a CIP code can be completed entirely via distance</span></span>
-<span><span class="co">#&gt;  education</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ../FILES </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  |__ C2020DEP*</span></span>
-<span><span class="co">#&gt;  |__ C2021DEP*</span></span>
-<span><span class="co">#&gt;  |__ C2022DEP*</span></span>
-<span><span class="co">#&gt;  |__ C2023DEP*</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  * Denotes a long file in which institutions may have more than one </span></span>
-<span><span class="co">#&gt;  record (UNITID values repeated across multiple rows).</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ======================================================================</span></span>
-<span><span class="co">#&gt; VARIABLE: efydeexc</span></span>
-<span><span class="co">#&gt; ======================================================================</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ::::::::::::::::::::          DESCRIPTION         ::::::::::::::::::::</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Students enrolled exclusively in distance education courses</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ../FILES </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  |__ EFFY2020_DIST*</span></span>
-<span><span class="co">#&gt;  |__ EFFY2021_DIST*</span></span>
-<span><span class="co">#&gt;  |__ EFFY2022_DIST*</span></span>
-<span><span class="co">#&gt;  |__ EFFY2023_DIST*</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  * Denotes a long file in which institutions may have more than one </span></span>
-<span><span class="co">#&gt;  record (UNITID values repeated across multiple rows).</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ======================================================================</span></span>
-<span><span class="co">#&gt; VARIABLE: efdeexc</span></span>
-<span><span class="co">#&gt; ======================================================================</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ::::::::::::::::::::          DESCRIPTION         ::::::::::::::::::::</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Students enrolled exclusively in distance education courses</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ../FILES </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  |__ EF2012A_DIST*</span></span>
-<span><span class="co">#&gt;  |__ EF2013A_DIST*</span></span>
-<span><span class="co">#&gt;  |__ EF2014A_DIST*</span></span>
-<span><span class="co">#&gt;  |__ EF2015A_DIST*</span></span>
-<span><span class="co">#&gt;  |__ EF2016A_DIST*</span></span>
-<span><span class="co">#&gt;  |__ EF2017A_DIST*</span></span>
-<span><span class="co">#&gt;  |__ EF2018A_DIST*</span></span>
-<span><span class="co">#&gt;  |__ EF2019A_DIST*</span></span>
-<span><span class="co">#&gt;  |__ EF2020A_DIST*</span></span>
-<span><span class="co">#&gt;  |__ EF2021A_DIST*</span></span>
-<span><span class="co">#&gt;  |__ EF2022A_DIST*</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  * Denotes a long file in which institutions may have more than one </span></span>
-<span><span class="co">#&gt;  record (UNITID values repeated across multiple rows).</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ======================================================================</span></span>
-<span><span class="co">#&gt; VARIABLE: efdeex1</span></span>
-<span><span class="co">#&gt; ======================================================================</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ::::::::::::::::::::          DESCRIPTION         ::::::::::::::::::::</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Students enrolled exclusively in distance education courses and are</span></span>
-<span><span class="co">#&gt;  located in same state/jurisdiction as institution</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ../FILES </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  |__ EF2012A_DIST*</span></span>
-<span><span class="co">#&gt;  |__ EF2013A_DIST*</span></span>
-<span><span class="co">#&gt;  |__ EF2014A_DIST*</span></span>
-<span><span class="co">#&gt;  |__ EF2015A_DIST*</span></span>
-<span><span class="co">#&gt;  |__ EF2016A_DIST*</span></span>
-<span><span class="co">#&gt;  |__ EF2017A_DIST*</span></span>
-<span><span class="co">#&gt;  |__ EF2018A_DIST*</span></span>
-<span><span class="co">#&gt;  |__ EF2019A_DIST*</span></span>
-<span><span class="co">#&gt;  |__ EF2020A_DIST*</span></span>
-<span><span class="co">#&gt;  |__ EF2021A_DIST*</span></span>
-<span><span class="co">#&gt;  |__ EF2022A_DIST*</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  * Denotes a long file in which institutions may have more than one </span></span>
-<span><span class="co">#&gt;  record (UNITID values repeated across multiple rows).</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ======================================================================</span></span>
-<span><span class="co">#&gt; VARIABLE: pcte12ugdeexc</span></span>
-<span><span class="co">#&gt; ======================================================================</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ::::::::::::::::::::          DESCRIPTION         ::::::::::::::::::::</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Percent of undergraduate 12-month unduplicated headcount enrolled</span></span>
-<span><span class="co">#&gt;  exclusively in distance education courses</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ../FILES </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  |__ DRVEF122021</span></span>
-<span><span class="co">#&gt;  |__ DRVEF122022</span></span>
-<span><span class="co">#&gt;  |__ DRVEF122023</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ======================================================================</span></span>
-<span><span class="co">#&gt; VARIABLE: pbachlde</span></span>
-<span><span class="co">#&gt; ======================================================================</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; NOTE: This variable has (2) unique descriptions.</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; :::::::::::::::::::         DESCRIPTION (1)        :::::::::::::::::::</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Number of Bachelor's degree programs offered via distance education</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ../FILES </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  |__ C2013DEP*</span></span>
-<span><span class="co">#&gt;  |__ C2014DEP*</span></span>
-<span><span class="co">#&gt;  |__ C2015DEP*</span></span>
-<span><span class="co">#&gt;  |__ C2016DEP*</span></span>
-<span><span class="co">#&gt;  |__ C2017DEP*</span></span>
-<span><span class="co">#&gt;  |__ C2018DEP*</span></span>
-<span><span class="co">#&gt;  |__ C2019DEP*</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  * Denotes a long file in which institutions may have more than one </span></span>
-<span><span class="co">#&gt;  record (UNITID values repeated across multiple rows).</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; :::::::::::::::::::         DESCRIPTION (2)        :::::::::::::::::::</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Bachelor's degree - all programs in a CIP code can be completed</span></span>
-<span><span class="co">#&gt;  entirely via distance education</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ../FILES </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  |__ C2020DEP*</span></span>
-<span><span class="co">#&gt;  |__ C2021DEP*</span></span>
-<span><span class="co">#&gt;  |__ C2022DEP*</span></span>
-<span><span class="co">#&gt;  |__ C2023DEP*</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  * Denotes a long file in which institutions may have more than one </span></span>
-<span><span class="co">#&gt;  record (UNITID values repeated across multiple rows).</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ======================================================================</span></span>
-<span><span class="co">#&gt; Printed information for 10 of out 70 variables.</span></span>
+<span><span class="co">#&gt; Printed information for 2 of out 70 variables.</span></span>
 <span><span class="co">#&gt; Increase limit to see more variables.</span></span></code></pre></div>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/ipeds_dict.html">ipeds_dict</a></span><span class="op">(</span><span class="st">"efde"</span>, search_col <span class="op">=</span> <span class="st">"varname"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ======================================================================</span></span>
@@ -800,13 +643,13 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ======================================================================</span></span>
 <span><span class="co">#&gt; Printed information for 10 of out 10 variables.</span></span></code></pre></div>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ipeds_init.html">ipeds_init</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/ipeds_select.html">ipeds_select</a></span><span class="op">(</span><span class="va">efdeexc</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/ipeds_year.html">ipeds_year</a></span><span class="op">(</span><span class="fl">2022</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="../reference/ipeds_get.html">ipeds_get</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">as_tibble</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 22,247 × 3</span></span></span>
 <span><span class="co">#&gt;    unitid efdeexc  year</span></span>
@@ -822,12 +665,12 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> <span style="text-decoration: underline;">100</span>663     120  <span style="text-decoration: underline;">2</span>022</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> <span style="text-decoration: underline;">100</span>663    <span style="text-decoration: underline;">3</span>548  <span style="text-decoration: underline;">2</span>022</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 22,237 more rows</span></span></span></code></pre></div>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/unzip.html" class="external-link">unzip</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"EF2022A_DIST.zip"</span><span class="op">)</span>, list <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                  Name  Length                Date</span></span>
 <span><span class="co">#&gt; 1    ef2022a_dist.csv 1554619 2023-10-16 07:56:00</span></span>
 <span><span class="co">#&gt; 2 ef2022a_dist_rv.csv 1555213 2024-09-23 08:38:00</span></span></code></pre></div>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu">read_csv</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/unzip.html" class="external-link">unzip</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"EF2022A_DIST.zip"</span><span class="op">)</span>,</span>
 <span>                      <span class="st">"ef2022a_dist_rv.csv"</span>,</span>
 <span>                      exdir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -848,7 +691,7 @@
 <div class="section level3">
 <h3 id="filter">Filter<a class="anchor" aria-label="anchor" href="#filter"></a>
 </h3>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ipeds_init.html">ipeds_init</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/ipeds_select.html">ipeds_select</a></span><span class="op">(</span><span class="va">efdeexc</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/ipeds_filter.html">ipeds_filter</a></span><span class="op">(</span><span class="st">"efdelev == 2"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
