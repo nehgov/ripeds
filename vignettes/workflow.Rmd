@@ -24,12 +24,33 @@ sapply(libs, require, character.only = TRUE)
 
 # Example 1: institution locations
 
+For this first request, we'll search for institution coordinates. Since we don't
+know the exact variable names, we can use `ipeds_dict()`. By default,
+`ipeds_dict()` will search variable names, descriptions, and filenames. We'll
+start with **latitude**:
+
 ## Search dictionary
 ```{r}
-ipeds_dict("longitude|latitude")
+ipeds_dict("latitude")
 ```
 
+The dictionary output shows two variables, _pclatitude_ and _latitude_. Both
+have similar descriptions, but _latitude_ has a longer stretch of years
+available. Now we'll search for **longitude**:
+
+```{r}
+ipeds_dict("longitude")
+```
+
+Similar output, but we note that **longitude** is represented by a variable that
+drops the final **e**: _longitud_. We have our variables.
+
 ## Pull most recent year
+
+To begin, we pull only the most recent year, which we can see from the output of
+the data dictionary under `../FILES`: 2023. We'll run the default chain and add
+a call to `dplyr::as_tibble()` at the end to covert the data.frame output to a
+tibble for nicer viewing:
 
 ```{r}
 df <- ipeds_init() |>
@@ -42,7 +63,13 @@ df <- ipeds_init() |>
 df
 ```
 
+The output contains the requested variables, plus the unique institutional
+**unitid**, and year associated with the request.
+
 ## Pull past 10 years
+
+Modifying the request slightly, we can request the past 10 years of data. Most
+institutions don't move, but some do and that might be interesting!
 
 ```{r}
 df <- ipeds_init() |>
@@ -55,7 +82,15 @@ df <- ipeds_init() |>
 df
 ```
 
-## Add other useful variables
+## Add other useful variables with a filter
+
+In the next step, we can add more variables, including _instnm_ (institution
+name), and _sector_, which gives the level (sub two-year, two-year, and
+four-year) by control (public, private not-for-profit, and private for-profit).
+We can also limit to institutions in Kentucky by using the filter `stabbr ==
+"KY"`. Because neither the additional variables nor the filtering variables come
+from different files than those already downloaded and in memory, this request
+should be faster.
 
 ```{r}
 df <- ipeds_init() |>
@@ -69,13 +104,12 @@ df <- ipeds_init() |>
 df
 ```
 
-
 # Example 2: exclusively online students
 
 ## Searching
 
 ```{r}
-ipeds_dict("distance")
+ipeds_dict("distance", limit = 2)
 ```
 
 
