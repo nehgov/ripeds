@@ -13,19 +13,95 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
+# How `ripeds` uses filters
 
-ripeds makes a distinction between filters that use variables from wide data
-files versus those from long data files. In general, ripeds will apply filters
-as follows:
+When using `ipeds_filter()` in a call chain, `ripeds` makes a distinction
+between filters that use variables from wide data files versus those from long
+(or narrow) data files.
 
-- **wide**: filter(s) applied in a preprocessing step that will produce a
-  data.frame of UNITID by YEAR, which will be used in the primary selection
-  stage to keep only those institution/year pairs returned by the filter
-- **long**: filter(s) applied in a postprocessing step after primary selection
-  stage
+**Wide**
+
+| unitid | instnm |
+|:-------|:-------|
+| 100654 | Alabama A & M University|
+| 100663 | University of Alabama at Birmingham |
+
+**Long**
+
+| unitid | efdelev | efdetot |
+|:-------|--------:|--------:|
+| 100654 |       1 |    6007 |
+| 100654 |       2 |    5206 |
+| 100654 |       3 |    5196 |
+| 100654 |      11 |      10 |
+| 100654 |      12 |     801 |
+| 100663 |       1 |   21639 |
+| 100663 |       2 |   13032 |
+| 100663 |       3 |   12776 |
+| 100663 |      11 |     256 |
+| 100663 |      12 |    8607 |
+
+In general, `ripeds` will apply filters as follows:
+
+- **wide**: filter(s) applied in a preprocessing step 
+- **long**: filter(s) applied in a postprocessing step 
   
 ### Preprocessing filter
 
-Preprocessing filters 
+Preprocessing filters require that a single data.frame containing all filtering
+variables is built prior to the main data request. Once constructed, all filters
+are applied and a single data.frame consisting of two columns, UNITID by YEAR,
+is returned. This data.frame will then be used in the primary data selection
+stage to keep only those institution/year pairs returned by the filter.
 
 ### Postprocessing filter
+
+Because long files are not unique by UNITID and YEAR, the filtering data.frame
+produced by a preprocessing filter will not adequately handle a filter like
+`efdelev == 3`.
+
+A postprocessing filter is applied in the case of variables sourced from long
+data files. After the preprocessing filter and primary data call, any filter
+containing a variable from a long data file will be applied to the output
+requested by the user.
+
+The result will depend on the complexity of the filter(s) and the type of output
+chosen by the user: 
+
+- [`join = TRUE` (default)] Filter(s) will be applied to the single joined
+data.frame, which should always be successful
+- [`join = FALSE`, `bind = TRUE|FALSE`] Filter(s) will be applied as applicable
+  to the individual data.frames contained in the output list. This means that if
+  a filter contains a variable found a particular long data file, there will be
+  an attempt to apply the filter to that data file. This may not be successful.
+  
+A postprocessing filter will fail when a complex filter containing variables
+across multiple data files is requested alongside `join = FALSE`. Since the
+complex filter is applied to only one data file or data file type in this
+situation, the filter will not be able to find some of the variables. In this
+situation, an error message alerting the user will occur and the unfiltered
+data.frame will be returned.
+
+When this error message is returned, the user should either set `join = TRUE`
+(the default), use a less complex filter, or filter the results in a separate
+process.
+
+# Considerations
+
+When applying filters using `ipeds_filter()`, a user should keep in mind the
+trade-off between complex filters with large data requests, memory / time
+required to fulfill the request, and the potential for errors.
+
+As a filter or set of filters becomes more complex, the data.frame needed for
+the preprocessing step will grow in size. When long data files are used, so too
+will the time and/or memory needed for the postprocessing steps. And in cases
+the user chooses not to join final output, there is increased chance of error or
+unexpected behavior. These issues will only scale as more variables and data
+years are requested.
+
+In situations requiring complex filtering behavior alongside large data
+requests, the user may benefit from breaking the request into smaller chunks or
+with fewer filters and wrangling the results using other R tools (such as those
+in the [Tidyverse](https://www.tidyverse.org)). In all cases, the user should
+confirm that output matches expectations.
+
