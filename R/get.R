@@ -129,7 +129,7 @@ ipeds_get <- function(ipedscall, bind = TRUE, join = TRUE) {
     ## -------------------------------------
     ## return
     ## -------------------------------------
-    tmp <- return_by_option(ipedscall, flist, s_dict, bind, join, long)
+    return_by_option(ipedscall, flist, s_dict, bind, join, long)
   })
 }
 
@@ -375,7 +375,7 @@ return_by_option <- function(ipedscall, flist, dict, bind, join, long) {
   ## long: FALSE
   ## flist_one: TRUE
   if (!long && flist_one && join) {
-    return(unname(flist)[[1]])
+    return(subset(unname(flist)[[1]], select = -c(file)))
   }
   ## bind: (ignored since join = TRUE)
   ## join: TRUE
@@ -384,7 +384,7 @@ return_by_option <- function(ipedscall, flist, dict, bind, join, long) {
   if (!long && !flist_one && join) {
     blist <- bind_like_files(flist, dict)
     if (length(blist) == 1) {
-      return(blist[[1]])
+      return(subset(blist[[1]], select = -c(file)))
     } else {
       return(join_all_files(blist))
     }

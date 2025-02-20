@@ -37,7 +37,6 @@ test_that("Single table request: (default), return data.frame", {
   colnames(df_comp) <- tolower(colnames(df_comp))
   df_comp <- df_comp[,c("unitid","instnm")]
   df_comp["year"] <- 2021
-  df_comp["file"] <- "HD2021"
   expect_equal(df, df_comp)
 })
 
@@ -87,7 +86,6 @@ test_that("Multiple table request: (default), return data.frame", {
                       colnames(tmp) <- tolower(colnames(tmp))
                       tmp <- tmp[,c("unitid","instnm")]
                       tmp["year"] <- x
-                      tmp["file"] <- paste0("HD", x)
                       tmp
                     })
   df_comp <- do.call(rbind, df_list)
@@ -150,8 +148,7 @@ test_that("Single table request w/filter: (default), return data.frame", {
   df_comp <- df_comp[df_comp[["stabbr"]] == "KY", ]
   df_comp <- df_comp[,c("unitid","instnm","stabbr")]
   df_comp["year"] <- 2021
-  df_comp["file"] <- "HD2021"
-  df_comp <- df_comp[,c(1,4,2,3,5)]
+  df_comp <- df_comp[,c(1,4,2,3)]
   rownames(df_comp) <- NULL
   expect_equal(df, df_comp)
 })
@@ -212,8 +209,7 @@ test_that("Multiple table request w/filter: (default), return data.frame", {
                       tmp <- tmp[tmp[["stabbr"]] == "KY", ]
                       tmp <- tmp[,c("unitid","instnm","stabbr")]
                       tmp["year"] <- x
-                      tmp["file"] <- paste0("HD", x)
-                      tmp <- tmp[,c(1,4,2,3,5)]
+                      tmp <- tmp[,c(1,4,2,3)]
                       rownames(tmp) <- NULL
                       tmp
                     })
@@ -284,7 +280,6 @@ test_that("Single long table request: (default), return data.frame", {
   colnames(df_comp) <- tolower(colnames(df_comp))
   df_comp <- df_comp[,c("unitid","efdesom")]
   df_comp["year"] <- 2021
-  df_comp["file"] <- "EF2021A_DIST"
   expect_equal(df, df_comp)
 })
 
@@ -336,7 +331,6 @@ test_that("Multiple long table request: (default), return data.frame", {
                       colnames(tmp) <- tolower(colnames(tmp))
                       tmp <- tmp[,c("unitid","efdesom")]
                       tmp["year"] <- x
-                      tmp["file"] <- paste0("EF", x, "A_DIST")
                       tmp
                     })
   df_comp <- do.call(rbind, df_list)
