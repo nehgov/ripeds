@@ -9,10 +9,8 @@ options(width = 100)
 # Download and Manipulate Integrated Postsecondary Education Data System (IPEDS) Data
 
 [![R-CMD-check](https://github.com/nehgov/ripeds/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/nehgov/ripeds/actions/workflows/R-CMD-check.yaml)
-[![GitHub
-release](https://img.shields.io/github/release/nehgov/ripeds.svg)](https://github.com/nehgov/ripeds)
-![R CMD check status](https://github.com/nehgov/ripeds/actions)
-![beta](https://img.shields.io/badge/beta-blue)
+![GitHub Release](https://img.shields.io/github/v/release/nehgov/ripeds)
+![Static Badge](https://img.shields.io/badge/release-beta-blue)
 
 
 
