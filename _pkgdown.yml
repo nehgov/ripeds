@@ -25,8 +25,9 @@ articles:
     contents:
       - introduction
       - design
-      - workflow
+      - nse
       - filter_behavior
+      - workflow
       - batch_download
 
 reference:

@@ -1,5 +1,11 @@
 # Download and Manipulate Integrated Postsecondary Education Data System (IPEDS) Data
 
+[![R build
+status](https://github.com/nehgov/ripeds/workflows/R-CMD-check/badge.svg)](https://github.com/nehgov/ripeds/actions)
+[![GitHub
+release](https://img.shields.io/github/release/nehgov/ripeds.svg)](https://github.com/nehgov/ripeds)
+<https://img.shields.io/badge/beta-blue>
+
 The `ripeds` R package provides a series of piped functions to
 facilitate downloading Department of Education Integrated Postsecondary
 Education Data System (IPEDS) complete data files.
@@ -33,3 +39,14 @@ and `ipeds_year()` come in any order in the pipe chain. Only
     ## 4 156213 2021           Asbury University     KY     1
     ## 5 156222 2020 Asbury Theological Seminary     KY     2
     ## 6 156222 2021 Asbury Theological Seminary     KY     2
+
+# Disclaimer
+
+This software package is licensed under the CC0 license. It is offered
+as-is and makes no representations or warranties of any kind concerning
+the Work, express, implied, statutory or otherwise, including without
+limitation warranties of title, merchantability, fitness for a
+particular purpose, non infringement, or the absence of latent or other
+defects, accuracy, or the present or absence of errors, whether or not
+discoverable, all to the greatest extent permissible under applicable
+law.

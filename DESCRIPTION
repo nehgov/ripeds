@@ -17,6 +17,7 @@ Depends:
 Suggests:
     testthat (>= 3.0.0),
     dplyr,
+    purrr,
     readr,
     tibble
 Config/testthat/edition: 3

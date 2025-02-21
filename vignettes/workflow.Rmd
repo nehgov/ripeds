@@ -18,6 +18,7 @@ knitr::opts_chunk$set(
 # Setup
 
 ```{r setup}
+#| include: FALSE
 libs <- c("dplyr", "readr", "tibble", "ripeds")
 sapply(libs, require, character.only = TRUE)
 ```
@@ -64,7 +65,7 @@ df
 ```
 
 The output contains the requested variables, plus the unique institutional
-**unitid**, and year associated with the request.
+_unitid_, and year associated with the request.
 
 ## Pull past 10 years
 
@@ -82,7 +83,7 @@ df <- ipeds_init() |>
 df
 ```
 
-## Add other useful variables with a filter
+## Add other useful variables as well as a filter
 
 In the next step, we can add more variables, including _instnm_ (institution
 name), and _sector_, which gives the level (sub two-year, two-year, and
@@ -104,19 +105,23 @@ df <- ipeds_init() |>
 df
 ```
 
-# Example 2: exclusively online students
+# Example 2: exclusively distance undergraduate students
+
+For this example, we'll search for the number of exclusively distance education
+undergraduate students.
 
 ## Searching
 
-```{r}
-ipeds_dict("distance", limit = 2)
-```
-
+We'll begin by searching for "distance":
 
 ```{r}
-ipeds_dict("efde", search_col = "varname")
+ipeds_dict("distance")
 ```
 
+This yields quite a few results (we're only shown 10 of 70). However, looking
+through the list, we find that _efdeexc_ represents, "Students enrolled
+exclusively in distance education courses" and covers 2011 to 2022. We'll use
+this variable.
 
 ```{r}
 df <- ipeds_init() |>
@@ -129,29 +134,59 @@ df <- ipeds_init() |>
 df
 ```
 
-```{r}
-unzip(file.path(tempdir(), "EF2022A_DIST.zip"), list = T)
+Looking at our output, we find an issue: _unitid_ values are not unique to each
+row. Instead, each _unitid_ has multiple values of _efdeexc_. Looking back at
+the output from `ipeds_dict()`, we can see that the file from which these values
+come, `EF2022A_DIST`, is long. That means we need to find the variable that
+uniquely identifies the values in _efdeexc_.
+
+There are two ways to do this:
+
+1. Search the filename with the `ripeds` dictionary and look through the list of
+   possible variables: `ipeds_dict("EF2022A_DIST", search_col = "filename",
+   limit = Inf)`
+1. Download the dictionary file associated with the complete data file provided
+   by IPEDS: `ipeds_download_to_disk(".", "EF2022A_DIST", type = "dictionary")`
+   
+The advantage of the first is that you don't have to download extra files (which
+will unzip into either a Microsoft Excel workbook or HTML file). The benefit of
+the second is that IPEDS dictionary contain more information than is presented
+by `ipeds_dict()`.
+
+## Check complete file dictionary file and filter
+
+For this example, we'll download the IPEDS dictionary file.
+
+```r
+ipeds_download_to_disk(".", "EF2022A_DIST", type = "dictionary")
 ```
 
+Looking in the **_Frequencies_** tab of the unzipped file, we can see that
+_efdelev_ values map to different student levels and combination of levels. To
+select only undergraduates, we need to set `efdelev == 2`.
 
-```{r}
-tmp <- read_csv(unzip(file.path(tempdir(), "EF2022A_DIST.zip"),
-                      "ef2022a_dist_rv.csv",
-                      exdir = tempdir())) |>
-  rename_all(tolower)
-```
+| varnumber | varname | codevalue | valuelabel                                      | frequency | percent |
+|:---------:|:--------|----------:|:------------------------------------------------|----------:|--------:|
+| 24816     | EFDELEV |         1 | All students total                              |     5,978 |   26.88 |
+| 24816     | EFDELEV |         2 | Undergraduate total                             |     5,706 |   25.66 |
+| 24816     | EFDELEV |         3 | Undergraduate, degree/certificate-seeking total |     5,703 |   25.64 |
+| 24816     | EFDELEV |        11 | Undergraduate, non-degree/certificate-seeking   |     2,803 |   12.60 |
+| 24816     | EFDELEV |        12 | Graduate                                        |     2,049 |    9.21 |
 
-## Check dictionary file
-
-## Filter
+Note that `ripeds` converts all input to lowercase, so choosing either `EFDELEV`
+or `efdelev` will work. Adding the filter, we successfully return the number of
+exclusively distance education undergraduate students in 2022.
 
 ```{r}
 df <- ipeds_init() |>
   ipeds_select(efdeexc) |>
-  ipeds_filter("efdelev == 2") |> 
+  ipeds_filter(efdelev == 2) |> 
   ipeds_year(2022) |> 
   ipeds_get() |>
   as_tibble()
+```
 
+```{r}
+df
 ```
 

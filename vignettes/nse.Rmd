@@ -1,0 +1,129 @@
+---
+title: "Non-standard evaluation"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Non-standard evaluation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+  % VignetteDepends{dplyr,purrr,tibble}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+By default `ripeds` allows for non-standard evaluation (NSE) in the functions.
+This default setting will feel normal to those accustomed to working with
+packages in the [Tidyverse](https://www.tidyverse.org). Users can also turn off
+NSE with `ipeds_init(use_nse = FALSE)`.
+
+```{r setup}
+library("ripeds")
+```
+
+# Selecting variables
+
+With NSE, variables can be separated by commas without quotation.
+
+**NSE**
+```{r}
+df <- ipeds_init() |>
+  ipeds_select(instnm, stabbr) |>
+  ipeds_year(2023) |>
+  ipeds_get()
+```
+
+```{r}
+df |> head()
+```
+
+Using standard evaluation, quotation and concatenation `c()` is required.
+
+**Standard**
+```{r}
+df <- ipeds_init(use_nse = FALSE) |>
+  ipeds_select(c("instnm", "stabbr")) |>
+  ipeds_year(2023) |>
+  ipeds_get()
+```
+
+```{r}
+df |> head()
+```
+
+Note that with standard evaluation, users can store variables names in an object
+and pass the object to `ipeds_select()`. This can be useful with large variable
+requests or dynamic requests.
+
+```{r}
+## using object
+vars_to_get <- c("instnm", "stabbr")
+df <- ipeds_init(use_nse = FALSE) |>
+  ipeds_select(vars_to_get) |>
+  ipeds_year(2023) |>
+  ipeds_get()
+
+df |> head()
+```
+
+```{r}
+## dynamically
+df_list <- purrr::map(c("instnm", "stabbr", "control"),
+                      ~ ipeds_init(use_nse = FALSE) |>
+                        ipeds_select(.x) |>
+                        ipeds_year(2023) |>
+                        ipeds_get())
+```
+
+```{r}
+lapply(df_list, head)
+```
+
+# Filters
+
+Filters can also be applied using either NSE or standard evaluation. With NSE,
+multiple filters are separated with commas, which are treated as **AND** (`&`).
+
+**NSE**
+```{r}
+df <- ipeds_init() |>
+  ipeds_select(instnm, stabbr) |>
+  ipeds_year(2023) |>
+  ipeds_filter(stabbr == "KY", control == 1) |> # stabbr == "KY" & control == 1
+  ipeds_get()
+```
+
+```{r}
+df |> head()
+```
+
+```{r}
+df |> dplyr::distinct(stabbr, control)
+```
+
+If you want a more complex filter, you will likely need to use standard
+evaluation.
+
+**Standard**
+```{r}
+df <- ipeds_init(use_nse = FALSE) |>
+  ipeds_select(c("instnm", "stabbr")) |>
+  ipeds_year(2023) |>
+  ipeds_filter("stabbr == 'KY' & (control == 1 | control == 2)") |> 
+  ipeds_get()
+```
+
+```{r}
+df |> head()
+```
+
+```{r}
+df |> dplyr::distinct(stabbr, control)
+```
+
+Note that with `ipeds_init(use_nse = FALSE)` you will have to use standard
+evaluation throughout the call chain. For more information about how filters
+work, see the vignette on [filter behavior](./filter_behavior.html).
