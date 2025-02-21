@@ -33,20 +33,20 @@ files contain variables of interest without downloading multiple dictionary
 files. And once the correct files are identified, there are potentially many
 files to download.
 
-ripeds simulates an API by smartly downloading, reading, and wrangling complete
+`ripeds` simulates an API by smartly downloading, reading, and wrangling complete
 data files. For users who already have the complete data files they need on
-their computer, ripeds can instead use those files, saving bandwidth and the
+their computer, `ripeds` can instead use those files, saving bandwidth and the
 time necessary to download. 
 
 Using complete data files rather than Access databases allows for complete
 coverage of IPEDS data and doesn't require users to install extra external
 database tools. To aid users not already familiar with the structure of IPEDS,
-ripeds also provides a searchable data dictionary that can be used to find and
+`ripeds` also provides a searchable data dictionary that can be used to find and
 request variables of interest.
 
 # Design principles
 
-ripeds is built with the following design principles, in general order of
+`ripeds` is built with the following design principles, in general order of
 importance:
 
 1. Support users who don't already know IPEDS structure
@@ -108,12 +108,12 @@ As an added wrinkle, while most complete data files are in a wide format, with
 each table row representing a unique institution (by UNITID), some are in long
 format, in which each institution can have multiple rows in the table.
 
-For more detailed information on how filters work with ripeds, see the [vignette
+For more detailed information on how filters work with `ripeds`, see the [vignette
 on filtering behavior](./filter_behavior.html).
 
 # Return
 
-By default, ripeds will attempt to combine all files into a single data.frame. This
+By default, `ripeds` will attempt to combine all files into a single data.frame. This
 is a two step process:
 
 1. Bind like files, meaning those that contain the same variables, but in
@@ -162,5 +162,5 @@ ipeds_init() |>
 will return a single data.frame in a list. Even though this is the same data
 (with the addition of the file name in the data.frame) as was returned in the
 first call since all the requested data come from a single complete data file,
-ripeds returns a list instead of a data.frame object for the sake of
+`ripeds` returns a list instead of a data.frame object for the sake of
 consistency.
