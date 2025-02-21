@@ -8,11 +8,12 @@ options(width = 100)
 ```
 # Download and Manipulate Integrated Postsecondary Education Data System (IPEDS) Data
 
-[![R build
-status](https://github.com/nehgov/ripeds/workflows/R-CMD-check/badge.svg)](https://github.com/nehgov/ripeds/actions)
+[![R-CMD-check](https://github.com/nehgov/ripeds/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/nehgov/ripeds/actions/workflows/R-CMD-check.yaml)
 [![GitHub
 release](https://img.shields.io/github/release/nehgov/ripeds.svg)](https://github.com/nehgov/ripeds)
-https://img.shields.io/badge/beta-blue
+![R CMD check status](https://github.com/nehgov/ripeds/actions)
+![beta](https://img.shields.io/badge/beta-blue)
+
 
 
 The `ripeds` R package provides a series of piped functions to facilitate
