@@ -66,9 +66,10 @@
 </h2>
 <p>When using <code><a href="../reference/ipeds_filter.html">ipeds_filter()</a></code> in a call chain,
 <code>ripeds</code> makes a distinction between filters that use
-variables from wide data files versus those from long (or narrow) data
-files.</p>
+variables from wide data files versus those that come from long (or
+narrow) data files.</p>
 <p><strong>Wide</strong></p>
+<p>In a wide data, each row represents a unique institution.</p>
 <table class="table">
 <thead><tr class="header">
 <th align="left">unitid</th>
@@ -86,6 +87,10 @@ files.</p>
 </tbody>
 </table>
 <p><strong>Long</strong></p>
+<p>In long (or narrow) data, unique institutions — here represented by
+their <strong>unitid</strong> — may have more than observation (row) in
+the data set. In this case, institutions have one observation each
+across five categories of <code>efdelev</code>.</p>
 <table class="table">
 <thead><tr class="header">
 <th align="left">unitid</th>
@@ -148,11 +153,11 @@ files.</p>
 <p>In general, <code>ripeds</code> will apply filters as follows:</p>
 <ul>
 <li>
-<strong>wide</strong>: filter(s) applied in a preprocessing
-step</li>
+<strong>wide</strong>: filter(s) applied in a preprocessing step
+before the primary data selection</li>
 <li>
-<strong>long</strong>: filter(s) applied in a postprocessing
-step</li>
+<strong>long</strong>: filter(s) applied in a postprocessing step
+after the primary data selection</li>
 </ul>
 <div class="section level4">
 <h4 id="preprocessing-filter">Preprocessing filter<a class="anchor" aria-label="anchor" href="#preprocessing-filter"></a>
@@ -160,16 +165,17 @@ step</li>
 <p>Preprocessing filters require that a single data.frame containing all
 filtering variables is built prior to the main data request. Once
 constructed, all filters are applied and a single data.frame consisting
-of two columns, UNITID by YEAR, is returned. This data.frame will then
-be used in the primary data selection stage to keep only those
-institution/year pairs returned by the filter.</p>
+of two columns, <strong>UNITID</strong> by year, is returned. This
+data.frame will then be used in the primary data selection stage to keep
+only those institution/year pairs returned by the filter.</p>
 </div>
 <div class="section level4">
 <h4 id="postprocessing-filter">Postprocessing filter<a class="anchor" aria-label="anchor" href="#postprocessing-filter"></a>
 </h4>
-<p>Because long files are not unique by UNITID and YEAR, the filtering
-data.frame produced by a preprocessing filter will not adequately handle
-a filter like <code>efdelev == 3</code>.</p>
+<p>Because long files are not unique by <strong>UNITID</strong> and year
+(see example above), the filtering data.frame produced by a
+preprocessing filter will not adequately handle a filter like
+<code>efdelev == 3</code>.</p>
 <p>A postprocessing filter is applied in the case of variables sourced
 from long data files. After the preprocessing filter and primary data
 call, any filter containing a variable from a long data file will be
@@ -178,7 +184,8 @@ applied to the output requested by the user.</p>
 type of output chosen by the user:</p>
 <ul>
 <li>[<code>join = TRUE</code> (default)] Filter(s) will be applied to
-the single joined data.frame, which should always be successful</li>
+the single joined data.frame, which should always be successful assuming
+a properly formatted filter</li>
 <li>[<code>join = FALSE</code>, <code>bind = TRUE|FALSE</code>]
 Filter(s) will be applied as applicable to the individual data.frames
 contained in the output list. This means that if a filter contains a
@@ -188,10 +195,10 @@ apply the filter to that data file. This may not be successful.</li>
 <p>A postprocessing filter will fail when a complex filter containing
 variables across multiple data files is requested alongside
 <code>join = FALSE</code>. Since the complex filter is applied to only
-one data file or data file type in this situation, the filter will not
-be able to find some of the variables. In this situation, an error
-message alerting the user will occur and the unfiltered data.frame will
-be returned.</p>
+one data file or data file type (<em>e.g.</em>, <code>HD*</code>), the
+filter will not be able to find some of the variables. In this
+situation, an error message alerting the user will occur and the
+unfiltered data.frame will be returned.</p>
 <p>When this error message is returned, the user should either set
 <code>join = TRUE</code> (the default), use a less complex filter, or
 filter the results in a separate process.</p>
