@@ -21,7 +21,7 @@ navbar:
 articles:
   - title: "Getting Started"
     desc: >
-      These vignettes introduce **ripeds**, explain it's design and some key
+      These vignettes introduce **ripeds**, explain its design and some key
       features, offer an example workflow, and show how users can batch download
       complete IPEDS data files.
     contents:
