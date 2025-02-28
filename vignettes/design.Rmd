@@ -179,3 +179,39 @@ first call --- since all the requested data come from a single complete data
 file --- `ripeds` returns a list instead of a data.frame object for the sake of
 consistency.
 
+# Speed and memory
+
+The first data request requires a table of current complete data files to be in
+the `tempdir()`. If `ipeds_init()` does not find the table, one will be created
+by scraping the IPEDS website, munging the results, and storing the table in
+`tempdir()`. This step does not take long and once completed, will not need to
+be taken again for the rest of the session. Subsequent data pulls of the same
+size will be a little faster for not having to repeat this step.
+
+When making a data call, `ripeds` will first check whether any of the required
+complete data files are located in the `tempdir()` (this is assuming the user
+does not have the files on their machine and did not supply `ipeds_init()` with
+a `local_dir`). Any missing files will be downloaded to the `tempdir()`. For the
+rest of the session, these files will be available for subsequent data requests.
+This is especially useful in interactive sessions in which the user makes
+multiple similar calls: data in memory will not need to be downloaded again.
+This should make additional calls faster as more necessary files are in memory.
+
+Individual complete data files are small: both the tables themselves and the
+zipped file in which they are downloaded. For most computers and situations,
+users should not find that they are taking up too much memory via temporary file
+storage in `tempdir()`. For older computers or situations in which memory must
+be kept open, however, users may wish to clear out their `tempdir()` within a
+session. If a user wants to keep the downloaded files, `ipeds_tmp_to_disk()`
+will save all IPEDS files in memory to the chosen directory. If a user does not
+care to save the files, they can just close the session and reopen a clean one.
+Alternatively, they may want to use something like:
+
+```r
+file.remove(list.files(tempdir(), full.names = TRUE, pattern = ".zip"))
+```
+
+**WARNING** The code above will remove all `*.zip` files from `tempdir()`. If a
+user has saved other zipped files to `tempdir()` during the session, these will
+be deleted as well.
+
