@@ -13,23 +13,23 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
-## Integrated Postsecondary Education Data System
+## Data on US higher education institutions
 
-For those interested in data in higher education institutions in the United
-States, IPEDS is an invaluable resource. What is IPEDS? From the National Center
-for Education Statistics (NCES) [web site](https://nces.ed.gov/ipeds/about-ipeds):
+For those interested in data on higher education institutions in the United
+States, the Integrated Postsecondary Education Data System (IPEDS) is an
+invaluable resource. What is IPEDS? From the National Center for Education
+Statistics (NCES) [web site](https://nces.ed.gov/ipeds/about-ipeds):
 
-> IPEDS is the Integrated Postsecondary Education Data System. It is a system of
-> interrelated surveys conducted annually by the U.S. Department of Education’s
-> National Center for Education Statistics (NCES). IPEDS gathers information
-> from every college, university, and technical and vocational institution that
-> participates in the federal student financial aid programs. The Higher
-> Education Act of 1965, as amended, requires that institutions that participate
-> in federal student aid programs report data on enrollments, program
-> completions, graduation rates, faculty and staff, finances, institutional
-> prices, and student financial aid.
+> [IPEDS] is a system of interrelated surveys conducted annually by the U.S.
+> Department of Education’s National Center for Education Statistics (NCES).
+> IPEDS gathers information from every college, university, and technical and
+> vocational institution that participates in the federal student financial aid
+> programs. The Higher Education Act of 1965, as amended, requires that
+> institutions that participate in federal student aid programs report data on
+> enrollments, program completions, graduation rates, faculty and staff,
+> finances, institutional prices, and student financial aid.
 
-IPEDS covers most higher education institutions (though not all):
+IPEDS covers most (though not all) higher education institutions:
 
 > The completion of all IPEDS surveys is mandatory for institutions that
 > participate in or are applicants for participation in any federal student
@@ -45,36 +45,49 @@ IPEDS covers most higher education institutions (though not all):
 ## Using IPEDS
 
 There are a number of ways to use IPEDS data. For information on single
-institutions, a person can use the [College
+institutions, one can use the [College
 Navigator](https://nces.ed.gov/collegenavigator/). NCES also provides a [Data
-Explorer}(https://nces.ed.gov/ipeds/search) with a number pre-made tables that
-some may find sufficient. 
+Explorer}(https://nces.ed.gov/ipeds/search) with a number pre-compiled tables
+that some may find sufficient.
 
-For researchers interested in analyses across many institutions, however, the
-complete data files, either as shared via Microsoft Access databases or separate
-CSV files are the most useful. Whereas Access databases go back to the 2004-2005
-school year, the CSV versions of the data files contain some information as far
-back as 1980.
+For researchers interested in performing analyses across many institutions,
+however, the complete data files are the most useful. These complete data files
+are shared via Microsoft Access databases or separate CSV files. Whereas Access
+databases go back to the 2004-2005 school year, the CSV versions of the data
+files contain some information as far back as 1980.
 
-## IPEDS does not have an API and is complex
+## IPEDS is complex and does not have an API
+
+The IPEDS database is complex. Downloading separate CSV files requires users to
+both understand where to find variables of interest and how to append / join
+these files into a single data frame that can be analyzed.
 
 Unlike some other federal data sources on higher education (like the [College
 Scorecard](https://collegescorecard.ed.gov)), IPEDS does not have an API that
 allows users to directly pull data for analyses or applications.
 
-In addition, the structure of IPEDS can be complex. Downloading separate CSV
-files requires users to both understand where to find variables of interest and
-how to append / join these files into a single data frame that can be analyzed.
-
 ## Purpose of `ripeds`
 
 The purpose of this package is threefold:
 
-1. To provide an API-like interface between IPEDS and R;
+1. To provide an API-like interface between IPEDS and R
 1. To facilitate finding and pulling relevant variables without requiring
-   detailed knowledge IPEDS's structure via an interactive dictionary function;
+   detailed knowledge IPEDS's structure via an interactive dictionary function
 1. To make it easy to batch download large parts of IPEDS (including full
-   dictionary files) for power users who need to save the original files on
-   their machine, but would like an easier and automated way of getting them.
+   dictionary files) for users who need to save the original files on their
+   machine and would like an easier and automated way of doing so
    
+## Other R package options
+   
+ Besides `ripeds`, there are other tools to access IPEDS data via R that users
+ may find helpful:
  
+ - [`ipeds`](https://github.com/jbryer/ipeds), which uses the Microsoft
+   Access files.
+ - [`educationdata`](https://educationdata.urban.org/documentation/#r), which
+   accesses Urban Institute's [Education Data
+   Portal](https://educationdata.urban.org/documentation/#about_the_api)
+   internal API. Data sources other than IPEDS may be accessed via Urban
+   Institute's API.
+   
+
