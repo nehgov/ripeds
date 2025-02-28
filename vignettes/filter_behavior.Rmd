@@ -16,10 +16,12 @@ knitr::opts_chunk$set(
 # How `ripeds` uses filters
 
 When using `ipeds_filter()` in a call chain, `ripeds` makes a distinction
-between filters that use variables from wide data files versus those from long
-(or narrow) data files.
+between filters that use variables from wide data files versus those that come
+from long (or narrow) data files.
 
 **Wide**
+
+In a wide data, each row represents a unique institution. 
 
 | unitid | instnm |
 |:-------|:-------|
@@ -27,6 +29,11 @@ between filters that use variables from wide data files versus those from long
 | 100663 | University of Alabama at Birmingham |
 
 **Long**
+
+In long (or narrow) data, unique institutions --- here represented by their
+**unitid** --- may have more than observation (row) in the data set. In this
+case, institutions have one observation each across five categories of
+`efdelev`.
 
 | unitid | efdelev | efdetot |
 |:-------|--------:|--------:|
@@ -43,22 +50,24 @@ between filters that use variables from wide data files versus those from long
 
 In general, `ripeds` will apply filters as follows:
 
-- **wide**: filter(s) applied in a preprocessing step 
-- **long**: filter(s) applied in a postprocessing step 
+- **wide**: filter(s) applied in a preprocessing step before the primary data
+  selection
+- **long**: filter(s) applied in a postprocessing step after the primary data
+  selection
   
 ### Preprocessing filter
 
 Preprocessing filters require that a single data.frame containing all filtering
 variables is built prior to the main data request. Once constructed, all filters
-are applied and a single data.frame consisting of two columns, UNITID by YEAR,
+are applied and a single data.frame consisting of two columns, **UNITID** by year,
 is returned. This data.frame will then be used in the primary data selection
 stage to keep only those institution/year pairs returned by the filter.
 
 ### Postprocessing filter
 
-Because long files are not unique by UNITID and YEAR, the filtering data.frame
-produced by a preprocessing filter will not adequately handle a filter like
-`efdelev == 3`.
+Because long files are not unique by **UNITID** and year (see example above),
+the filtering data.frame produced by a preprocessing filter will not adequately
+handle a filter like `efdelev == 3`.
 
 A postprocessing filter is applied in the case of variables sourced from long
 data files. After the preprocessing filter and primary data call, any filter
@@ -69,7 +78,8 @@ The result will depend on the complexity of the filter(s) and the type of output
 chosen by the user: 
 
 - [`join = TRUE` (default)] Filter(s) will be applied to the single joined
-data.frame, which should always be successful
+  data.frame, which should always be successful assuming a properly formatted
+  filter
 - [`join = FALSE`, `bind = TRUE|FALSE`] Filter(s) will be applied as applicable
   to the individual data.frames contained in the output list. This means that if
   a filter contains a variable found a particular long data file, there will be
@@ -77,8 +87,8 @@ data.frame, which should always be successful
   
 A postprocessing filter will fail when a complex filter containing variables
 across multiple data files is requested alongside `join = FALSE`. Since the
-complex filter is applied to only one data file or data file type in this
-situation, the filter will not be able to find some of the variables. In this
+complex filter is applied to only one data file or data file type (_e.g._,
+`HD*`), the filter will not be able to find some of the variables. In this
 situation, an error message alerting the user will occur and the unfiltered
 data.frame will be returned.
 
