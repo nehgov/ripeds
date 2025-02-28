@@ -22,21 +22,22 @@ complete data files, there are two primary download options:
 1. [Complete data files](https://nces.ed.gov/ipeds/datacenter/DataFiles.aspx)
 
 Each version has benefits and drawbacks. Whereas Access databases helpfully
-provide all data tables for a given year, the files are large and in a special
-database format. Access databases also only go back to the 2004-2005 academic
-year data collection.
+provide all data tables for a given year, the files are large. They also come in
+a proprietary database format that may require the installation of additional
+software for some users. Finally, IPEDS Access databases only go back to the
+2004-2005 data collection period.
 
-On the other hand, the complete data files are smaller --- effectively zipped
-CSV versions of the database tables. They also include all available data, which
-in some cases goes back to 1980. However, it can be difficult to know which
-files contain variables of interest without downloading multiple dictionary
-files. And once the correct files are identified, there are potentially many
-files to download.
+On the other hand, the complete data files are smaller --- zipped CSV versions
+of individual database tables. They also include all available data, which in
+some cases goes back to 1980. However, it can be difficult to know which files
+contain variables of interest without downloading multiple dictionary files.
+Once the correct files are identified, there are potentially many files to
+download.
 
-`ripeds` simulates an API by smartly downloading, reading, and wrangling complete
-data files. For users who already have the complete data files they need on
-their computer, `ripeds` can instead use those files, saving bandwidth and the
-time necessary to download. 
+`ripeds` simulates an API by smartly downloading, reading, and wrangling
+complete data files. For users who already have the complete data files they
+need on their computer, `ripeds` can skip downloading and instead use those
+files, saving bandwidth and the time necessary to download.
 
 Using complete data files rather than Access databases allows for complete
 coverage of IPEDS data and doesn't require users to install extra external
@@ -58,19 +59,21 @@ importance:
 
 In some instances, these design principles are at odds with each other. Allowing
 users more flexibility in choosing filters means that there might be instances
-in which many files need to be downloaded (breaking 4) or that the request to
-return unjoined files in a list cannot also correctly apply the filter (breaking
-3). Based on the complexity of IPEDS, there is unfortunately no way around some
-incommensurable requests. Users who understand these design choices, however,
-can find ways to mitigate unintended output and ultimately gather the data they
-need in the format required for their analysis.
+in which many files need to be downloaded (breaking principle 4) or that the
+request to return unjoined files in a list cannot also correctly apply the
+filter (breaking principle 3). Based on the complexity of IPEDS, there is
+unfortunately no way around some incommensurable requests. Users who understand
+these design choices, however, can find ways to mitigate unintended output and
+ultimately gather the data they need in the format required for their analysis.
 
 # How it works
 
 The general process for returning data from a call is as follows:
 
-1. Using an internal data dictionary, generate a list of complete data files
-     that contain selected variables alongside chosen years
+1. Scrape the IPEDS complete data file site to generate a table of currently
+   available files if not already in memory.
+1. Using the table alongside an internal data dictionary, generate a list of
+     complete data files that contain selected variables alongside chosen years
 1. Read complete data files into memory --- downloading if necessary ---
    selecting variables as requested
 1. Return output: list of each individual file used, list of files in which like
@@ -87,6 +90,8 @@ ipeds_init() |>
 
 This call would generate the following work flow:
 
+1. Check memory for table of available files; if not available, scrape IPEDS
+   site (only needs to do this once per session)
 1. Filter potential data files to those released for 2023, and check data
    dictionary for `instnm` and `stabbr`
    - _both are found in `HD2023` data file_
@@ -97,7 +102,6 @@ This call would generate the following work flow:
    default), selecting `instnm` and `stabbr` as well as `unitid` 
 1. Return data frame
 
-
 ## Using a filter
 
 With a filter, the process becomes a little more complex. Because filtering
@@ -105,8 +109,9 @@ variables might be located in different data files, these data files must first
 be read into memory and combined as necessary so that the filter can be applied. 
 
 As an added wrinkle, while most complete data files are in a wide format, with
-each table row representing a unique institution (by UNITID), some are in long
-format, in which each institution can have multiple rows in the table.
+each table row representing a unique institution (by the variable **UNITID**),
+some complete data files are in long format, in which each institution can have
+multiple rows in the table.
 
 For more detailed information on how filters work with `ripeds`, see the [vignette
 on filtering behavior](./filter_behavior.html).
@@ -116,16 +121,21 @@ on filtering behavior](./filter_behavior.html).
 By default, `ripeds` will attempt to combine all files into a single data.frame. This
 is a two step process:
 
-1. Bind like files, meaning those that contain the same variables, but in
-   different years. This means files can simply be row appended.
-1. Join different file types by UNITID and year. A full or outer join is used,
+1. Row bind like files, meaning those data.frame coming from complete files that
+   contain the same variables, but in different years (_e.g._, `HD2020`,
+   `HD2021`, `HD2022`, _etc_)
+1. Join different file types by **UNITID** and year using a full or outer join
    so as not to artificially subset the resulting data.frame based on the order
-   of the joins. This may result in missing values depending the specific nature
-   of the call.
+   of the joins --- this may result in missing values in some data.frame cells
+   depending the specific nature of the call
    
 The user can also choose to return files row bound only with like files, but not
 joined across files or entirely individually. Both of these options will result
-in the return of a list.
+in the return of a list. For example, if a user sets `join = FALSE` but `bind =
+TRUE` and the data call requires the complete data files `HD2020`, `HD2021`,
+`IC2020`, and `IC2021`, the a list of two items will be returned: a data.frame
+in which the results from the two `HD*` files are bound together and a
+data.frame in which the results from the two `IC*` files are bound together.
 
 If the user chooses only to bind like files, but the result is a single bound
 data.frame, output will be a list with one item. For example,
@@ -138,8 +148,10 @@ ipeds_init() |>
 ```
 
 returns a list with one item: a data.frame with two observations per unique
-UNITID containing the UNITID, institution name, state abbreviation, year, and
-file name. Choosing not to bind (which by default also sets `join = FALSE`),
+**UNITID** containing the **UNITID**, institution name, state abbreviation,
+year, and file name. 
+
+Choosing not to bind (which by default also sets `join = FALSE`),
 
 ```r
 ipeds_init() |>
@@ -148,9 +160,11 @@ ipeds_init() |>
   ipeds_get(bind = FALSE)
 ```
 
-returns a list of two items: a separate data.frame containing UNITID,
+returns a list of two items: separate data.frames containing **UNITID**,
 institution name, state abbreviation, file name, and year for each year.
-Returning to the original call, choosing either `join = FALSE` or `bind = FALSE`,
+
+Returning to the original call, choosing either `join = FALSE` or `bind =
+FALSE`,
 
 ```r
 ipeds_init() |>
@@ -161,6 +175,7 @@ ipeds_init() |>
 
 will return a single data.frame in a list. Even though this is the same data
 (with the addition of the file name in the data.frame) as was returned in the
-first call since all the requested data come from a single complete data file,
-`ripeds` returns a list instead of a data.frame object for the sake of
+first call --- since all the requested data come from a single complete data
+file --- `ripeds` returns a list instead of a data.frame object for the sake of
 consistency.
+
