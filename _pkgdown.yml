@@ -3,6 +3,7 @@ url: https://potential-adventure-6knn6m6.pages.github.io/
 
 template:
   bootstrap: 5
+  bootswatch: cosmo
 
 navbar:
   title: "ripeds"
@@ -20,8 +21,9 @@ navbar:
 articles:
   - title: "Getting Started"
     desc: >
-      These vignettes introduce **ripeds**, offer an example workflow, and
-      show how users can batch download complete IPEDS data files.
+      These vignettes introduce **ripeds**, explain it's design and some key
+      features, offer an example workflow, and show how users can batch download
+      complete IPEDS data files.
     contents:
       - introduction
       - design
@@ -37,8 +39,8 @@ reference:
     - ipeds_get
   - title: Select and filter variables
     contents:
-    - matches('select')
-    - matches('filter')
+    - matches("select")
+    - matches("filter")
     - ipeds_year
   - title: Search data elements
     contents:

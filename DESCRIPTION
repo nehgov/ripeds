@@ -18,7 +18,6 @@ Suggests:
     testthat (>= 3.0.0),
     dplyr,
     purrr,
-    readr,
     tibble
 Config/testthat/edition: 3
 URL: https://potential-adventure-6knn6m6.pages.github.io/
