@@ -38,7 +38,7 @@ the `ipeds_download_to_disk()` function.
 
 There are two basic ways to download the files:
 
-1. Using file names directly;
+1. Using file names directly
 1. Using results from the helper function `ipeds_file_table()`
    
 ### Using file names
