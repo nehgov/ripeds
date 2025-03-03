@@ -4,6 +4,10 @@
 ![GitHub Release](https://img.shields.io/github/v/release/nehgov/ripeds)
 ![Static Badge](https://img.shields.io/badge/release-beta-blue)
 
+**THIS SOFTWARE PACKAGE IS IN BETA RELEASE AND MAY CONTAIN SOME BUGS. 
+IN ADDITION, SOME FUNCTIONALITY MAY CHANGE. PLEASE SEE DISCLAIMER BELOW 
+AND USE ACCORDINGLY.**
+
 The `ripeds` R package provides a series of piped functions to
 facilitate downloading Department of Education Integrated Postsecondary
 Education Data System (IPEDS) complete data files.
