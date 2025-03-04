@@ -108,7 +108,7 @@ ipeds_download_to_disk <- function(to_dir, files = NULL, use_ipeds_dict = NULL,
   ## choose dictionary first
   using_dict <- FALSE
   if (!is.null(use_ipeds_dict)) {
-    files <- make_distinct(use_ipeds_dict, "filename")[["filename"]]
+    files <- make_distinct(use_ipeds_dict, "file")[["file"]]
     using_dict <- TRUE
   }
   ## confirm files in IPEDS
