@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ripeds</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -76,7 +76,9 @@ NSE with <code>ipeds_init(use_nse = FALSE)</code>.</p>
 <code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ipeds_init.html">ipeds_init</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/ipeds_select.html">ipeds_select</a></span><span class="op">(</span><span class="va">instnm</span>, <span class="va">stabbr</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/ipeds_year.html">ipeds_year</a></span><span class="op">(</span><span class="fl">2023</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/ipeds_get.html">ipeds_get</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="../reference/ipeds_get.html">ipeds_get</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Downloading to /tmp/RtmpbOzbtK:</span></span>
+<span><span class="co">#&gt; - HD2023.zip</span></span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   unitid                              instnm stabbr year</span></span>
