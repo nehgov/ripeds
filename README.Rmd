@@ -44,6 +44,10 @@ df <- ipeds_init() |>
 ## show
 df |> head()
 ```
+# Help and vignettes
+
+See the [`ripeds`](https://nehgov.github.io/ripeds) site for more help as well
+as vignettes on explaining package functionality.
 
 # Disclaimer
 

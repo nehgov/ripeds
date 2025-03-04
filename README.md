@@ -4,9 +4,9 @@
 ![GitHub Release](https://img.shields.io/github/v/release/nehgov/ripeds)
 ![Static Badge](https://img.shields.io/badge/release-beta-blue)
 
-**THIS SOFTWARE PACKAGE IS IN BETA RELEASE AND MAY CONTAIN SOME BUGS. 
-IN ADDITION, SOME FUNCTIONALITY MAY CHANGE. PLEASE SEE DISCLAIMER BELOW 
-AND USE ACCORDINGLY.**
+**THIS SOFTWARE PACKAGE IS IN BETA RELEASE AND MAY CONTAIN SOME BUGS. IN
+ADDITION, SOME FUNCTIONALITY MAY CHANGE. PLEASE SEE DISCLAIMER BELOW AND
+USE ACCORDINGLY.**
 
 The `ripeds` R package provides a series of piped functions to
 facilitate downloading Department of Education Integrated Postsecondary
@@ -42,8 +42,34 @@ and `ipeds_year()` come in any order in the pipe chain. Only
     ## 5 156222 2020 Asbury Theological Seminary     KY     2
     ## 6 156222 2021 Asbury Theological Seminary     KY     2
 
+# Help and vignettes
+
+See the [`ripeds`](https://nehgov.github.io/ripeds) site for more help
+as well as vignettes on explaining package functionality.
+
 # Disclaimer
 
-The software package is licensed under the CC0 license. It is provided "as is" without any warranty of any kind, either expressed, implied, or statutory, including, but not limited to, any warranty that the subject software will conform to specifications, any implied warranties of merchantability, fitness for a particular purpose, or freedom from infringement, any warranty that the subject software will be error free, or any warranty that documentation, if provided, will conform to the subject software. This agreement does not, in any manner, constitute an endorsement by NEH or any prior recipient of any results, resulting designs, hardware, software products or any other applications resulting from use of the subject software. Further, NEH disclaims all warranties and liabilities regarding third-party software, if present in the original software, and distributes it "as is." 
+The software package is licensed under the CC0 license. It is provided
+“as is” without any warranty of any kind, either expressed, implied, or
+statutory, including, but not limited to, any warranty that the subject
+software will conform to specifications, any implied warranties of
+merchantability, fitness for a particular purpose, or freedom from
+infringement, any warranty that the subject software will be error free,
+or any warranty that documentation, if provided, will conform to the
+subject software. This agreement does not, in any manner, constitute an
+endorsement by NEH or any prior recipient of any results, resulting
+designs, hardware, software products or any other applications resulting
+from use of the subject software. Further, NEH disclaims all warranties
+and liabilities regarding third-party software, if present in the
+original software, and distributes it “as is.”
 
-The recipient agrees to waive any and all claims against the United States government, its contractors and subcontractors, as well as any prior recipient. If recipient's use of the subject software results in any liabilities, demands, damages, expenses or losses arising from such use, including any damages from products based on, or resulting from, recipient's use of the subject software, recipient shall indemnify and hold harmless the United States government, its contractors and subcontractors, as well as any prior recipient, to the extent permitted by law. Recipient's sole remedy for any such matter shall be the immediate, unilateral termination of this agreement.
+The recipient agrees to waive any and all claims against the United
+States government, its contractors and subcontractors, as well as any
+prior recipient. If recipient’s use of the subject software results in
+any liabilities, demands, damages, expenses or losses arising from such
+use, including any damages from products based on, or resulting from,
+recipient’s use of the subject software, recipient shall indemnify and
+hold harmless the United States government, its contractors and
+subcontractors, as well as any prior recipient, to the extent permitted
+by law. Recipient’s sole remedy for any such matter shall be the
+immediate, unilateral termination of this agreement.
