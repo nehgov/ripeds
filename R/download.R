@@ -167,7 +167,7 @@ ipeds_download_to_disk <- function(to_dir, files = NULL, use_ipeds_dict = NULL,
     f <- fzipvec[i]
     if (overwrite | !file.exists(file.path(to_dir, f))) {
       ## message
-      message(paste0("- ", f))
+      if (!quiet) message(paste0("- ", f))
       ## download to local directory
       utils::download.file(file.path(base_url, f),
                            file.path(to_dir, f),
