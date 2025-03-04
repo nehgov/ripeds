@@ -146,7 +146,7 @@ ipeds_download_to_disk <- function(to_dir, files = NULL, use_ipeds_dict = NULL,
     if (length(overlap) > 0) {
       message("The following files have already been downloaded:\n\n",
               paste0("- ", overlap, "\n"),
-              "\nIf you would like to redownload, set overwrite = TRUE")
+              "\nIf you would like to redownload, set overwrite = TRUE\n")
     }
     ## update file list
     files <- files[which(!files %in% overlap)]
@@ -160,15 +160,20 @@ ipeds_download_to_disk <- function(to_dir, files = NULL, use_ipeds_dict = NULL,
   ## set base url
   base_url <- "https://nces.ed.gov/ipeds/datacenter/data"
   ## loop through
+  message(paste0("Downloading to ", to_dir, ":"))
   for (i in 1:length(fzipvec)) {
     f <- fzipvec[i]
-    if (!file.exists(file.path(to_dir, f))) {
+    if (overwrite | !file.exists(file.path(to_dir, f))) {
+      ## message
+      message(paste0("- ", f))
       ## download to local directory
       utils::download.file(file.path(base_url, f),
                            file.path(to_dir, f),
                            quiet = TRUE, mode = "wb")
       ## add counter so not throttled
-      if (i %% 50 == 0) Sys.sleep(10)
+      if (i %% 50 == 0) {
+        countdown(sample(15:25, 1), "Pausing to give server a break...")
+      }
     }
   }
 }

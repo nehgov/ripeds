@@ -95,6 +95,17 @@ get_file_stub_name <- function(file, lower = FALSE) {
   if (lower) { tolower(stub) } else { stub }
 }
 
+## counter when pausing for downloads
+countdown <- function(pause, text) {
+  cat("\n")
+  for (i in pause:0) {
+    j <- ifelse(i == 0, "done!", i)
+    cat("\r", text, j)
+    Sys.sleep(1)
+    if (i == 0) { cat("\n\n") }
+  }
+}
+
 ## -----------------------------------------------------------------------------
 ## helper functions to support base R pipe chains / reduce code
 ## -----------------------------------------------------------------------------

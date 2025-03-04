@@ -51,35 +51,36 @@ test_that("convert_hash_df_names", {
 
 ## get_hash
 test_that("get_hash", {
+  ## NB: hashes will change with updates of data, so checking that *_hash and
+  ## *_hash_lu are inverses
   ## file names
-  expect_equal(get_hash("HD2020", file_hash), c("HD2020" = "fi730"))
-  expect_equal(get_hash("fi730", file_hash_lu), c("fi730" = "HD2020"))
+  expect_equal(get_hash(get_hash("HD2020", file_hash), file_hash_lu), c("HD2020" = "HD2020"))
   ## var names
-  expect_equal(get_hash("instnm", vars_hash), c("instnm" = "vi3907"))
-  expect_equal(get_hash("vi3907", vars_hash_lu), c("vi3907" = "instnm"))
+  expect_equal(get_hash(get_hash("instnm", vars_hash), vars_hash_lu), c("instnm" = "instnm"))
   ## descriptions
-  expect_equal(get_hash("11/12-month contract", desc_hash),
-               c("11/12-month contract" = "di1"))
-  expect_equal(get_hash("di1", desc_hash_lu),
-               c("di1" = "11/12-month contract"))
+  expect_equal(get_hash(get_hash("11/12-month contract", desc_hash), desc_hash_lu),
+               c("11/12-month contract" = "11/12-month contract"))
   ## vector
-  expect_equal(get_hash(c("HD2020","HD2021"), file_hash),
-               c("HD2020" = "fi730", "HD2021" = "fi731"))
+  expect_equal(get_hash(get_hash(c("HD2020","HD2021"), file_hash), file_hash_lu),
+               c("HD2020" = "HD2020", "HD2021" = "HD2021"))
 })
 
 ## convert_hash_vec
 test_that("convert_hash_vec", {
   df <- data.frame(i = 1:11,
-                   idxf = paste0("fi", 720:730))
+                   idxf = get_hash(paste0("HD", 2010:2020), file_hash))
   vec <- convert_hash_vec(df, "idxf")
   expect_equal(unname(vec), paste0("HD", 2010:2020))
 })
 
 ## convert_hash_df
 test_that("convert_hash_df", {
-  df <- data.frame("idxf" = c("fi720", "fi721", "fi722"),
-                   "idxv" = c("vi3907", "vi3908", "vi3909"),
-                   "idxd" = c("di1", "di2", "di3"))
+  df <- data.frame("idxf" = get_hash(paste0("HD", 2010:2012), file_hash),
+                   "idxv" = get_hash(c("instnm", "instrfte", "instsize"), vars_hash),
+                   "idxd" = get_hash(c("11/12-month contract",
+                                       "12-month full-time equivalent enrollment",
+                                       "12-month instructional activity clock hours: undergraduates"),
+                                     desc_hash))
   df_conv <- convert_hash_df(df)
   rownames(df_conv) <- NULL
   df_comp <- data.frame("idxf" = paste0("HD", 2010:2012),

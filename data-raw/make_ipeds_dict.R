@@ -29,8 +29,8 @@ parse_xlsx <- function(zipfile, dfile) {
   f <- unzip(zipfile, dfile, exdir = tempdir())
   sheets <- readxl::excel_sheets(f)
   sname <- sheets[grepl("[V|v]arlist", sheets)]
-  out <- readxl::read_excel(f, sheet = sname) |>
-     dplyr::filter(tolower(varname) != "unitid")
+  out <- readxl::read_excel(f, sheet = sname) ## |>
+     ## dplyr::filter(tolower(varname) != "unitid")
   invisible(file.remove(f))
   out
 }
@@ -163,8 +163,9 @@ for (i in 1:length(dict)) {
   } else {
     ## subset variables for file
     dfvars <- df_vars |>
-      dplyr::filter(file_name == itab[["file"]][i],
-                    tolower(varname) != "unitid") |>
+      dplyr::filter(file_name == itab[["file"]][i]## ,
+                    ## tolower(varname) != "unitid"
+                    ) |>
       dplyr::pull(varname)
     out <- parse_html(file.path(tdir, zipf), fname, dfvars)
   }
