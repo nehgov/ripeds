@@ -1,6 +1,6 @@
 Package: ripeds
 Title: Download and Manipulate Integrated Postsecondary Education Data System (IPEDS) Data
-Version: 0.2.0
+Version: 0.2.1
 Authors@R: person("Benjamin", "Skinner",
            email = "bskinner@neh.gov",
            role = c("aut", "cre"),
@@ -20,6 +20,6 @@ Suggests:
     purrr,
     tibble
 Config/testthat/edition: 3
-URL: https://potential-adventure-6knn6m6.pages.github.io/
+URL: https://nehgov.github.io/ripeds
 BugReports: https://github.com/nehgov/ripeds/issues
 Config/Needs/website: rmarkdown
