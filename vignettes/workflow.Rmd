@@ -77,7 +77,8 @@ df <- ipeds_init() |>
   ipeds_select(latitude, longitud) |>
   ipeds_year(2014:2023) |> 
   ipeds_get() |>
-  as_tibble()
+  as_tibble() |>
+  arrange(unitid, year)
 ```
 ```{r}
 df
