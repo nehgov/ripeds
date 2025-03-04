@@ -10,7 +10,8 @@ ipeds_download_to_disk(
   use_ipeds_dict = NULL,
   type = c("data", "dictionary"),
   overwrite = FALSE,
-  create_dir = TRUE
+  create_dir = TRUE,
+  quiet = FALSE
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ directory. Default is \code{FALSE} (keep already existing files).}
 
 \item{create_dir}{Recursively create directory path specified by user if it
 does not exist. Default is \code{TRUE}.}
+
+\item{quiet}{Do not show progress messages. Default is \code{FALSE}.}
 }
 \description{
 Directly download and save IPEDS zip files to disk for future usage. By

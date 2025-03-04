@@ -84,6 +84,7 @@ ipeds_temp_to_disk <- function(to_dir, overwrite = FALSE, remove_from_tempdir = 
 #'   directory. Default is `FALSE` (keep already existing files).
 #' @param create_dir Recursively create directory path specified by user if it
 #'   does not exist. Default is `TRUE`.
+#' @param quiet Do not show progress messages. Default is `FALSE`.
 #'
 #' @examples
 #' \dontrun{
@@ -104,7 +105,8 @@ ipeds_temp_to_disk <- function(to_dir, overwrite = FALSE, remove_from_tempdir = 
 #' @export
 ipeds_download_to_disk <- function(to_dir, files = NULL, use_ipeds_dict = NULL,
                                    type = c("data", "dictionary"),
-                                   overwrite = FALSE, create_dir = TRUE) {
+                                   overwrite = FALSE, create_dir = TRUE,
+                                   quiet = FALSE) {
   ## choose dictionary first
   using_dict <- FALSE
   if (!is.null(use_ipeds_dict)) {
@@ -160,7 +162,7 @@ ipeds_download_to_disk <- function(to_dir, files = NULL, use_ipeds_dict = NULL,
   ## set base url
   base_url <- "https://nces.ed.gov/ipeds/datacenter/data"
   ## loop through
-  message(paste0("Downloading to ", to_dir, ":"))
+  if (!quiet) message(paste0("Downloading to ", to_dir, ":"))
   for (i in 1:length(fzipvec)) {
     f <- fzipvec[i]
     if (overwrite | !file.exists(file.path(to_dir, f))) {

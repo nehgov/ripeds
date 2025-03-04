@@ -80,11 +80,13 @@ get_file_location_or_download <- function(f, local_dir = NA) {
     return(tempdir())
   } else if (!is.na(local_dir)) {
     if (!file.exists(file.path(local_dir, f))) {
-      ipeds_download_to_disk(get_file_stub_name(f), to_dir = local_dir)
+      ipeds_download_to_disk(get_file_stub_name(f), to_dir = local_dir,
+                             quiet = TRUE)
     }
     return(local_dir)
   } else if (is.na(local_dir)) {
-    ipeds_download_to_disk(get_file_stub_name(f), to_dir = tempdir())
+    ipeds_download_to_disk(get_file_stub_name(f), to_dir = tempdir(),
+                           quiet = TRUE)
     return(tempdir())
   }
 }
