@@ -1,3 +1,8 @@
+# ripeds 0.2.1
+
+* Bug fix to addition of quiet option in download
+* Small edit to workflow vignette
+
 # ripeds 0.2.0
 
 * Public beta release
