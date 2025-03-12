@@ -18,11 +18,16 @@ function, `%>%`. Internal commands, `ipeds_select()`, `ipeds_filter()`,
 and `ipeds_year()` come in any order in the pipe chain. Only
 `ipeds_select()` is required.
 
+This software package was developed by the Office of Data and Evaluation
+of the National Endowment for the Humanities.
+
 # Installation
 
     devtools::install_github("nehgov/ripeds")
 
 # Example
+
+    library(ripeds)
 
     ## perform data pull
     df <- ipeds_init() |>
